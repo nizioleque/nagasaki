@@ -7,7 +7,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
@@ -49,12 +48,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // create a 2D table for the grid and initialize with default BombBoxes
     List<List<BombBox>> grid = List.generate(rows, (i) {
       return List.generate(columns, (j) {
         return BombBox();
       });
     });
 
+    // select random coordinates and add bombs
     var randomPicker = List<int>.generate(rows * columns, (i) => i)..shuffle();
     for (var i = 0; i < nBombs; i++) {
       var index = randomPicker.removeLast();
@@ -63,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var bombsLeft = nBombs;
 
+    // return widget
     return Scaffold(
       body: Column(
         children: [
@@ -116,6 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
   settings() {}
 }
 
+// grid widget class
 class GameArea extends StatelessWidget {
   const GameArea(
       {Key? key, required this.columns, required this.rows, required this.grid})
