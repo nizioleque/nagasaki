@@ -27,15 +27,15 @@ class BombBox {
   bool isVisible;
   int bombsAround;
 
-  BombBox([this.isBomb = false, this.isVisible = true, this.bombsAround = 0]);
+  BombBox([this.isBomb = false, this.isVisible = false, this.bombsAround = 0]);
 
   getWidget() {
-    var fillColor = Colors.black;
-    if (isVisible) fillColor = isBomb ? Colors.red : Colors.grey;
+    var fillColor = isBomb ? Colors.red : Colors.grey;
 
     return Container(
       decoration: BoxDecoration(
         color: fillColor,
+        border: isVisible ? null : Border.all(width: 4.0),
       ),
     );
   }
@@ -48,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     // create a 2D table for the grid and initialize with default BombBoxes
     List<List<BombBox>> grid = List.generate(rows, (i) {
       return List.generate(columns, (j) {
@@ -59,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var randomPicker = List<int>.generate(rows * columns, (i) => i)..shuffle();
     for (var i = 0; i < nBombs; i++) {
       var index = randomPicker.removeLast();
-      grid[index ~/ columns][index % columns] = BombBox(true);
+      grid[index ~/ columns][index % columns].isBomb = true;
     }
 
     var bombsLeft = nBombs;
