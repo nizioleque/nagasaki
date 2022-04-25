@@ -10,91 +10,99 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.red,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return const MaterialApp(
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class BombBox {
+  bool isBomb;
+  bool isVisible;
+  int bombsAround;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  BombBox([this.isBomb = false, this.isVisible = true, this.bombsAround = 0]);
+
+  getWidget() {
+    var fillColor = Colors.black;
+    if (isVisible) fillColor = isBomb ? Colors.red : Colors.grey;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: fillColor,
+      ),
+    );
   }
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final int rows = 10;
+  final int columns = 10;
+  final int nBombs = 10;
 
   @override
   Widget build(BuildContext context) {
+    List<List<BombBox>> grid = List.generate(rows, (i) {
+      return List.generate(columns, (j) {
+        return BombBox();
+      });
+    });
+
+    var randomPicker = List<int>.generate(rows * columns, (i) => i)..shuffle();
+    for (var i = 0; i < nBombs; i++) {
+      var index = randomPicker.removeLast();
+      grid[index ~/ columns][index % columns] = BombBox(true);
+    }
+
+    var bombsLeft = nBombs;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       body: Column(
         children: [
-          Expanded(
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () => {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const GameScreen()),
-                  )
-                },
-                child: const Text("New Game"),
-              ),
+          Container(
+            height: 150,
+            color: Colors.grey,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: resetGame(),
+                  child: const Text("Reset"),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      bombsLeft.toString(),
+                      style: const TextStyle(
+                        fontSize: 50,
+                      ),
+                    ),
+                    const Text("bombs"),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: settings(),
+                  child: const Text("Settings"),
+                )
+              ],
             ),
           ),
           Expanded(
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () => {},
-                child: const Text("Resume Game"),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () => {},
-                child: const Text("Settings"),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio: columns / rows,
+                  child: GameArea(columns: columns, rows: rows, grid: grid),
+                ),
               ),
             ),
           ),
@@ -102,41 +110,33 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  resetGame() {}
+
+  settings() {}
 }
 
-class GameScreen extends StatefulWidget {
-  const GameScreen({Key? key}) : super(key: key);
+class GameArea extends StatelessWidget {
+  const GameArea(
+      {Key? key, required this.columns, required this.rows, required this.grid})
+      : super(key: key);
 
-  @override
-  State<GameScreen> createState() => _GameScreenState();
-}
-
-class _GameScreenState extends State<GameScreen> {
-  late var colors = List.generate(100, (index) => Colors.black);
-
-  final _grid = List.generate(
-    100,
-    (index) => Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: colors[index]),
-      ),
-    ),
-  );
+  final int columns;
+  final int rows;
+  final List<List<BombBox>> grid;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Game Screen'),
-      ),
-      body: Center(
-        child: SizedBox(
-          width: 400,
-          height: 400,
-          child: GridView.count(
-            crossAxisCount: 10,
-            children: _grid,
-          ),
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: columns,
+      childAspectRatio: 1,
+      children: List.generate(
+        rows * columns,
+        (index) => Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: grid[index ~/ columns][index % columns].getWidget(),
         ),
       ),
     );
