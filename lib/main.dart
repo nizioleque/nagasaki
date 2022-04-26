@@ -32,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late bool blockGrid = false;
   late List<List<FieldData>> grid;
   late int bombsLeft;
+  late int clickedFields = 0;
 
   @override
   void initState() {
@@ -173,7 +174,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void handleFieldTap(int i, int j) {
     debugPrint('[handleFieldTap] $i, $j');
+    // cant click if game over
     if (blockGrid) return;
+    // cant click if flagged
     if (grid[i][j].isFlagged) return;
 
     /* if (!grid[i][j].isVisible) {
@@ -187,13 +190,15 @@ class _MyHomePageState extends State<MyHomePage> {
         makeFieldVisible(i, j);
       });
     }
-
+    if (clickedFields + nBombs == columns * rows) gameWon();
     if (grid[i][j].isBomb) gameOver();
   }
 
   void handleFieldLongPress(int i, int j) {
     debugPrint('[handleLongPressTap] $i, $j');
+    // cant put flag when game over
     if (blockGrid) return;
+    // cant put flag when clicked
     if (grid[i][j].isClicked) return;
     // mark as bomb / question mark
     if (!grid[i][j].isFlagged) {
@@ -221,11 +226,22 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text('GAME OVER'),
-        content: const Text("You hit a bomb!"),
+        content: const Text("You've hit a bomb!"),
         backgroundColor: Colors.red,
       ),
     );
     blockGrid = true;
+  }
+
+  void gameWon() {
+    debugPrint('You Won!');
+    showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: const Text("YOU WON"),
+              content: const Text("You've found all bombs!"),
+              backgroundColor: Colors.lightGreen,
+            ));
   }
 
   void resetGame() {
@@ -239,6 +255,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void makeFieldVisible(int i, int j) {
     grid[i][j].isClicked = true;
+    clickedFields++;
     if (grid[i][j].isBomb) return;
     if (grid[i][j].bombsAround == 0) {
       if (i - 1 >= 0 && !grid[i - 1][j].isClicked) {
