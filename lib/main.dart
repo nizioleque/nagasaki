@@ -35,29 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-
-    // create a 2D table for the grid and initialize with default BombBoxes
-    grid = List.generate(rows, (i) {
-      return List.generate(columns, (j) {
-        return FieldData();
-      });
-    });
-
-    // select random coordinates and add bombs
-    var randomPicker = List<int>.generate(rows * columns, (i) => i)..shuffle();
-    for (var i = 0; i < nBombs; i++) {
-      var index = randomPicker.removeLast();
-      grid[index ~/ columns][index % columns].isBomb = true;
-    }
-
-    // count bombs
-    for (var i = 0; i < rows; i++) {
-      for (var j = 0; j < columns; j++) {
-        grid[i][j].bombsAround = countBombsAround(grid, i, j);
-      }
-    }
-
-    bombsLeft = nBombs;
+    prepareGrid();
   }
 
   @override
@@ -76,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: resetGame(),
+                      onPressed: resetGame,
                       child: const Text("Reset"),
                     ),
                     Column(
@@ -136,6 +114,31 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  void prepareGrid() {
+    // create a 2D table for the grid and initialize with default BombBoxes
+    grid = List.generate(rows, (i) {
+      return List.generate(columns, (j) {
+        return FieldData();
+      });
+    });
+
+    // select random coordinates and add bombs
+    var randomPicker = List<int>.generate(rows * columns, (i) => i)..shuffle();
+    for (var i = 0; i < nBombs; i++) {
+      var index = randomPicker.removeLast();
+      grid[index ~/ columns][index % columns].isBomb = true;
+    }
+
+    // count bombs
+    for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < columns; j++) {
+        grid[i][j].bombsAround = countBombsAround(grid, i, j);
+      }
+    }
+
+    bombsLeft = nBombs;
   }
 
   int countBombsAround(List<List<FieldData>> grid, int i, int j) {
@@ -199,7 +202,11 @@ class _MyHomePageState extends State<MyHomePage> {
     debugPrint('Game Over!');
   }
 
-  resetGame() {}
+  void resetGame() {
+    setState(() {
+      prepareGrid();
+    });
+  }
 
   settings() {}
 }
