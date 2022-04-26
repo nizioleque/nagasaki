@@ -181,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     } */
 
-    if (!grid[i][j].isVisible) {
+    if (!grid[i][j].isClicked) {
       setState(() {
         makeFieldVisible(i, j);
       });
@@ -193,6 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void handleFieldLongPress(int i, int j) {
     debugPrint('[handleLongPressTap] $i, $j');
     if (blockGrid) return;
+    if (grid[i][j].isClicked) return;
     // mark as bomb / question mark
     if (!grid[i][j].isFlagged) {
       // add flag?
@@ -236,19 +237,19 @@ class _MyHomePageState extends State<MyHomePage> {
   settings() {}
 
   void makeFieldVisible(int i, int j) {
-    grid[i][j].isVisible = true;
+    grid[i][j].isClicked = true;
     if (grid[i][j].isBomb) return;
     if (grid[i][j].bombsAround == 0) {
-      if (i - 1 >= 0 && !grid[i - 1][j].isVisible) {
+      if (i - 1 >= 0 && !grid[i - 1][j].isClicked) {
         makeFieldVisible(i - 1, j);
       }
-      if (i + 1 < rows && !grid[i + 1][j].isVisible) {
+      if (i + 1 < rows && !grid[i + 1][j].isClicked) {
         makeFieldVisible(i + 1, j);
       }
-      if (j - 1 >= 0 && !grid[i][j - 1].isVisible) {
+      if (j - 1 >= 0 && !grid[i][j - 1].isClicked) {
         makeFieldVisible(i, j - 1);
       }
-      if (j + 1 < columns && !grid[i][j + 1].isVisible) {
+      if (j + 1 < columns && !grid[i][j + 1].isClicked) {
         makeFieldVisible(i, j + 1);
       }
     }

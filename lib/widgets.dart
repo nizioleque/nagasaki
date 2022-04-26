@@ -78,7 +78,7 @@ class Field extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: color,
-              border: data.isVisible ? null : Border.all(width: 4.0),
+              border: data.isClicked ? null : Border.all(width: 4.0),
             ),
             child: Align(
               alignment: Alignment.center,
