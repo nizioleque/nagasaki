@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'widgets.dart';
+import 'classes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -164,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return counter;
   }
 
-  handleFieldTap(int i, int j) {
+  void handleFieldTap(int i, int j) {
     debugPrint('[handleFieldTap] $i, $j');
 
     if (!grid[i][j].isVisible) {
@@ -176,125 +178,17 @@ class _MyHomePageState extends State<MyHomePage> {
     if (grid[i][j].isBomb) gameOver();
   }
 
-  handleFieldLongPress(int i, int j) {
+  void handleFieldLongPress(int i, int j) {
     debugPrint('[handleLongPressTap] $i, $j');
 
     // mark as bomb / question mark
   }
 
-  gameOver() {
+  void gameOver() {
     debugPrint('Game Over!');
   }
 
   resetGame() {}
 
   settings() {}
-}
-
-class FieldData {
-  bool isBomb;
-  bool isVisible;
-  int bombsAround;
-
-  FieldData([
-    this.isBomb = false,
-    this.isVisible = false,
-    this.bombsAround = 0,
-  ]);
-}
-
-class FieldChangeData {
-  int index;
-  PressType pressType;
-
-  FieldChangeData(
-    this.index,
-    this.pressType,
-  );
-}
-
-enum PressType {
-  tap,
-  longPress,
-}
-
-// grid widget class
-class GameArea extends StatelessWidget {
-  const GameArea({
-    Key? key,
-    required this.columns,
-    required this.rows,
-    required this.grid,
-    required this.onChanged,
-  }) : super(key: key);
-
-  final int columns;
-  final int rows;
-  final List<List<FieldData>> grid;
-  final ValueChanged<FieldChangeData> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.count(
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: columns,
-      padding: const EdgeInsets.all(0),
-      childAspectRatio: 1,
-      children: List.generate(
-        rows * columns,
-        (index) => Field(
-          data: grid[index ~/ columns][index % columns],
-          handleTap: (bool b) {
-            debugPrint('[GameArea] detected tap');
-            onChanged(FieldChangeData(index, PressType.tap));
-          },
-          handleLongPress: (bool b) {
-            debugPrint('[GameArea] detected long press');
-            onChanged(FieldChangeData(index, PressType.longPress));
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class Field extends StatelessWidget {
-  const Field({
-    Key? key,
-    required this.handleTap,
-    required this.handleLongPress,
-    required this.data,
-  }) : super(key: key);
-
-  final ValueChanged<bool> handleTap;
-  final ValueChanged<bool> handleLongPress;
-  final FieldData data;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        debugPrint('[Field] detected tap');
-        handleTap(false);
-      },
-      onLongPress: () {
-        debugPrint('[Field] detected long press');
-        handleLongPress(false);
-      },
-      child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: data.isBomb ? Colors.orange : Colors.grey,
-              border: data.isVisible ? null : Border.all(width: 4.0),
-            ),
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                data.bombsAround.toString(),
-              ),
-            ),
-          )),
-    );
-  }
 }
