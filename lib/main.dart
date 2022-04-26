@@ -27,7 +27,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final int rows = 10;
   final int columns = 10;
-  final int nBombs = 30;
+  final int nBombs = 10;
 
   late List<List<FieldData>> grid;
   late int bombsLeft;
@@ -143,22 +143,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int countBombsAround(List<List<FieldData>> grid, int i, int j) {
     int counter = 0;
-    if (i - 1 > 0 && j - 1 > 0 && grid[i - 1][j - 1].isBomb) {
+    if (i - 1 >= 0 && j - 1 >= 0 && grid[i - 1][j - 1].isBomb) {
       counter++;
     }
-    if (i - 1 > 0 && grid[i - 1][j].isBomb) {
+    if (i - 1 >= 0 && grid[i - 1][j].isBomb) {
       counter++;
     }
-    if (i - 1 > 0 && j + 1 < columns && grid[i - 1][j + 1].isBomb) {
+    if (i - 1 >= 0 && j + 1 < columns && grid[i - 1][j + 1].isBomb) {
       counter++;
     }
-    if (j - 1 > 0 && grid[i][j - 1].isBomb) {
+    if (j - 1 >= 0 && grid[i][j - 1].isBomb) {
       counter++;
     }
     if (j + 1 < columns && grid[i][j + 1].isBomb) {
       counter++;
     }
-    if (i + 1 < rows && j - 1 > 0 && grid[i + 1][j - 1].isBomb) {
+    if (i + 1 < rows && j - 1 >= 0 && grid[i + 1][j - 1].isBomb) {
       counter++;
     }
     if (i + 1 < rows && grid[i + 1][j].isBomb) {
@@ -173,9 +173,15 @@ class _MyHomePageState extends State<MyHomePage> {
   void handleFieldTap(int i, int j) {
     debugPrint('[handleFieldTap] $i, $j');
 
-    if (!grid[i][j].isVisible) {
+    /* if (!grid[i][j].isVisible) {
       setState(() {
         grid[i][j].isVisible = true;
+      });
+    } */
+
+    if (!grid[i][j].isVisible) {
+      setState(() {
+        makeFieldVisible(i, j);
       });
     }
 
@@ -195,6 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
         grid[i][j].isFlagged = true;
         bombsLeft--;
       });
+      // if there is flag already, remove it
     } else if (grid[i][j].isFlagged) {
       debugPrint('removed flag $i $j');
       setState(() {
@@ -215,4 +222,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   settings() {}
+
+  void makeFieldVisible(int i, int j) {
+    grid[i][j].isVisible = true;
+
+    if (grid[i][j].bombsAround == 0) {
+      if (i - 1 >= 0 && !grid[i - 1][j].isVisible) {
+        makeFieldVisible(i - 1, j);
+      }
+      if (i + 1 < rows && !grid[i + 1][j].isVisible) {
+        makeFieldVisible(i + 1, j);
+      }
+      if (j - 1 >= 0 && !grid[i][j - 1].isVisible) {
+        makeFieldVisible(i, j - 1);
+      }
+      if (j + 1 < columns && !grid[i][j + 1].isVisible) {
+        makeFieldVisible(i, j + 1);
+      }
+    }
+  }
 }
