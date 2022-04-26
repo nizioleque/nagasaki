@@ -1,0 +1,1 @@
+adb disconnect 192.168.0.4:5555
