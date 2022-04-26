@@ -47,46 +47,58 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // return widget
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            height: 150,
-            color: Colors.grey,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: resetGame(),
-                  child: const Text("Reset"),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        color: Colors.grey,
+        child: SafeArea(
+          child: Column(
+            children: [
+              Container(
+                height: 150,
+                color: Colors.grey,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      bombsLeft.toString(),
-                      style: const TextStyle(
-                        fontSize: 50,
-                      ),
+                    ElevatedButton(
+                      onPressed: resetGame(),
+                      child: const Text("Reset"),
                     ),
-                    const Text("bombs"),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          bombsLeft.toString(),
+                          style: const TextStyle(
+                            fontSize: 50,
+                          ),
+                        ),
+                        const Text("bombs"),
+                      ],
+                    ),
+                    ElevatedButton(
+                      onPressed: settings(),
+                      child: const Text("Settings"),
+                    )
                   ],
                 ),
-                ElevatedButton(
-                  onPressed: settings(),
-                  child: const Text("Settings"),
-                )
-              ],
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: GameArea(columns: columns, rows: rows, grid: grid),
               ),
-            ),
+              Expanded(
+                child: Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Center(
+                      child: AspectRatio(
+                        aspectRatio: columns / rows,
+                        child:
+                            GameArea(columns: columns, rows: rows, grid: grid),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -130,6 +142,7 @@ class GameArea extends StatelessWidget {
     return GridView.count(
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: columns,
+      padding: const EdgeInsets.all(0),
       childAspectRatio: 1,
       children: List.generate(
         rows * columns,
