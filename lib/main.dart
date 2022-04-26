@@ -123,6 +123,12 @@ class BombBox {
         color: fillColor,
         border: isVisible ? null : Border.all(width: 4.0),
       ),
+      child: Align(
+        alignment: Alignment.center,
+        child: Text(
+          bombsAround.toString(),
+        ),
+      ),
     );
   }
 }
