@@ -56,9 +56,13 @@ class Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var color = data.isBomb
+    /*  var color = data.isBomb
         ? (data.isFlagged ? Colors.green : Colors.orange)
-        : Colors.grey;
+        : Colors.grey; */
+
+    var color = data.isFlagged
+        ? Colors.green
+        : (data.isBomb ? Colors.orange : Colors.grey);
 
     return GestureDetector(
       onTap: () {

@@ -186,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
     debugPrint('[handleLongPressTap] $i, $j');
 
     // mark as bomb / question mark
-    if (grid[i][j].isBomb) {
+    if (!grid[i][j].isFlagged) {
       // add flag?
 
       // prevent this from running many times!
@@ -194,6 +194,12 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         grid[i][j].isFlagged = true;
         bombsLeft--;
+      });
+    } else if (grid[i][j].isFlagged) {
+      debugPrint('removed flag $i $j');
+      setState(() {
+        grid[i][j].isFlagged = false;
+        bombsLeft++;
       });
     }
   }
