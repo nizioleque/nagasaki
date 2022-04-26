@@ -82,10 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Center(
-                child: AspectRatio(
-                  aspectRatio: columns / rows,
-                  child: GameArea(columns: columns, rows: rows, grid: grid),
-                ),
+                child: GameArea(columns: columns, rows: rows, grid: grid),
               ),
             ),
           ),
