@@ -30,6 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final int nBombs = 30;
 
   late List<List<FieldData>> grid;
+  late int bombsLeft;
 
   @override
   void initState() {
@@ -55,12 +56,12 @@ class _MyHomePageState extends State<MyHomePage> {
         grid[i][j].bombsAround = countBombsAround(grid, i, j);
       }
     }
+
+    bombsLeft = nBombs;
   }
 
   @override
   Widget build(BuildContext context) {
-    var bombsLeft = nBombs;
-
     // return widget
     return Scaffold(
       body: Container(
@@ -182,6 +183,16 @@ class _MyHomePageState extends State<MyHomePage> {
     debugPrint('[handleLongPressTap] $i, $j');
 
     // mark as bomb / question mark
+    if (grid[i][j].isBomb) {
+      // add flag?
+
+      // prevent this from running many times!
+      debugPrint('flagged mine $i, $j');
+      setState(() {
+        grid[i][j].isFlagged = true;
+        bombsLeft--;
+      });
+    }
   }
 
   void gameOver() {

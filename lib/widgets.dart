@@ -56,6 +56,10 @@ class Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var color = data.isBomb
+        ? (data.isFlagged ? Colors.green : Colors.orange)
+        : Colors.grey;
+
     return GestureDetector(
       onTap: () {
         debugPrint('[Field] detected tap');
@@ -69,7 +73,7 @@ class Field extends StatelessWidget {
           padding: const EdgeInsets.all(2.0),
           child: Container(
             decoration: BoxDecoration(
-              color: data.isBomb ? Colors.orange : Colors.grey,
+              color: color,
               border: data.isVisible ? null : Border.all(width: 4.0),
             ),
             child: Align(
