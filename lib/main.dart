@@ -108,7 +108,7 @@ class BombBox {
   BombBox([this.isBomb = false, this.isVisible = false, this.bombsAround = 0]);
 
   getWidget() {
-    var fillColor = isBomb ? Colors.red : Colors.grey;
+    var fillColor = isBomb ? Colors.orange : Colors.grey;
 
     return Container(
       decoration: BoxDecoration(
