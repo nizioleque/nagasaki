@@ -233,7 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void makeFieldVisible(int i, int j) {
     grid[i][j].isVisible = true;
-
+    if (grid[i][j].isBomb) return;
     if (grid[i][j].bombsAround == 0) {
       if (i - 1 >= 0 && !grid[i - 1][j].isVisible) {
         makeFieldVisible(i - 1, j);
