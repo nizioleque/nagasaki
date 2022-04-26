@@ -60,9 +60,13 @@ class Field extends StatelessWidget {
         ? (data.isFlagged ? Colors.green : Colors.orange)
         : Colors.grey; */
 
-    var color = data.isFlagged
-        ? Colors.green
-        : (data.isBomb ? Colors.orange : Colors.grey);
+    // var color = data.isFlagged
+    //     ? Colors.green
+    //     : (data.isBomb ? Colors.orange : Colors.grey);
+
+    var color = data.isClicked
+        ? (data.isBomb ? Colors.red : Colors.grey)
+        : (data.isFlagged ? Colors.green : Colors.grey);
 
     return GestureDetector(
       onTap: () {

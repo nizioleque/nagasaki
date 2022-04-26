@@ -190,6 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
         makeFieldVisible(i, j);
       });
     }
+    debugPrint('$clickedFields clicked fields');
     if (clickedFields + nBombs == columns * rows) gameWon();
     if (grid[i][j].isBomb) gameOver();
   }
@@ -242,12 +243,14 @@ class _MyHomePageState extends State<MyHomePage> {
               content: const Text("You've found all bombs!"),
               backgroundColor: Colors.lightGreen,
             ));
+    blockGrid = true;
   }
 
   void resetGame() {
     setState(() {
       prepareGrid();
       blockGrid = false;
+      clickedFields = 0;
     });
   }
 
