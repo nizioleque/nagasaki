@@ -213,6 +213,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void gameOver() {
     debugPrint('Game Over!');
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('GAME OVER'),
+        content: const Text("You hit a bomb!"),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   void resetGame() {
