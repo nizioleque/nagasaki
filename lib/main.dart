@@ -174,6 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void handleFieldTap(int i, int j) {
     debugPrint('[handleFieldTap] $i, $j');
     if (blockGrid) return;
+    if (grid[i][j].isFlagged) return;
 
     /* if (!grid[i][j].isVisible) {
       setState(() {
