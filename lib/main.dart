@@ -29,6 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final int columns = 10;
   final int nBombs = 10;
 
+  late bool blockGrid = false;
   late List<List<FieldData>> grid;
   late int bombsLeft;
 
@@ -172,6 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void handleFieldTap(int i, int j) {
     debugPrint('[handleFieldTap] $i, $j');
+    if (blockGrid) return;
 
     /* if (!grid[i][j].isVisible) {
       setState(() {
@@ -190,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void handleFieldLongPress(int i, int j) {
     debugPrint('[handleLongPressTap] $i, $j');
-
+    if (blockGrid) return;
     // mark as bomb / question mark
     if (!grid[i][j].isFlagged) {
       // add flag?
@@ -221,11 +223,13 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.red,
       ),
     );
+    blockGrid = true;
   }
 
   void resetGame() {
     setState(() {
       prepareGrid();
+      blockGrid = false;
     });
   }
 
