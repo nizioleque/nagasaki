@@ -29,7 +29,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    
     // create a 2D table for the grid and initialize with default BombBoxes
     List<List<BombBox>> grid = List.generate(rows, (i) {
       return List.generate(columns, (j) {
@@ -132,7 +131,6 @@ class GameArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.count(
-      shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: columns,
       childAspectRatio: 1,
