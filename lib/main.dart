@@ -43,6 +43,12 @@ class _MyHomePageState extends State<MyHomePage> {
       grid[index ~/ columns][index % columns].isBomb = true;
     }
 
+    for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < columns; j++) {
+        grid[i][j].bombsAround = countBombsAround(grid, i, j);
+      }
+    }
+
     var bombsLeft = nBombs;
 
     // return widget
@@ -101,6 +107,35 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  int countBombsAround(List<List<BombBox>> grid, int i, int j) {
+    int counter = 0;
+    if (i - 1 > 0 && j - 1 > 0 && grid[i - 1][j - 1].isBomb) {
+      counter++;
+    }
+    if (i - 1 > 0 && grid[i - 1][j].isBomb) {
+      counter++;
+    }
+    if (i - 1 > 0 && j + 1 < columns && grid[i - 1][j + 1].isBomb) {
+      counter++;
+    }
+    if (j - 1 > 0 && grid[i][j - 1].isBomb) {
+      counter++;
+    }
+    if (j + 1 < columns && grid[i][j + 1].isBomb) {
+      counter++;
+    }
+    if (i + 1 < rows && j - 1 > 0 && grid[i + 1][j - 1].isBomb) {
+      counter++;
+    }
+    if (i + 1 < rows && grid[i + 1][j].isBomb) {
+      counter++;
+    }
+    if (i + 1 < rows && j + 1 < columns && grid[i + 1][j + 1].isBomb) {
+      counter++;
+    }
+    return counter;
   }
 
   resetGame() {}
