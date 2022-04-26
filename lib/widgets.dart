@@ -83,7 +83,9 @@ class Field extends StatelessWidget {
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                data.bombsAround > 0 ? data.bombsAround.toString() : '',
+                (data.bombsAround > 0 && data.isClicked)
+                    ? data.bombsAround.toString()
+                    : '',
               ),
             ),
           )),
