@@ -22,25 +22,6 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class BombBox {
-  bool isBomb;
-  bool isVisible;
-  int bombsAround;
-
-  BombBox([this.isBomb = false, this.isVisible = false, this.bombsAround = 0]);
-
-  getWidget() {
-    var fillColor = isBomb ? Colors.red : Colors.grey;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: fillColor,
-        border: isVisible ? null : Border.all(width: 4.0),
-      ),
-    );
-  }
-}
-
 class _MyHomePageState extends State<MyHomePage> {
   final int rows = 10;
   final int columns = 10;
@@ -117,6 +98,25 @@ class _MyHomePageState extends State<MyHomePage> {
   resetGame() {}
 
   settings() {}
+}
+
+class BombBox {
+  bool isBomb;
+  bool isVisible;
+  int bombsAround;
+
+  BombBox([this.isBomb = false, this.isVisible = false, this.bombsAround = 0]);
+
+  getWidget() {
+    var fillColor = isBomb ? Colors.red : Colors.grey;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: fillColor,
+        border: isVisible ? null : Border.all(width: 4.0),
+      ),
+    );
+  }
 }
 
 // grid widget class
