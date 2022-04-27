@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 class FieldData {
   bool isBomb;
   bool isClicked;
@@ -38,4 +40,20 @@ class GameSettings {
     this.rows = 10,
     this.bombs = 10,
   });
+}
+
+class BombPosistion {
+  final int x;
+  final int y;
+
+  BombPosistion(this.x, this.y);
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    return other is BombPosistion && other.x == x && other.y == y;
+  }
+
+  @override
+  int get hashCode => hashValues(x, y);
 }

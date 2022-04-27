@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,6 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer? timer;
   late bool timerActive;
   late GameSettings sett;
+  late Set<BombPosistion> bombs;
 
   @override
   void initState() {
@@ -176,8 +178,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void generateBombs([int? iTap, int? jTap]) {
     // select random coordinates and add bombs
     var rng = Random();
-    Set<int> randomSet = <int>{};
-    while (randomSet.length != sett.bombs) {
+    bombs = <BombPosistion>{};
+    while (bombs.length != sett.bombs) {
       int randomNumber = rng.nextInt(sett.columns * sett.rows);
 
       // check if i, j != first clicked field
@@ -185,12 +187,12 @@ class _MyHomePageState extends State<MyHomePage> {
       int i = randomNumber ~/ sett.columns;
       int j = randomNumber % sett.columns;
       if (i != iTap || j != jTap) {
-        randomSet.add(randomNumber);
+        bombs.add(BombPosistion(i, j));
       }
     }
 
-    for (var element in randomSet) {
-      grid[element ~/ sett.columns][element % sett.columns].isBomb = true;
+    for (var element in bombs) {
+      grid[element.x][element.y].isBomb = true;
     }
 
     // count bombs
@@ -239,6 +241,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // cant click if flagged
     if (grid[i][j].isFlagged) return;
 
+    BombPosistion a = BombPosistion(1, 1);
+    BombPosistion b = BombPosistion(1, 1);
+
+    if (a == b) {
+      debugPrint("są równe");
+    } else {
+      debugPrint("nie są równe");
+    }
+
     // first click - generate bombs
     if (clickedFields == 0) {
       generateBombs(i, j);
@@ -251,7 +262,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     debugPrint('$clickedFields clicked fields');
     if (grid[i][j].isBomb) {
-      gameOver();
+      explode(i, j);
+      // GameOver();
     } else if (clickedFields + sett.bombs == sett.columns * sett.rows) {
       gameWon();
     }
@@ -474,5 +486,54 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       },
     );
+  }
+
+  void explode(int i, int j) {
+    // bombs.forEach((element) {
+    //   if (!(element.first == i && element.last == j)) {
+    //     waitForExplosion();
+    //     setState(() {
+    //       debugPrint(element.first.toString());
+    //       grid[element.first][element.last].isClicked = true;
+    //     });
+    //   }
+    // });
+    int time = 1000;
+    var miliseconds = Duration(milliseconds: time ~/ sett.bombs);
+    int k = 0;
+    Timer timer = Timer.periodic(miliseconds, (Timer timer) {
+      if (k == bombs.length) {
+        setState(() {
+          timer.cancel();
+          gameOver();
+        });
+      } else {
+        if (bombs.elementAt(k).x == i && bombs.elementAt(k).y == j) k++;
+        setState(() {
+          debugPrint("boom");
+          grid[bombs.elementAt(k).x][bombs.elementAt(k).y].isClicked = true;
+        });
+        // }
+
+        k++;
+      }
+    });
+  }
+
+  void waitForExplosion() {
+    int start = 10000;
+    var milisecond = Duration(milliseconds: 10000 ~/ sett.bombs);
+    Timer timer = Timer.periodic(milisecond, (Timer timer) {
+      if (start < 0) {
+        setState(() {
+          timer.cancel();
+          gameOver();
+        });
+      } else {
+        setState(() {
+          start -= 1000 ~/ sett.bombs;
+        });
+      }
+    });
   }
 }
