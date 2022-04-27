@@ -302,6 +302,8 @@ class _MyHomePageState extends State<MyHomePage> {
         flaggedFields--;
         bombsLeft++;
       });
+
+      HapticFeedback.selectionClick();
     }
   }
 

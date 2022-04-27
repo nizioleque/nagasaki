@@ -30,11 +30,11 @@ class GameArea extends StatelessWidget {
         rows * columns,
         (index) => Field(
           data: grid[index ~/ columns][index % columns],
-          handleTap: (bool b) {
+          handleTap: () {
             debugPrint('[GameArea] detected tap');
             onChanged(FieldChangeData(index, PressType.tap));
           },
-          handleLongPress: (bool b) {
+          handleLongPress: () {
             debugPrint('[GameArea] detected long press');
             onChanged(FieldChangeData(index, PressType.longPress));
           },
@@ -53,8 +53,8 @@ class Field extends StatefulWidget {
     required this.data,
   }) : super(key: key);
 
-  final ValueChanged<bool> handleTap;
-  final ValueChanged<bool> handleLongPress;
+  final void Function() handleTap;
+  final void Function() handleLongPress;
   final FieldData data;
 
   // long press duration [miliseconds]
@@ -85,7 +85,7 @@ class _FieldState extends State<Field> {
           () {
             // trigger long press
             debugPrint('[Field] detected long press');
-            widget.handleLongPress(false);
+            widget.handleLongPress();
           },
         );
       },
@@ -96,7 +96,7 @@ class _FieldState extends State<Field> {
 
           // trigger tap
           debugPrint('[Field] detected tap');
-          widget.handleTap(false);
+          widget.handleTap();
         }
       },
       child: Padding(
