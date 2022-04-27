@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'widgets.dart';
 import 'classes.dart';
+import 'helpers.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,9 +30,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final int rows = 10;
-  final int columns = 10;
-  final int nBombs = 4;
+  // final int rows = 10;
+  // final int columns = 10;
+  // final int nBombs = 4;
 
   late bool blockGrid;
   late List<List<FieldData>> grid;
@@ -41,11 +42,20 @@ class _MyHomePageState extends State<MyHomePage> {
   late int flaggedFields;
   Timer? timer;
   late bool timerActive;
+  late GameSettings sett;
 
   @override
   void initState() {
     super.initState();
-    prepareGrid();
+
+    // TODO: load user settings from storage??
+    sett = GameSettings(
+      columns: 10,
+      rows: 10,
+      bombs: 10,
+    );
+
+    prepareGame(sett);
   }
 
   @override
@@ -111,16 +121,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: const EdgeInsets.all(16.0),
                     child: Center(
                       child: AspectRatio(
-                        aspectRatio: columns / rows,
+                        aspectRatio: sett.columns / sett.rows,
                         child: GameArea(
-                          columns: columns,
-                          rows: rows,
+                          columns: sett.columns,
+                          rows: sett.rows,
                           grid: grid,
                           onChanged: (FieldChangeData data) {
                             debugPrint(
                                 '[HomePage] onChanged, index: ${data.index}, type: ${data.pressType}');
-                            int i = data.index ~/ columns;
-                            int j = data.index % columns;
+                            int i = data.index ~/ sett.columns;
+                            int j = data.index % sett.columns;
                             switch (data.pressType) {
                               case PressType.tap:
                                 handleFieldTap(i, j);
@@ -144,10 +154,12 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void prepareGrid() {
+  void prepareGame(GameSettings s) {
+    sett = s;
+
     // create a 2D table for the grid and initialize with default BombBoxes
-    grid = List.generate(rows, (i) {
-      return List.generate(columns, (j) {
+    grid = List.generate(s.rows, (i) {
+      return List.generate(s.columns, (j) {
         return FieldData();
       });
     });
@@ -155,25 +167,25 @@ class _MyHomePageState extends State<MyHomePage> {
     // select random coordinates and add bombs
     var rng = Random();
     Set<int> randomSet = <int>{};
-    while (randomSet.length != nBombs) {
-      int randomNumber = rng.nextInt(columns * rows);
-      int i = randomNumber ~/ columns;
-      int j = randomNumber % columns;
+    while (randomSet.length != s.bombs) {
+      int randomNumber = rng.nextInt(s.columns * s.rows);
+      int i = randomNumber ~/ s.columns;
+      int j = randomNumber % s.columns;
       // here check if i, j != first clicked field
       randomSet.add(randomNumber);
     }
     for (var element in randomSet) {
-      grid[element ~/ columns][element % columns].isBomb = true;
+      grid[element ~/ s.columns][element % s.columns].isBomb = true;
     }
 
     // count bombs
-    for (var i = 0; i < rows; i++) {
-      for (var j = 0; j < columns; j++) {
+    for (var i = 0; i < s.rows; i++) {
+      for (var j = 0; j < s.columns; j++) {
         grid[i][j].bombsAround = countBombsAround(grid, i, j);
       }
     }
 
-    bombsLeft = nBombs;
+    bombsLeft = s.bombs;
     blockGrid = false;
     time = 0;
     clickedFields = 0;
@@ -189,22 +201,24 @@ class _MyHomePageState extends State<MyHomePage> {
     if (i - 1 >= 0 && grid[i - 1][j].isBomb) {
       counter++;
     }
-    if (i - 1 >= 0 && j + 1 < columns && grid[i - 1][j + 1].isBomb) {
+    if (i - 1 >= 0 && j + 1 < sett.columns && grid[i - 1][j + 1].isBomb) {
       counter++;
     }
     if (j - 1 >= 0 && grid[i][j - 1].isBomb) {
       counter++;
     }
-    if (j + 1 < columns && grid[i][j + 1].isBomb) {
+    if (j + 1 < sett.columns && grid[i][j + 1].isBomb) {
       counter++;
     }
-    if (i + 1 < rows && j - 1 >= 0 && grid[i + 1][j - 1].isBomb) {
+    if (i + 1 < sett.rows && j - 1 >= 0 && grid[i + 1][j - 1].isBomb) {
       counter++;
     }
-    if (i + 1 < rows && grid[i + 1][j].isBomb) {
+    if (i + 1 < sett.rows && grid[i + 1][j].isBomb) {
       counter++;
     }
-    if (i + 1 < rows && j + 1 < columns && grid[i + 1][j + 1].isBomb) {
+    if (i + 1 < sett.rows &&
+        j + 1 < sett.columns &&
+        grid[i + 1][j + 1].isBomb) {
       counter++;
     }
     return counter;
@@ -231,7 +245,7 @@ class _MyHomePageState extends State<MyHomePage> {
     debugPrint('$clickedFields clicked fields');
     if (grid[i][j].isBomb) {
       gameOver();
-    } else if (clickedFields + nBombs == columns * rows) {
+    } else if (clickedFields + sett.bombs == sett.columns * sett.rows) {
       gameWon();
     }
   }
@@ -246,7 +260,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!grid[i][j].isFlagged) {
       // add flag?
       // reached maximum of flags
-      if (flaggedFields == nBombs) return;
+      if (flaggedFields == sett.bombs) return;
       // prevent this from running many times!
       debugPrint('flagged mine $i, $j');
       setState(() {
@@ -293,12 +307,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void resetGame() {
     setState(() {
-      prepareGrid();
+      prepareGame(sett);
     });
   }
 
   void openSettings() {
     final _controllers = [for (var i = 0; i < 3; i++) TextEditingController()];
+    final _formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
@@ -306,59 +321,106 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text("SETTINGS"),
         contentPadding: const EdgeInsets.all(20.0),
         scrollable: true,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              onChanged: (String str) {},
-              controller: _controllers[0],
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                labelText: "Columns",
+        content: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                autovalidateMode: AutovalidateMode.always,
+                validator: (value) => validateRange(value, 1, 30),
+                controller: _controllers[0],
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: const InputDecoration(
+                  labelText: "Columns",
+                ),
               ),
-            ),
-            TextField(
-              onChanged: (String str) {},
-              controller: _controllers[1],
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                labelText: "Rows",
+              TextFormField(
+                autovalidateMode: AutovalidateMode.always,
+                validator: (value) => validateRange(value, 1, 30),
+                controller: _controllers[1],
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: const InputDecoration(
+                  labelText: "Rows",
+                ),
               ),
-            ),
-            TextField(
-              onChanged: (String str) {},
-              controller: _controllers[2],
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                labelText: "Bombs",
+              TextFormField(
+                autovalidateMode: AutovalidateMode.always,
+                validator: (value) {
+                  try {
+                    var fields = int.parse(_controllers[0].text) *
+                        int.parse(_controllers[1].text);
+
+                    return validateRange(value, 1, fields - 1);
+                  } catch (e) {
+                    return null;
+                  }
+                },
+                controller: _controllers[2],
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: const InputDecoration(
+                  labelText: "Bombs",
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              // var newCol = int.parse(_controllers[i].text);
+              if (_formKey.currentState!.validate()) {
+                setState(() {
+                  GameSettings newSettings = GameSettings(
+                    columns: int.parse(_controllers[0].text),
+                    rows: int.parse(_controllers[1].text),
+                    bombs: int.parse(_controllers[2].text),
+                  );
+                  prepareGame(newSettings);
+                });
+
+                Navigator.of(context).pop();
+              }
+            },
             child: const Text("Apply"),
           ),
         ],
       ),
     );
 
-    for (var c in _controllers) {
-      var text = 15.toString();
+    for (int i = 0; i < 3; i++) {
+      int val;
 
-      c.value = c.value.copyWith(
-        text: text,
-        selection: TextSelection.collapsed(offset: text.length),
-      );
+      switch (i) {
+        case 0:
+          val = sett.columns;
+          break;
+        case 1:
+          val = sett.rows;
+          break;
+        case 2:
+          val = sett.bombs;
+          break;
+        default:
+          val = 0;
+      }
+
+      var text = val.toString();
+
+      _controllers[i].value = _controllers[i].value.copyWith(
+            text: text,
+            selection: TextSelection.collapsed(offset: text.length),
+          );
     }
   }
 
@@ -374,22 +436,24 @@ class _MyHomePageState extends State<MyHomePage> {
       if (i - 1 >= 0 && !grid[i - 1][j].isClicked) {
         makeFieldVisible(i - 1, j);
       }
-      if (i - 1 >= 0 && j + 1 < columns && !grid[i - 1][j + 1].isClicked) {
+      if (i - 1 >= 0 && j + 1 < sett.columns && !grid[i - 1][j + 1].isClicked) {
         makeFieldVisible(i - 1, j + 1);
       }
       if (j - 1 >= 0 && !grid[i][j - 1].isClicked) {
         makeFieldVisible(i, j - 1);
       }
-      if (j + 1 < columns && !grid[i][j + 1].isClicked) {
+      if (j + 1 < sett.columns && !grid[i][j + 1].isClicked) {
         makeFieldVisible(i, j + 1);
       }
-      if (i + 1 < rows && j - 1 >= 0 && !grid[i + 1][j - 1].isClicked) {
+      if (i + 1 < sett.rows && j - 1 >= 0 && !grid[i + 1][j - 1].isClicked) {
         makeFieldVisible(i + 1, j - 1);
       }
-      if (i + 1 < rows && !grid[i + 1][j].isClicked) {
+      if (i + 1 < sett.rows && !grid[i + 1][j].isClicked) {
         makeFieldVisible(i + 1, j);
       }
-      if (i + 1 < rows && j + 1 < columns && !grid[i + 1][j + 1].isClicked) {
+      if (i + 1 < sett.rows &&
+          j + 1 < sett.columns &&
+          !grid[i + 1][j + 1].isClicked) {
         makeFieldVisible(i + 1, j + 1);
       }
     }
