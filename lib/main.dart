@@ -164,27 +164,6 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     });
 
-    // select random coordinates and add bombs
-    var rng = Random();
-    Set<int> randomSet = <int>{};
-    while (randomSet.length != s.bombs) {
-      int randomNumber = rng.nextInt(s.columns * s.rows);
-      int i = randomNumber ~/ s.columns;
-      int j = randomNumber % s.columns;
-      // here check if i, j != first clicked field
-      randomSet.add(randomNumber);
-    }
-    for (var element in randomSet) {
-      grid[element ~/ s.columns][element % s.columns].isBomb = true;
-    }
-
-    // count bombs
-    for (var i = 0; i < s.rows; i++) {
-      for (var j = 0; j < s.columns; j++) {
-        grid[i][j].bombsAround = countBombsAround(grid, i, j);
-      }
-    }
-
     bombsLeft = s.bombs;
     blockGrid = false;
     time = 0;
@@ -231,11 +210,10 @@ class _MyHomePageState extends State<MyHomePage> {
     // cant click if flagged
     if (grid[i][j].isFlagged) return;
 
-    /* if (!grid[i][j].isVisible) {
-      setState(() {
-        grid[i][j].isVisible = true;
-      });
-    } */
+    // first click - generate bombs
+    if (clickedFields == 0) {
+      generateBombs(i, j);
+    }
 
     if (!grid[i][j].isClicked) {
       setState(() {
@@ -247,6 +225,34 @@ class _MyHomePageState extends State<MyHomePage> {
       gameOver();
     } else if (clickedFields + sett.bombs == sett.columns * sett.rows) {
       gameWon();
+    }
+  }
+
+  void generateBombs([int? iTap, int? jTap]) {
+    // select random coordinates and add bombs
+    var rng = Random();
+    Set<int> randomSet = <int>{};
+    while (randomSet.length != sett.bombs) {
+      int randomNumber = rng.nextInt(sett.columns * sett.rows);
+
+      // check if i, j != first clicked field
+      // to avoid generating a bomb under the user's finger
+      int i = randomNumber ~/ sett.columns;
+      int j = randomNumber % sett.columns;
+      if (i != iTap || j != jTap) {
+        randomSet.add(randomNumber);
+      }
+    }
+
+    for (var element in randomSet) {
+      grid[element ~/ sett.columns][element % sett.columns].isBomb = true;
+    }
+
+    // count bombs
+    for (var i = 0; i < sett.rows; i++) {
+      for (var j = 0; j < sett.columns; j++) {
+        grid[i][j].bombsAround = countBombsAround(grid, i, j);
+      }
     }
   }
 
