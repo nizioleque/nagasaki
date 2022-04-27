@@ -37,12 +37,19 @@ class _MyHomePageState extends State<MyHomePage> {
   late int clickedFields;
   late int time;
   late int flaggedFields;
-  late Timer? timer;
+  Timer? timer;
+  late bool timerActive;
 
   @override
   void initState() {
     super.initState();
     prepareGrid();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
   }
 
   @override
@@ -405,17 +412,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void resetTimer() {
-    const oneSec = Duration(seconds: 1);
-    timer = Timer.periodic(oneSec, (Timer timer) {
-      if (!blockGrid) {
+    // cancel timer if already exists
+    timer?.cancel();
+
+    // create new timer
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (Timer timer) {
         setState(() {
-          time++;
+          if (blockGrid) {
+            timer.cancel();
+          } else {
+            time++;
+          }
         });
-      } else if (blockGrid) {
-        setState(() {
-          timer.cancel();
-        });
-      }
-    });
+      },
+    );
   }
 }
