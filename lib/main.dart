@@ -160,9 +160,9 @@ class _MyHomePageState extends State<MyHomePage> {
     bombsLeft = nBombs;
     blockGrid = false;
     time = 0;
-    timer = null;
     clickedFields = 0;
     flaggedFields = 0;
+    timer?.cancel();
     resetTimer();
   }
 
