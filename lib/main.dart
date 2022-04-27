@@ -162,7 +162,6 @@ class _MyHomePageState extends State<MyHomePage> {
     time = 0;
     clickedFields = 0;
     flaggedFields = 0;
-    timer?.cancel();
     resetTimer();
   }
 
