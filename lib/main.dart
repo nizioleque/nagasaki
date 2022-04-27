@@ -68,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     // return widget
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         color: Colors.grey,
         child: SafeArea(
