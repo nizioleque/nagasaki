@@ -327,45 +327,29 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                autovalidateMode: AutovalidateMode.always,
-                validator: (value) => validateRange(value, 1, 30),
+              SettingsNumberField(
                 controller: _controllers[0],
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  labelText: "Columns",
-                ),
-              ),
-              TextFormField(
-                autovalidateMode: AutovalidateMode.always,
                 validator: (value) => validateRange(value, 1, 30),
+                text: "Columns",
+              ),
+              SettingsNumberField(
                 controller: _controllers[1],
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  labelText: "Rows",
-                ),
+                validator: (value) => validateRange(value, 1, 30),
+                text: "Rows",
               ),
-              TextFormField(
-                autovalidateMode: AutovalidateMode.always,
-                validator: (value) {
-                  try {
-                    var fields = int.parse(_controllers[0].text) *
-                        int.parse(_controllers[1].text);
+              SettingsNumberField(
+                  controller: _controllers[2],
+                  validator: (value) {
+                    try {
+                      var fields = int.parse(_controllers[0].text) *
+                          int.parse(_controllers[1].text);
 
-                    return validateRange(value, 1, fields - 1);
-                  } catch (e) {
-                    return null;
-                  }
-                },
-                controller: _controllers[2],
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  labelText: "Bombs",
-                ),
-              ),
+                      return validateRange(value, 1, fields - 1);
+                    } catch (e) {
+                      return null;
+                    }
+                  },
+                  text: "Mines"),
             ],
           ),
         ),
