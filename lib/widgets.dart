@@ -74,21 +74,26 @@ class _FieldState extends State<Field> {
         : (widget.data.isFlagged ? Colors.green : Colors.grey);
 
     return GestureDetector(
-      onTap: () {
-        debugPrint('[Field] detected tap');
-        widget.handleTap(false);
-      },
-      onPanDown: (_) {
+      onTapDown: (_) {
+        // start long press timer
         longPressTimer = Timer(
           const Duration(milliseconds: Field.longPressDuration),
           () {
+            // trigger long press
             debugPrint('[Field] detected long press');
             widget.handleLongPress(false);
           },
         );
       },
-      onPanCancel: () {
-        longPressTimer?.cancel();
+      onTapUp: (_) {
+        if (longPressTimer != null && longPressTimer!.isActive) {
+          // if timer is active, cancel
+          longPressTimer?.cancel();
+
+          // trigger tap
+          debugPrint('[Field] detected tap');
+          widget.handleTap(false);
+        }
       },
       child: Padding(
           padding: const EdgeInsets.all(2.0),
