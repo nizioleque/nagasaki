@@ -85,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: settings(),
+                      onPressed: openSettings,
                       child: const Text("Settings"),
                     )
                   ],
@@ -256,12 +256,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void gameWon() {
     debugPrint('You Won!');
     showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-              title: const Text("YOU WON"),
-              content: const Text("You've found all bombs!"),
-              backgroundColor: Colors.lightGreen,
-            ));
+      context: context,
+      builder: (BuildContext context) => const AlertDialog(
+        title: Text("YOU WON"),
+        content: Text("You've found all bombs!"),
+        backgroundColor: Colors.lightGreen,
+      ),
+    );
     blockGrid = true;
   }
 
@@ -271,7 +272,44 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  settings() {}
+  void openSettings() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text("SETTINGS"),
+        contentPadding: const EdgeInsets.all(20.0),
+        content: Container(
+          height: 500,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Columns"),
+              TextField(
+                onChanged: (String str) {},
+                decoration: const InputDecoration(
+                  hintText: "Hint",
+                ),
+              ),
+              const Text("Rows"),
+              TextField(
+                onChanged: (String str) {},
+                decoration: const InputDecoration(
+                  hintText: "Hint",
+                ),
+              ),
+              const Text("Bombs"),
+              TextField(
+                onChanged: (String str) {},
+                decoration: const InputDecoration(
+                  hintText: "Hint",
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   void makeFieldVisible(int i, int j) {
     grid[i][j].isClicked = true;
