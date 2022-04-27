@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'widgets.dart';
 import 'classes.dart';
 import 'helpers.dart';
@@ -330,12 +329,12 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               SettingsNumberField(
                 controller: _controllers[0],
-                validator: (value) => validateRange(value, 1, 30),
+                validator: (value) => validateRange(value, 3, 30),
                 text: "Columns",
               ),
               SettingsNumberField(
                 controller: _controllers[1],
-                validator: (value) => validateRange(value, 1, 30),
+                validator: (value) => validateRange(value, 3, 30),
                 text: "Rows",
               ),
               SettingsNumberField(
@@ -345,7 +344,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       var fields = int.parse(_controllers[0].text) *
                           int.parse(_controllers[1].text);
 
-                      return validateRange(value, 1, fields - 1);
+                      return validateRange(value, 2, fields - 1);
                     } catch (e) {
                       return null;
                     }
