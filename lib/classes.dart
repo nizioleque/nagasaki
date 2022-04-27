@@ -26,3 +26,16 @@ enum PressType {
   tap,
   longPress,
 }
+
+// setting values
+class GameSettings {
+  int columns;
+  int rows;
+  int bombs;
+
+  GameSettings({
+    this.columns = 10,
+    this.rows = 10,
+    this.bombs = 10,
+  });
+}

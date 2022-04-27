@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'widgets.dart';
 import 'classes.dart';
 
@@ -152,15 +153,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // select random coordinates and add bombs
-    // var randomPicker = List<int>.generate(rows * columns, (i) => i)..shuffle();
-    // for (var i = 0; i < nBombs; i++) {
-    //   var index = randomPicker.removeLast();
-    //   grid[index ~/ columns][index % columns].isBomb = true;
-    // }
-
-    // select random coordinates and add bombs
     var rng = Random();
-    Set<int> randomSet = Set<int>();
+    Set<int> randomSet = <int>{};
     while (randomSet.length != nBombs) {
       int randomNumber = rng.nextInt(columns * rows);
       int i = randomNumber ~/ columns;
@@ -168,9 +162,9 @@ class _MyHomePageState extends State<MyHomePage> {
       // here check if i, j != first clicked field
       randomSet.add(randomNumber);
     }
-    randomSet.forEach((element) {
+    for (var element in randomSet) {
       grid[element ~/ columns][element % columns].isBomb = true;
-    });
+    }
 
     // count bombs
     for (var i = 0; i < rows; i++) {
@@ -304,6 +298,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void openSettings() {
+    final _controllers = [for (var i = 0; i < 3; i++) TextEditingController()];
+
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -314,67 +310,31 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Columns"),
             TextField(
               onChanged: (String str) {},
+              controller: _controllers[0],
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: const InputDecoration(
-                hintText: "Hint",
+                labelText: "Columns",
               ),
             ),
-            const Text("Rows"),
             TextField(
               onChanged: (String str) {},
+              controller: _controllers[1],
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: const InputDecoration(
-                hintText: "Hint",
+                labelText: "Rows",
               ),
             ),
-            const Text("Bombs"),
             TextField(
               onChanged: (String str) {},
+              controller: _controllers[2],
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: const InputDecoration(
-                hintText: "Hint",
-              ),
-            ),
-            const Text("Columns"),
-            TextField(
-              onChanged: (String str) {},
-              decoration: const InputDecoration(
-                hintText: "Hint",
-              ),
-            ),
-            const Text("Rows"),
-            TextField(
-              onChanged: (String str) {},
-              decoration: const InputDecoration(
-                hintText: "Hint",
-              ),
-            ),
-            const Text("Bombs"),
-            TextField(
-              onChanged: (String str) {},
-              decoration: const InputDecoration(
-                hintText: "Hint",
-              ),
-            ),
-            const Text("Columns"),
-            TextField(
-              onChanged: (String str) {},
-              decoration: const InputDecoration(
-                hintText: "Hint",
-              ),
-            ),
-            const Text("Rows"),
-            TextField(
-              onChanged: (String str) {},
-              decoration: const InputDecoration(
-                hintText: "Hint",
-              ),
-            ),
-            const Text("Bombs"),
-            TextField(
-              onChanged: (String str) {},
-              decoration: const InputDecoration(
-                hintText: "Hint",
+                labelText: "Bombs",
               ),
             ),
           ],
@@ -382,15 +342,24 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           TextButton(
             onPressed: () {},
-            child: Text("Cancel"),
+            child: const Text("Cancel"),
           ),
           TextButton(
             onPressed: () {},
-            child: Text("Apply"),
+            child: const Text("Apply"),
           ),
         ],
       ),
     );
+
+    for (var c in _controllers) {
+      var text = 15.toString();
+
+      c.value = c.value.copyWith(
+        text: text,
+        selection: TextSelection.collapsed(offset: text.length),
+      );
+    }
   }
 
   void makeFieldVisible(int i, int j) {
