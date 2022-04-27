@@ -278,35 +278,86 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) => AlertDialog(
         title: const Text("SETTINGS"),
         contentPadding: const EdgeInsets.all(20.0),
-        content: Container(
-          height: 500,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Columns"),
-              TextField(
-                onChanged: (String str) {},
-                decoration: const InputDecoration(
-                  hintText: "Hint",
-                ),
+        scrollable: true,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Columns"),
+            TextField(
+              onChanged: (String str) {},
+              decoration: const InputDecoration(
+                hintText: "Hint",
               ),
-              const Text("Rows"),
-              TextField(
-                onChanged: (String str) {},
-                decoration: const InputDecoration(
-                  hintText: "Hint",
-                ),
+            ),
+            const Text("Rows"),
+            TextField(
+              onChanged: (String str) {},
+              decoration: const InputDecoration(
+                hintText: "Hint",
               ),
-              const Text("Bombs"),
-              TextField(
-                onChanged: (String str) {},
-                decoration: const InputDecoration(
-                  hintText: "Hint",
-                ),
+            ),
+            const Text("Bombs"),
+            TextField(
+              onChanged: (String str) {},
+              decoration: const InputDecoration(
+                hintText: "Hint",
               ),
-            ],
-          ),
+            ),
+            const Text("Columns"),
+            TextField(
+              onChanged: (String str) {},
+              decoration: const InputDecoration(
+                hintText: "Hint",
+              ),
+            ),
+            const Text("Rows"),
+            TextField(
+              onChanged: (String str) {},
+              decoration: const InputDecoration(
+                hintText: "Hint",
+              ),
+            ),
+            const Text("Bombs"),
+            TextField(
+              onChanged: (String str) {},
+              decoration: const InputDecoration(
+                hintText: "Hint",
+              ),
+            ),
+            const Text("Columns"),
+            TextField(
+              onChanged: (String str) {},
+              decoration: const InputDecoration(
+                hintText: "Hint",
+              ),
+            ),
+            const Text("Rows"),
+            TextField(
+              onChanged: (String str) {},
+              decoration: const InputDecoration(
+                hintText: "Hint",
+              ),
+            ),
+            const Text("Bombs"),
+            TextField(
+              onChanged: (String str) {},
+              decoration: const InputDecoration(
+                hintText: "Hint",
+              ),
+            ),
+          ],
         ),
+        actions: [
+          TextButton(
+            onPressed: () {},
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {},
+            child: Text("Apply"),
+          ),
+        ],
       ),
     );
   }
