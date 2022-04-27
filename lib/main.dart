@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'widgets.dart';
 import 'classes.dart';
@@ -33,8 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
   late List<List<FieldData>> grid;
   late int bombsLeft;
   late int clickedFields;
-  late int timeLeft;
+  late int time;
   late int flaggedFields;
+  late Timer? timer;
 
   @override
   void initState() {
@@ -77,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          timeLeft.toString(),
+                          time.toString(),
                           style: const TextStyle(
                             fontSize: 50,
                           ),
@@ -156,9 +159,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     bombsLeft = nBombs;
     blockGrid = false;
-    timeLeft = 100;
+    time = 0;
+    timer = null;
     clickedFields = 0;
     flaggedFields = 0;
+    resetTimer();
   }
 
   int countBombsAround(List<List<FieldData>> grid, int i, int j) {
@@ -347,5 +352,20 @@ class _MyHomePageState extends State<MyHomePage> {
         makeFieldVisible(i + 1, j + 1);
       }
     }
+  }
+
+  void resetTimer() {
+    const oneSec = Duration(seconds: 1);
+    timer = Timer.periodic(oneSec, (Timer timer) {
+      if (!blockGrid) {
+        setState(() {
+          time++;
+        });
+      } else if (blockGrid) {
+        setState(() {
+          timer.cancel();
+        });
+      }
+    });
   }
 }
