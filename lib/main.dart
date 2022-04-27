@@ -261,17 +261,29 @@ class _MyHomePageState extends State<MyHomePage> {
     clickedFields++;
     if (grid[i][j].isBomb) return;
     if (grid[i][j].bombsAround == 0) {
+      if (i - 1 >= 0 && j - 1 >= 0 && !grid[i - 1][j - 1].isClicked) {
+        makeFieldVisible(i - 1, j - 1);
+      }
       if (i - 1 >= 0 && !grid[i - 1][j].isClicked) {
         makeFieldVisible(i - 1, j);
       }
-      if (i + 1 < rows && !grid[i + 1][j].isClicked) {
-        makeFieldVisible(i + 1, j);
+      if (i - 1 >= 0 && j + 1 < columns && !grid[i - 1][j + 1].isClicked) {
+        makeFieldVisible(i - 1, j + 1);
       }
       if (j - 1 >= 0 && !grid[i][j - 1].isClicked) {
         makeFieldVisible(i, j - 1);
       }
       if (j + 1 < columns && !grid[i][j + 1].isClicked) {
         makeFieldVisible(i, j + 1);
+      }
+      if (i + 1 < rows && j - 1 >= 0 && !grid[i + 1][j - 1].isClicked) {
+        makeFieldVisible(i + 1, j - 1);
+      }
+      if (i + 1 < rows && !grid[i + 1][j].isClicked) {
+        makeFieldVisible(i + 1, j);
+      }
+      if (i + 1 < rows && j + 1 < columns && !grid[i + 1][j + 1].isClicked) {
+        makeFieldVisible(i + 1, j + 1);
       }
     }
   }
