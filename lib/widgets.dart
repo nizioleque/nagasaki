@@ -87,7 +87,10 @@ class Field extends StatelessWidget {
                   ? const DecorationImage(
                       image: AssetImage('assets/images/bomb.png'),
                     )
-                  : null,
+                  : (data.isFlagged
+                      ? const DecorationImage(
+                          image: AssetImage('assets/images/flag.png'))
+                      : null),
             ),
             child: Align(
               alignment: Alignment.center,
