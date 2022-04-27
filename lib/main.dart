@@ -34,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late int bombsLeft;
   late int clickedFields;
   late int timeLeft;
+  late int flaggedFields;
 
   @override
   void initState() {
@@ -157,6 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
     blockGrid = false;
     timeLeft = 100;
     clickedFields = 0;
+    flaggedFields = 0;
   }
 
   int countBombsAround(List<List<FieldData>> grid, int i, int j) {
@@ -223,11 +225,13 @@ class _MyHomePageState extends State<MyHomePage> {
     // mark as bomb / question mark
     if (!grid[i][j].isFlagged) {
       // add flag?
-
+      // reached maximum of flags
+      if (flaggedFields == nBombs) return;
       // prevent this from running many times!
       debugPrint('flagged mine $i, $j');
       setState(() {
         grid[i][j].isFlagged = true;
+        flaggedFields++;
         bombsLeft--;
       });
       // if there is flag already, remove it
@@ -235,6 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
       debugPrint('removed flag $i $j');
       setState(() {
         grid[i][j].isFlagged = false;
+        flaggedFields--;
         bombsLeft++;
       });
     }
@@ -363,6 +368,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void makeFieldVisible(int i, int j) {
+    if (grid[i][j].isFlagged) return;
     grid[i][j].isClicked = true;
     clickedFields++;
     if (grid[i][j].isBomb) return;
