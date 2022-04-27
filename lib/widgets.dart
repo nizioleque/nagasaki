@@ -60,6 +60,9 @@ class Field extends StatefulWidget {
   // long press duration [miliseconds]
   static const longPressDuration = 200;
 
+  // bomb/flag img scale
+  static const imgSizeFactor = 0.7;
+
   @override
   State<Field> createState() => _FieldState();
 }
@@ -101,29 +104,44 @@ class _FieldState extends State<Field> {
             decoration: BoxDecoration(
               color: color,
               border: widget.data.isClicked ? null : Border.all(width: 4.0),
-              image: widget.data.isBomb && widget.data.isClicked
-                  ? const DecorationImage(
-                      image: AssetImage('assets/images/bomb.png'),
-                      // fit: BoxFit.fill,
-                    )
-                  : (widget.data.isFlagged
-                      ? const DecorationImage(
-                          image: AssetImage('assets/images/flag.png'),
-                          // fit: BoxFit.fill,
-                        )
-                      : null),
             ),
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                (widget.data.bombsAround > 0 &&
-                        widget.data.isClicked &&
-                        !widget.data.isBomb)
-                    ? widget.data.bombsAround.toString()
-                    : '',
-              ),
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                if (widget.data.bombsAround > 0 &&
+                    widget.data.isClicked &&
+                    !widget.data.isBomb)
+                  Text(
+                    widget.data.bombsAround.toString(),
+                  ),
+                if (widget.data.isBomb && widget.data.isClicked)
+                  const FieldImage(imgPath: 'assets/images/bomb.png'),
+                if (widget.data.isFlagged)
+                  const FieldImage(imgPath: 'assets/images/flag.png')
+              ],
             ),
           )),
+    );
+  }
+}
+
+class FieldImage extends StatelessWidget {
+  const FieldImage({
+    Key? key,
+    required this.imgPath,
+  }) : super(key: key);
+
+  final String imgPath;
+
+  @override
+  Widget build(BuildContext context) {
+    return FractionallySizedBox(
+      heightFactor: Field.imgSizeFactor,
+      widthFactor: Field.imgSizeFactor,
+      child: Image(
+        image: AssetImage(imgPath),
+        fit: BoxFit.contain,
+      ),
     );
   }
 }
