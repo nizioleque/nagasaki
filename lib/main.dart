@@ -27,12 +27,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final int rows = 10;
   final int columns = 10;
-  final int nBombs = 10;
+  final int nBombs = 4;
 
-  late bool blockGrid = false;
+  late bool blockGrid;
   late List<List<FieldData>> grid;
   late int bombsLeft;
-  late int clickedFields = 0;
+  late int clickedFields;
+  late int timeLeft;
 
   @override
   void initState() {
@@ -69,6 +70,18 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         const Text("bombs"),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          timeLeft.toString(),
+                          style: const TextStyle(
+                            fontSize: 50,
+                          ),
+                        ),
+                        const Text("time"),
                       ],
                     ),
                     ElevatedButton(
@@ -141,6 +154,9 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     bombsLeft = nBombs;
+    blockGrid = false;
+    timeLeft = 100;
+    clickedFields = 0;
   }
 
   int countBombsAround(List<List<FieldData>> grid, int i, int j) {
@@ -191,8 +207,11 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
     debugPrint('$clickedFields clicked fields');
-    if (clickedFields + nBombs == columns * rows) gameWon();
-    if (grid[i][j].isBomb) gameOver();
+    if (grid[i][j].isBomb) {
+      gameOver();
+    } else if (clickedFields + nBombs == columns * rows) {
+      gameWon();
+    }
   }
 
   void handleFieldLongPress(int i, int j) {
@@ -225,9 +244,9 @@ class _MyHomePageState extends State<MyHomePage> {
     debugPrint('Game Over!');
     showDialog<String>(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('GAME OVER'),
-        content: const Text("You've hit a bomb!"),
+      builder: (BuildContext context) => const AlertDialog(
+        title: Text('GAME OVER'),
+        content: Text("You've hit a bomb!"),
         backgroundColor: Colors.red,
       ),
     );
@@ -249,8 +268,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void resetGame() {
     setState(() {
       prepareGrid();
-      blockGrid = false;
-      clickedFields = 0;
     });
   }
 
