@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'widgets.dart';
@@ -151,11 +152,25 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     // select random coordinates and add bombs
-    var randomPicker = List<int>.generate(rows * columns, (i) => i)..shuffle();
-    for (var i = 0; i < nBombs; i++) {
-      var index = randomPicker.removeLast();
-      grid[index ~/ columns][index % columns].isBomb = true;
+    // var randomPicker = List<int>.generate(rows * columns, (i) => i)..shuffle();
+    // for (var i = 0; i < nBombs; i++) {
+    //   var index = randomPicker.removeLast();
+    //   grid[index ~/ columns][index % columns].isBomb = true;
+    // }
+
+    // select random coordinates and add bombs
+    var rng = Random();
+    Set<int> randomSet = Set<int>();
+    while (randomSet.length != nBombs) {
+      int randomNumber = rng.nextInt(columns * rows);
+      int i = randomNumber ~/ columns;
+      int j = randomNumber % columns;
+      // here check if i, j != first clicked field
+      randomSet.add(randomNumber);
     }
+    randomSet.forEach((element) {
+      grid[element ~/ columns][element % columns].isBomb = true;
+    });
 
     // count bombs
     for (var i = 0; i < rows; i++) {
