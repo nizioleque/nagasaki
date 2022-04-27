@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'classes.dart';
@@ -43,7 +45,7 @@ class GameArea extends StatelessWidget {
 }
 
 // field widget class
-class Field extends StatelessWidget {
+class Field extends StatefulWidget {
   const Field({
     Key? key,
     required this.handleTap,
@@ -55,41 +57,51 @@ class Field extends StatelessWidget {
   final ValueChanged<bool> handleLongPress;
   final FieldData data;
 
+  // long press duration [miliseconds]
+  static const longPressDuration = 200;
+
+  @override
+  State<Field> createState() => _FieldState();
+}
+
+class _FieldState extends State<Field> {
+  Timer? longPressTimer;
+
   @override
   Widget build(BuildContext context) {
-    /*  var color = data.isBomb
-        ? (data.isFlagged ? Colors.green : Colors.orange)
-        : Colors.grey; */
-
-    // var color = data.isFlagged
-    //     ? Colors.green
-    //     : (data.isBomb ? Colors.orange : Colors.grey);
-
-    var color = data.isClicked
-        ? (data.isBomb ? Colors.red : Colors.grey)
-        : (data.isFlagged ? Colors.green : Colors.grey);
+    var color = widget.data.isClicked
+        ? (widget.data.isBomb ? Colors.red : Colors.grey)
+        : (widget.data.isFlagged ? Colors.green : Colors.grey);
 
     return GestureDetector(
       onTap: () {
         debugPrint('[Field] detected tap');
-        handleTap(false);
+        widget.handleTap(false);
       },
-      onLongPress: () {
-        debugPrint('[Field] detected long press');
-        handleLongPress(false);
+      onPanDown: (_) {
+        longPressTimer = Timer(
+          const Duration(milliseconds: Field.longPressDuration),
+          () {
+            debugPrint('[Field] detected long press');
+            widget.handleLongPress(false);
+          },
+        );
+      },
+      onPanCancel: () {
+        longPressTimer?.cancel();
       },
       child: Padding(
           padding: const EdgeInsets.all(2.0),
           child: Container(
             decoration: BoxDecoration(
               color: color,
-              border: data.isClicked ? null : Border.all(width: 4.0),
-              image: data.isBomb && data.isClicked
+              border: widget.data.isClicked ? null : Border.all(width: 4.0),
+              image: widget.data.isBomb && widget.data.isClicked
                   ? const DecorationImage(
                       image: AssetImage('assets/images/bomb.png'),
                       // fit: BoxFit.fill,
                     )
-                  : (data.isFlagged
+                  : (widget.data.isFlagged
                       ? const DecorationImage(
                           image: AssetImage('assets/images/flag.png'),
                           // fit: BoxFit.fill,
@@ -99,8 +111,10 @@ class Field extends StatelessWidget {
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                (data.bombsAround > 0 && data.isClicked && !data.isBomb)
-                    ? data.bombsAround.toString()
+                (widget.data.bombsAround > 0 &&
+                        widget.data.isClicked &&
+                        !widget.data.isBomb)
+                    ? widget.data.bombsAround.toString()
                     : '',
               ),
             ),
