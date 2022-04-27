@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'widgets.dart';
 import 'classes.dart';
 import 'helpers.dart';
@@ -172,6 +173,34 @@ class _MyHomePageState extends State<MyHomePage> {
     resetTimer();
   }
 
+  void generateBombs([int? iTap, int? jTap]) {
+    // select random coordinates and add bombs
+    var rng = Random();
+    Set<int> randomSet = <int>{};
+    while (randomSet.length != sett.bombs) {
+      int randomNumber = rng.nextInt(sett.columns * sett.rows);
+
+      // check if i, j != first clicked field
+      // to avoid generating a bomb under the user's finger
+      int i = randomNumber ~/ sett.columns;
+      int j = randomNumber % sett.columns;
+      if (i != iTap || j != jTap) {
+        randomSet.add(randomNumber);
+      }
+    }
+
+    for (var element in randomSet) {
+      grid[element ~/ sett.columns][element % sett.columns].isBomb = true;
+    }
+
+    // count bombs
+    for (var i = 0; i < sett.rows; i++) {
+      for (var j = 0; j < sett.columns; j++) {
+        grid[i][j].bombsAround = countBombsAround(grid, i, j);
+      }
+    }
+  }
+
   int countBombsAround(List<List<FieldData>> grid, int i, int j) {
     int counter = 0;
     if (i - 1 >= 0 && j - 1 >= 0 && grid[i - 1][j - 1].isBomb) {
@@ -228,55 +257,34 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void generateBombs([int? iTap, int? jTap]) {
-    // select random coordinates and add bombs
-    var rng = Random();
-    Set<int> randomSet = <int>{};
-    while (randomSet.length != sett.bombs) {
-      int randomNumber = rng.nextInt(sett.columns * sett.rows);
-
-      // check if i, j != first clicked field
-      // to avoid generating a bomb under the user's finger
-      int i = randomNumber ~/ sett.columns;
-      int j = randomNumber % sett.columns;
-      if (i != iTap || j != jTap) {
-        randomSet.add(randomNumber);
-      }
-    }
-
-    for (var element in randomSet) {
-      grid[element ~/ sett.columns][element % sett.columns].isBomb = true;
-    }
-
-    // count bombs
-    for (var i = 0; i < sett.rows; i++) {
-      for (var j = 0; j < sett.columns; j++) {
-        grid[i][j].bombsAround = countBombsAround(grid, i, j);
-      }
-    }
-  }
-
   void handleFieldLongPress(int i, int j) {
     debugPrint('[handleLongPressTap] $i, $j');
+
     // cant put flag when game over
     if (blockGrid) return;
+
     // cant put flag when clicked
     if (grid[i][j].isClicked) return;
-    // mark as bomb / question mark
+
+    // mark as flagged / question mark
     if (!grid[i][j].isFlagged) {
-      // add flag?
       // reached maximum of flags
       if (flaggedFields == sett.bombs) return;
-      // prevent this from running many times!
+
       debugPrint('flagged mine $i, $j');
+
       setState(() {
         grid[i][j].isFlagged = true;
         flaggedFields++;
         bombsLeft--;
       });
+
+      // haptic feedback
+      HapticFeedback.selectionClick();
+    } else {
       // if there is flag already, remove it
-    } else if (grid[i][j].isFlagged) {
       debugPrint('removed flag $i $j');
+
       setState(() {
         grid[i][j].isFlagged = false;
         flaggedFields--;
