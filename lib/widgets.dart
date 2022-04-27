@@ -83,6 +83,11 @@ class Field extends StatelessWidget {
             decoration: BoxDecoration(
               color: color,
               border: data.isClicked ? null : Border.all(width: 4.0),
+              image: data.isBomb && data.isClicked
+                  ? const DecorationImage(
+                      image: AssetImage('assets/images/bomb.png'),
+                    )
+                  : null,
             ),
             child: Align(
               alignment: Alignment.center,
