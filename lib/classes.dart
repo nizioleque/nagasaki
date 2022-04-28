@@ -4,12 +4,14 @@ class FieldData {
   bool isBomb;
   bool isClicked;
   bool isFlagged;
+  bool isDeleted;
   int bombsAround;
 
   FieldData({
     this.isBomb = false,
     this.isClicked = false,
     this.isFlagged = false,
+    this.isDeleted = false,
     this.bombsAround = 0,
   });
 }

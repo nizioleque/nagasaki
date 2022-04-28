@@ -265,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     debugPrint('$clickedFields clicked fields');
     if (grid[i][j].isBomb) {
-      explode(i, j);
+      tempExplode(i, j);
       // GameOver();
     } else if (clickedFields + sett.bombs == sett.columns * sett.rows) {
       gameWon();
@@ -494,15 +494,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void explode(int i, int j) {
-    // bombs.forEach((element) {
-    //   if (!(element.first == i && element.last == j)) {
-    //     waitForExplosion();
-    //     setState(() {
-    //       debugPrint(element.first.toString());
-    //       grid[element.first][element.last].isClicked = true;
-    //     });
-    //   }
-    // });
     int time = 1000;
     var miliseconds = Duration(milliseconds: time ~/ sett.bombs);
     int k = 0;
@@ -521,6 +512,47 @@ class _MyHomePageState extends State<MyHomePage> {
         // }
 
         k++;
+      }
+    });
+  }
+
+  void tempExplode(int i, int j) {
+    var oneSec = Duration(milliseconds: 10);
+    List<BombPosistion> aboutToDelete = List<BombPosistion>.empty();
+    aboutToDelete = aboutToDelete.toList();
+    aboutToDelete.add(BombPosistion(i, j));
+    Timer timer = Timer.periodic(oneSec, (Timer timer) {
+      if (clickedFields == sett.rows * sett.columns) {
+        setState(() {
+          timer.cancel();
+          gameOver();
+        });
+      } else {
+        List<BombPosistion> temp = List<BombPosistion>.empty();
+        temp = temp.toList();
+        aboutToDelete.forEach((element) {
+          if (element.x - 1 >= 0 && !grid[element.x - 1][element.y].isDeleted) {
+            temp.add(BombPosistion(element.x - 1, element.y));
+          }
+          if (element.x + 1 < sett.rows &&
+              !grid[element.x + 1][element.y].isDeleted) {
+            temp.add(BombPosistion(element.x + 1, element.y));
+          }
+          if (element.y - 1 >= 0 && !grid[element.x][element.y - 1].isDeleted) {
+            temp.add(BombPosistion(element.x, element.y - 1));
+          }
+          if (element.y + 1 < sett.columns &&
+              !grid[element.x][element.y + 1].isDeleted) {
+            temp.add(BombPosistion(element.x, element.y + 1));
+          }
+        });
+        setState(() {
+          aboutToDelete.forEach((element) {
+            grid[element.x][element.y].isClicked = true;
+            grid[element.x][element.y].isDeleted = true;
+          });
+        });
+        aboutToDelete = temp;
       }
     });
   }
