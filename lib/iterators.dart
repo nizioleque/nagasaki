@@ -12,7 +12,7 @@ class FieldsAroundIterator extends Iterator<FieldData> {
   }
 
   @override
-  FieldData get current => grid.atIndex(iter.current);
+  FieldData get current => grid.at(iter.current);
 
   @override
   bool moveNext() => iter.moveNext();

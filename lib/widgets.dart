@@ -26,7 +26,7 @@ class GameArea extends StatelessWidget {
       children: List.generate(
         grid.fields,
         (index) => Field(
-          data: grid.atIndex(index),
+          data: grid.at(index),
           handleTap: () {
             debugPrint('[GameArea] detected tap');
             onChanged(FieldChangeData(index, PressType.tap));

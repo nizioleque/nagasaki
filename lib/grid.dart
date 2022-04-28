@@ -41,11 +41,10 @@ class Grid {
   FieldPosition indexToij(int index) =>
       FieldPosition(index ~/ columns, index % columns);
 
-  FieldData atIndex(int index) {
+  FieldData at(int index) {
     return _grid[index];
   }
 
-  FieldData at(index) => atIndex(index);
 
   FieldData atij(int i, int j) {
     return _grid[i * _sett.columns + j];
@@ -60,7 +59,7 @@ class Grid {
   }
 
   bool flag(int index) {
-    var el = atIndex(index);
+    var el = at(index);
 
     // cant put flag when game over
     if (locked) return false;
@@ -88,7 +87,7 @@ class Grid {
     // cannot tap when game is over
     if (locked) return false;
 
-    var el = atIndex(index);
+    var el = at(index);
 
     // cannot tap if field is flagged
     if (el.isFlagged) return false;
@@ -133,18 +132,18 @@ class Grid {
     }
 
     for (int i in bombs) {
-      atIndex(i).isBomb = true;
+      at(i).isBomb = true;
     }
 
     // set bomb counts
     for (int i = 0; i < _grid.length; i++) {
-      atIndex(i).bombsAround = _countBombsAround(i);
+      at(i).bombsAround = _countBombsAround(i);
     }
   }
 
   void makeFieldVisible(int index) {
     // make the field visible
-    var field = atIndex(index);
+    var field = at(index);
 
     if (field.isFlagged) return;
 
@@ -156,7 +155,7 @@ class Grid {
     // make fields around visible
     if (field.bombsAround == 0) {
       for (int f in FieldsAroundPosition(grid: this, index: index)) {
-        if (!atIndex(f).isClicked) makeFieldVisible(f);
+        if (!at(f).isClicked) makeFieldVisible(f);
       }
     }
   }
