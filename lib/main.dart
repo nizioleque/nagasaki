@@ -177,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
     resetTimer();
   }
 
-  void generateBombs([int? iTap, int? jTap]) {
+  void firstTap([int? iTap, int? jTap]) {
     // select random coordinates and add bombs
     var rng = Random();
     bombs = <BombPosistion>{};
@@ -206,6 +206,9 @@ class _MyHomePageState extends State<MyHomePage> {
         grid[i][j].bombsAround = countBombsAround(grid, i, j);
       }
     }
+
+    // start timer
+    startTimer();
   }
 
   int countBombsAround(List<List<FieldData>> grid, int i, int j) {
@@ -248,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // first click - generate bombs
     if (clickedFields == 0) {
-      generateBombs(i, j);
+      firstTap(i, j);
     }
 
     if (!grid[i][j].isClicked) {
@@ -368,7 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       var fields = int.parse(_controllers[0].text) *
                           int.parse(_controllers[1].text);
 
-                      return validateRange(value, 2, fields - 1);
+                      return validateRange(value, 2, fields - 9);
                     } catch (e) {
                       return null;
                     }
@@ -470,7 +473,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void resetTimer() {
     // cancel timer if already exists
     timer?.cancel();
+  }
 
+  void startTimer() {
     // create new timer
     timer = Timer.periodic(
       const Duration(seconds: 1),
