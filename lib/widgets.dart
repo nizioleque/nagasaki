@@ -16,7 +16,7 @@ class GameArea extends StatelessWidget {
 
   final int columns;
   final int rows;
-  final List<List<FieldData>> grid;
+  final List<FieldData> grid;
   final ValueChanged<FieldChangeData> onChanged;
 
   @override
@@ -29,7 +29,7 @@ class GameArea extends StatelessWidget {
       children: List.generate(
         rows * columns,
         (index) => Field(
-          data: grid[index ~/ columns][index % columns],
+          data: grid[index],
           handleTap: () {
             debugPrint('[GameArea] detected tap');
             onChanged(FieldChangeData(index, PressType.tap));

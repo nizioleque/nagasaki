@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // final int nBombs = 4;
 
   late bool blockGrid;
-  late List<List<FieldData>> grid;
+  late List<FieldData> grid;
   late int bombsLeft;
   late int clickedFields;
   late int deletedFields;
@@ -45,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer? timer;
   late bool timerActive;
   late GameSettings sett;
-  late Set<BombPosistion> bombs;
+  late Set<FieldPosition> bombs;
 
   @override
   void initState() {
@@ -133,14 +132,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           onChanged: (FieldChangeData data) {
                             debugPrint(
                                 '[HomePage] onChanged, index: ${data.index}, type: ${data.pressType}');
-                            int i = data.index ~/ sett.columns;
-                            int j = data.index % sett.columns;
                             switch (data.pressType) {
                               case PressType.tap:
-                                handleFieldTap(i, j);
+                                handleFieldTap(data.index);
                                 break;
                               case PressType.longPress:
-                                handleFieldLongPress(i, j);
+                                handleFieldLongPress(data.index);
                                 break;
                               default:
                             }
@@ -162,11 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
     sett = s;
 
     // create a 2D table for the grid and initialize with default BombBoxes
-    grid = List.generate(s.rows, (i) {
-      return List.generate(s.columns, (j) {
-        return FieldData();
-      });
-    });
+    grid = List.generate(s.rows * s.columns, (i) => FieldData());
 
     bombsLeft = s.bombs;
     blockGrid = false;
@@ -177,115 +170,129 @@ class _MyHomePageState extends State<MyHomePage> {
     resetTimer();
   }
 
-  void firstTap([int? iTap, int? jTap]) {
+  FieldPosition indexToij(int index, int columns) {
+    return FieldPosition(index ~/ columns, index % columns);
+  }
+
+  int ijToIndex(int i, int j, int columns) {
+    return i * columns + j;
+  }
+
+  void firstTap(int index) {
     // select random coordinates and add bombs
     var rng = Random();
-    bombs = <BombPosistion>{};
+    var bombs = <int>{};
+    var tapPos = indexToij(index, sett.columns);
+
     while (bombs.length != sett.bombs) {
       int randomNumber = rng.nextInt(sett.columns * sett.rows);
-
+      var randomPos = indexToij(randomNumber, sett.columns);
       // check if i, j != first clicked field
       // to avoid generating a bomb under the user's finger
-      int i = randomNumber ~/ sett.columns;
-      int j = randomNumber % sett.columns;
-      if (!(i >= iTap! - 1 &&
-          i <= iTap + 1 &&
-          j >= jTap! - 1 &&
-          j <= jTap + 1)) {
-        bombs.add(BombPosistion(i, j));
+      if (!(randomPos.i >= tapPos.i - 1 &&
+          randomPos.i <= tapPos.i + 1 &&
+          randomPos.j >= tapPos.j - 1 &&
+          randomPos.j <= tapPos.j + 1)) {
+        bombs.add(randomNumber);
       }
     }
 
     for (var element in bombs) {
-      grid[element.x][element.y].isBomb = true;
+      grid[element].isBomb = true;
     }
 
     // count bombs
-    for (var i = 0; i < sett.rows; i++) {
-      for (var j = 0; j < sett.columns; j++) {
-        grid[i][j].bombsAround = countBombsAround(grid, i, j);
-      }
+    for (var index = 0; index < sett.rows * sett.columns; index++) {
+      grid[index].bombsAround = countBombsAround(grid, index);
     }
 
     // start timer
     startTimer();
   }
 
-  int countBombsAround(List<List<FieldData>> grid, int i, int j) {
+  int countBombsAround(List<FieldData> grid, int index) {
     int counter = 0;
-    if (i - 1 >= 0 && j - 1 >= 0 && grid[i - 1][j - 1].isBomb) {
+    var pos = indexToij(index, sett.columns);
+
+    if (pos.i - 1 >= 0 &&
+        pos.j - 1 >= 0 &&
+        grid[ijToIndex(pos.i - 1, pos.j - 1, sett.columns)].isBomb) {
       counter++;
     }
-    if (i - 1 >= 0 && grid[i - 1][j].isBomb) {
+    if (pos.i - 1 >= 0 &&
+        grid[ijToIndex(pos.i - 1, pos.j, sett.columns)].isBomb) {
       counter++;
     }
-    if (i - 1 >= 0 && j + 1 < sett.columns && grid[i - 1][j + 1].isBomb) {
+    if (pos.i - 1 >= 0 &&
+        pos.j + 1 < sett.columns &&
+        grid[ijToIndex(pos.i - 1, pos.j + 1, sett.columns)].isBomb) {
       counter++;
     }
-    if (j - 1 >= 0 && grid[i][j - 1].isBomb) {
+    if (pos.j - 1 >= 0 &&
+        grid[ijToIndex(pos.i, pos.j - 1, sett.columns)].isBomb) {
       counter++;
     }
-    if (j + 1 < sett.columns && grid[i][j + 1].isBomb) {
+    if (pos.j + 1 < sett.columns &&
+        grid[ijToIndex(pos.i, pos.j + 1, sett.columns)].isBomb) {
       counter++;
     }
-    if (i + 1 < sett.rows && j - 1 >= 0 && grid[i + 1][j - 1].isBomb) {
+    if (pos.i + 1 < sett.rows &&
+        pos.j - 1 >= 0 &&
+        grid[ijToIndex(pos.i + 1, pos.j - 1, sett.columns)].isBomb) {
       counter++;
     }
-    if (i + 1 < sett.rows && grid[i + 1][j].isBomb) {
+    if (pos.i + 1 < sett.rows &&
+        grid[ijToIndex(pos.i + 1, pos.j, sett.columns)].isBomb) {
       counter++;
     }
-    if (i + 1 < sett.rows &&
-        j + 1 < sett.columns &&
-        grid[i + 1][j + 1].isBomb) {
+    if (pos.i + 1 < sett.rows &&
+        pos.j + 1 < sett.columns &&
+        grid[ijToIndex(pos.i + 1, pos.j + 1, sett.columns)].isBomb) {
       counter++;
     }
     return counter;
   }
 
-  void handleFieldTap(int i, int j) {
-    debugPrint('[handleFieldTap] $i, $j');
+  void handleFieldTap(int index) {
     // cant click if game over
     if (blockGrid) return;
     // cant click if flagged
-    if (grid[i][j].isFlagged) return;
+    if (grid[index].isFlagged) return;
 
     // first click - generate bombs
     if (clickedFields == 0) {
-      firstTap(i, j);
+      firstTap(index);
     }
 
-    if (!grid[i][j].isClicked) {
+    if (!grid[index].isClicked) {
       setState(() {
-        makeFieldVisible(i, j);
+        makeFieldVisible(index);
       });
     }
     debugPrint('$clickedFields clicked fields');
-    if (grid[i][j].isBomb) {
-      tempExplode(i, j);
+    if (grid[index].isBomb) {
+      tempExplode(index);
       // GameOver();
     } else if (clickedFields + sett.bombs == sett.columns * sett.rows) {
       gameWon();
     }
   }
 
-  void handleFieldLongPress(int i, int j) {
-    debugPrint('[handleLongPressTap] $i, $j');
-
+  void handleFieldLongPress(int index) {
     // cant put flag when game over
     if (blockGrid) return;
 
     // cant put flag when clicked
-    if (grid[i][j].isClicked) return;
+    if (grid[index].isClicked) return;
 
     // mark as flagged / question mark
-    if (!grid[i][j].isFlagged) {
+    if (!grid[index].isFlagged) {
       // reached maximum of flags
       if (flaggedFields == sett.bombs) return;
 
-      debugPrint('flagged mine $i, $j');
-
+      // set flag
       setState(() {
-        grid[i][j].isFlagged = true;
+        grid[index].isFlagged = true;
         flaggedFields++;
         bombsLeft--;
       });
@@ -294,10 +301,8 @@ class _MyHomePageState extends State<MyHomePage> {
       HapticFeedback.selectionClick();
     } else {
       // if there is flag already, remove it
-      debugPrint('removed flag $i $j');
-
       setState(() {
-        grid[i][j].isFlagged = false;
+        grid[index].isFlagged = false;
         flaggedFields--;
         bombsLeft++;
       });
@@ -435,37 +440,49 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void makeFieldVisible(int i, int j) {
-    if (grid[i][j].isFlagged) return;
-    grid[i][j].isClicked = true;
+  void makeFieldVisible(int index) {
+    var pos = indexToij(index, sett.columns);
+
+    if (grid[index].isFlagged) return;
+    grid[index].isClicked = true;
     clickedFields++;
-    if (grid[i][j].isBomb) return;
-    if (grid[i][j].bombsAround == 0) {
-      if (i - 1 >= 0 && j - 1 >= 0 && !grid[i - 1][j - 1].isClicked) {
-        makeFieldVisible(i - 1, j - 1);
+    if (grid[index].isBomb) return;
+    if (grid[index].bombsAround == 0) {
+      if (pos.i - 1 >= 0 &&
+          pos.j - 1 >= 0 &&
+          !grid[ijToIndex(pos.i - 1, pos.j - 1, sett.columns)].isClicked) {
+        makeFieldVisible(ijToIndex(pos.i - 1, pos.j - 1, sett.columns));
       }
-      if (i - 1 >= 0 && !grid[i - 1][j].isClicked) {
-        makeFieldVisible(i - 1, j);
+      if (pos.i - 1 >= 0 &&
+          !grid[ijToIndex(pos.i - 1, pos.j, sett.columns)].isClicked) {
+        makeFieldVisible(ijToIndex(pos.i - 1, pos.j, sett.columns));
       }
-      if (i - 1 >= 0 && j + 1 < sett.columns && !grid[i - 1][j + 1].isClicked) {
-        makeFieldVisible(i - 1, j + 1);
+      if (pos.i - 1 >= 0 &&
+          pos.j + 1 < sett.columns &&
+          !grid[ijToIndex(pos.i - 1, pos.j + 1, sett.columns)].isClicked) {
+        makeFieldVisible(ijToIndex(pos.i - 1, pos.j + 1, sett.columns));
       }
-      if (j - 1 >= 0 && !grid[i][j - 1].isClicked) {
-        makeFieldVisible(i, j - 1);
+      if (pos.j - 1 >= 0 &&
+          !grid[ijToIndex(pos.i, pos.j - 1, sett.columns)].isClicked) {
+        makeFieldVisible(ijToIndex(pos.i, pos.j - 1, sett.columns));
       }
-      if (j + 1 < sett.columns && !grid[i][j + 1].isClicked) {
-        makeFieldVisible(i, j + 1);
+      if (pos.j + 1 < sett.columns &&
+          !grid[ijToIndex(pos.i, pos.j + 1, sett.columns)].isClicked) {
+        makeFieldVisible(ijToIndex(pos.i, pos.j + 1, sett.columns));
       }
-      if (i + 1 < sett.rows && j - 1 >= 0 && !grid[i + 1][j - 1].isClicked) {
-        makeFieldVisible(i + 1, j - 1);
+      if (pos.i + 1 < sett.rows &&
+          pos.j - 1 >= 0 &&
+          !grid[ijToIndex(pos.i + 1, pos.j - 1, sett.columns)].isClicked) {
+        makeFieldVisible(ijToIndex(pos.i + 1, pos.j - 1, sett.columns));
       }
-      if (i + 1 < sett.rows && !grid[i + 1][j].isClicked) {
-        makeFieldVisible(i + 1, j);
+      if (pos.i + 1 < sett.rows &&
+          !grid[ijToIndex(pos.i + 1, pos.j, sett.columns)].isClicked) {
+        makeFieldVisible(ijToIndex(pos.i + 1, pos.j, sett.columns));
       }
-      if (i + 1 < sett.rows &&
-          j + 1 < sett.columns &&
-          !grid[i + 1][j + 1].isClicked) {
-        makeFieldVisible(i + 1, j + 1);
+      if (pos.i + 1 < sett.rows &&
+          pos.j + 1 < sett.columns &&
+          !grid[ijToIndex(pos.i + 1, pos.j + 1, sett.columns)].isClicked) {
+        makeFieldVisible(ijToIndex(pos.i + 1, pos.j + 1, sett.columns));
       }
     }
   }
@@ -491,7 +508,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void explode(int i, int j) {
+  void explode(int index) {
+    var pos = indexToij(index, sett.columns);
     int time = 1000;
     var miliseconds = Duration(milliseconds: time ~/ sett.bombs);
     int k = 0;
@@ -502,10 +520,12 @@ class _MyHomePageState extends State<MyHomePage> {
           gameOver();
         });
       } else {
-        if (bombs.elementAt(k).x == i && bombs.elementAt(k).y == j) k++;
+        if (bombs.elementAt(k).i == pos.i && bombs.elementAt(k).j == pos.j) k++;
         setState(() {
           debugPrint("boom");
-          grid[bombs.elementAt(k).x][bombs.elementAt(k).y].isClicked = true;
+          grid[ijToIndex(
+                  bombs.elementAt(k).i, bombs.elementAt(k).j, sett.columns)]
+              .isClicked = true;
         });
         // }
 
@@ -514,11 +534,15 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void tempExplode(int i, int j) {
+  void tempExplode(int index) {
+    var pos = indexToij(index, sett.columns);
+    var i = pos.i;
+    var j = pos.j;
+
     var oneSec = Duration(milliseconds: 10);
-    List<BombPosistion> aboutToDelete = List<BombPosistion>.empty();
+    List<FieldPosition> aboutToDelete = List<FieldPosition>.empty();
     aboutToDelete = aboutToDelete.toList();
-    aboutToDelete.add(BombPosistion(i, j));
+    aboutToDelete.add(FieldPosition(i, j));
     Timer timer = Timer.periodic(oneSec, (Timer timer) {
       if (deletedFields == sett.rows * sett.columns) {
         setState(() {
@@ -527,32 +551,44 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       } else {
         debugPrint("$deletedFields deleted fields");
-        List<BombPosistion> temp = List<BombPosistion>.empty();
+        List<FieldPosition> temp = List<FieldPosition>.empty();
         temp = temp.toList();
         aboutToDelete.forEach((element) {
-          if (element.x - 1 >= 0 && !grid[element.x - 1][element.y].isDeleted) {
-            grid[element.x - 1][element.y].isDeleted = true;
-            temp.add(BombPosistion(element.x - 1, element.y));
+          if (element.i - 1 >= 0 &&
+              !grid[ijToIndex(element.i - 1, element.j, sett.columns)]
+                  .isDeleted) {
+            grid[ijToIndex(element.i - 1, element.j, sett.columns)].isDeleted =
+                true;
+            temp.add(FieldPosition(element.i - 1, element.j));
           }
-          if (element.x + 1 < sett.rows &&
-              !grid[element.x + 1][element.y].isDeleted) {
-            grid[element.x + 1][element.y].isDeleted = true;
-            temp.add(BombPosistion(element.x + 1, element.y));
+          if (element.i + 1 < sett.rows &&
+              !grid[ijToIndex(element.i + 1, element.j, sett.columns)]
+                  .isDeleted) {
+            grid[ijToIndex(element.i + 1, element.j, sett.columns)].isDeleted =
+                true;
+            temp.add(FieldPosition(element.i + 1, element.j));
           }
-          if (element.y - 1 >= 0 && !grid[element.x][element.y - 1].isDeleted) {
-            grid[element.x][element.y - 1].isDeleted = true;
-            temp.add(BombPosistion(element.x, element.y - 1));
+          if (element.j - 1 >= 0 &&
+              !grid[ijToIndex(element.i, element.j - 1, sett.columns)]
+                  .isDeleted) {
+            grid[ijToIndex(element.i, element.j - 1, sett.columns)].isDeleted =
+                true;
+            temp.add(FieldPosition(element.i, element.j - 1));
           }
-          if (element.y + 1 < sett.columns &&
-              !grid[element.x][element.y + 1].isDeleted) {
-            grid[element.x][element.y + 1].isDeleted = true;
-            temp.add(BombPosistion(element.x, element.y + 1));
+          if (element.j + 1 < sett.columns &&
+              !grid[ijToIndex(element.i, element.j + 1, sett.columns)]
+                  .isDeleted) {
+            grid[ijToIndex(element.i, element.j + 1, sett.columns)].isDeleted =
+                true;
+            temp.add(FieldPosition(element.i, element.j + 1));
           }
         });
         setState(() {
           aboutToDelete.forEach((element) {
-            grid[element.x][element.y].isClicked = true;
-            grid[element.x][element.y].isDeleted = true;
+            grid[ijToIndex(element.i, element.j, sett.columns)].isClicked =
+                true;
+            grid[ijToIndex(element.i, element.j, sett.columns)].isDeleted =
+                true;
             deletedFields++;
           });
         });

@@ -44,18 +44,18 @@ class GameSettings {
   });
 }
 
-class BombPosistion {
-  final int x;
-  final int y;
+class FieldPosition {
+  final int i;
+  final int j;
 
-  BombPosistion(this.x, this.y);
+  FieldPosition(this.i, this.j);
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    return other is BombPosistion && other.x == x && other.y == y;
+    return other is FieldPosition && other.i == i && other.j == j;
   }
 
   @override
-  int get hashCode => hashValues(x, y);
+  int get hashCode => hashValues(i, j);
 }
