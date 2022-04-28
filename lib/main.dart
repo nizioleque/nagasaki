@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'widgets.dart';
 import 'classes.dart';
 import 'helpers.dart';
+import 'grid.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,7 +43,6 @@ class _MyHomePageState extends State<MyHomePage> {
   late int time;
   late int flaggedFields;
   Timer? timer;
-  late bool timerActive;
   late GameSettings sett;
   late Set<FieldPosition> bombs;
 
@@ -209,6 +209,14 @@ class _MyHomePageState extends State<MyHomePage> {
     // start timer
     startTimer();
   }
+
+  // void iteratorTest() {
+  //   debugPrint("iteratorTest");
+  //   Grid g = Grid(sett: sett);
+  //   for (FieldPosition field in FieldsAroundTEST(grid: g, index: 0)) {
+  //     field.toString();
+  //   }
+  // }
 
   int countBombsAround(List<FieldData> grid, int index) {
     int counter = 0;

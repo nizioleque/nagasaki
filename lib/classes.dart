@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
 class FieldData {
   bool isBomb;
@@ -48,6 +48,10 @@ class FieldPosition {
   final int i;
   final int j;
 
+  static fromIndex(int index, int columns) {
+    return FieldPosition(index ~/ columns, index % columns);
+  }
+
   FieldPosition(this.i, this.j);
   @override
   bool operator ==(Object other) {
@@ -58,4 +62,10 @@ class FieldPosition {
 
   @override
   int get hashCode => hashValues(i, j);
+
+  // @override
+  // String toString() {
+  //   // TODO: implement toString
+  //   return "$i, $j";
+  // }
 }
