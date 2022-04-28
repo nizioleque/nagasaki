@@ -148,6 +148,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void prepareGame([GameSettings? s]) {
+// TODO: save user settings
+
     s ??= GameSettings(
       columns: 10,
       rows: 10,

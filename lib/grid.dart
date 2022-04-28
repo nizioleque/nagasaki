@@ -5,7 +5,7 @@ import 'classes.dart';
 import 'iterators.dart';
 
 class Grid {
-  late List<FieldData> grid;
+  late List<FieldData> _grid;
   late GameSettings _sett;
 
   bool _locked = false;
@@ -17,7 +17,7 @@ class Grid {
   Grid({required sett}) {
     _sett = sett;
     _totalFields = _sett.rows * _sett.columns;
-    grid = List.generate(_totalFields, (i) => FieldData());
+    _grid = List.generate(_totalFields, (i) => FieldData());
   }
 
   int get columns => _sett.columns;
@@ -35,17 +35,17 @@ class Grid {
       FieldPosition(index ~/ columns, index % columns);
 
   FieldData atIndex(int index) {
-    return grid[index];
+    return _grid[index];
   }
 
   FieldData at(index) => atIndex(index);
 
   FieldData atij(int i, int j) {
-    return grid[i * _sett.columns + j];
+    return _grid[i * _sett.columns + j];
   }
 
   FieldData atPos(FieldPosition pos) {
-    return grid[pos.i * _sett.columns + pos.j];
+    return _grid[pos.i * _sett.columns + pos.j];
   }
 
   void lock() {
@@ -127,7 +127,7 @@ class Grid {
     }
 
     // set bomb counts
-    for (int i = 0; i < grid.length; i++) {
+    for (int i = 0; i < _grid.length; i++) {
       atIndex(i).bombsAround = _countBombsAround(i);
     }
   }
