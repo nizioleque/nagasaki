@@ -30,10 +30,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // final int rows = 10;
-  // final int columns = 10;
-  // final int nBombs = 4;
-
   late Grid grid;
   late int time;
   Timer? timer;

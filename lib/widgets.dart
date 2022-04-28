@@ -69,10 +69,10 @@ class _FieldState extends State<Field> {
 
   @override
   Widget build(BuildContext context) {
-    // var color = widget.data.isClicked
-    //     ? (widget.data.isBomb ? Colors.red : Colors.grey)
-    //     : (widget.data.isFlagged ? Colors.green : Colors.grey);
-    var color = widget.data.isBomb ? Colors.red : Colors.grey;
+    var color = widget.data.isClicked
+        ? (widget.data.isBomb ? Colors.red : Colors.grey)
+        : (widget.data.isFlagged ? Colors.green : Colors.grey);
+    // var color = widget.data.isBomb ? Colors.red : Colors.grey;
 
     return GestureDetector(
       onTapDown: (_) {
