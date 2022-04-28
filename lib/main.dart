@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nagasaki/settings.dart';
 import 'widgets.dart';
 import 'classes.dart';
-import 'helpers.dart';
 import 'grid.dart';
 
 void main() {
@@ -99,7 +98,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: openSettings,
+                      onPressed: () async {
+                        List result = await openSettings(grid, context);
+                        if (result[0] == true) {
+                          setState(() {
+                            prepareGame(result[1]);
+                          });
+                        }
+                      },
                       child: const Text("Settings"),
                     )
                   ],
@@ -153,14 +159,6 @@ class _MyHomePageState extends State<MyHomePage> {
     time = 0;
     resetTimer();
   }
-
-  // FieldPosition indexToij(int index, int columns) {
-  //   return FieldPosition(index ~/ columns, index % columns);
-  // }
-
-  // int ijToIndex(int i, int j, int columns) {
-  //   return i * columns + j;
-  // }
 
   void firstTap(int index) {
     // generate bombs
@@ -222,104 +220,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       prepareGame();
     });
-  }
-
-  void openSettings() {
-    final _controllers = [for (var i = 0; i < 3; i++) TextEditingController()];
-    final _formKey = GlobalKey<FormState>();
-    var sett = grid.settings;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text("SETTINGS"),
-        contentPadding: const EdgeInsets.all(20.0),
-        scrollable: true,
-        content: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SettingsNumberField(
-                controller: _controllers[0],
-                validator: (value) => validateRange(value, 3, 30),
-                text: "Columns",
-              ),
-              SettingsNumberField(
-                controller: _controllers[1],
-                validator: (value) => validateRange(value, 3, 30),
-                text: "Rows",
-              ),
-              SettingsNumberField(
-                  controller: _controllers[2],
-                  validator: (value) {
-                    try {
-                      var fields = int.parse(_controllers[0].text) *
-                          int.parse(_controllers[1].text);
-
-                      return validateRange(value, 2, fields - 9);
-                    } catch (e) {
-                      return null;
-                    }
-                  },
-                  text: "Mines"),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              // var newCol = int.parse(_controllers[i].text);
-              if (_formKey.currentState!.validate()) {
-                setState(() {
-                  GameSettings newSettings = GameSettings(
-                    columns: int.parse(_controllers[0].text),
-                    rows: int.parse(_controllers[1].text),
-                    bombs: int.parse(_controllers[2].text),
-                  );
-                  prepareGame(newSettings);
-                });
-
-                Navigator.of(context).pop();
-              }
-            },
-            child: const Text("Apply"),
-          ),
-        ],
-      ),
-    );
-
-    for (int i = 0; i < 3; i++) {
-      int val;
-
-      switch (i) {
-        case 0:
-          val = sett.columns;
-          break;
-        case 1:
-          val = sett.rows;
-          break;
-        case 2:
-          val = sett.bombs;
-          break;
-        default:
-          val = 0;
-      }
-
-      var text = val.toString();
-
-      _controllers[i].value = _controllers[i].value.copyWith(
-            text: text,
-            selection: TextSelection.collapsed(offset: text.length),
-          );
-    }
   }
 
   void resetTimer() {
