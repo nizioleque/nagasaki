@@ -186,7 +186,10 @@ class _MyHomePageState extends State<MyHomePage> {
       // to avoid generating a bomb under the user's finger
       int i = randomNumber ~/ sett.columns;
       int j = randomNumber % sett.columns;
-      if (i != iTap || j != jTap) {
+      if (!(i >= iTap! - 1 &&
+          i <= iTap + 1 &&
+          j >= jTap! - 1 &&
+          jTap <= jTap + 1)) {
         bombs.add(BombPosistion(i, j));
       }
     }
