@@ -147,9 +147,9 @@ class _MyHomePageState extends State<MyHomePage> {
 // TODO: save user settings
 
     s ??= GameSettings(
-      columns: 10,
-      rows: 10,
-      bombs: 10,
+      columns: 20,
+      rows: 30,
+      bombs: 500,
     );
 
     grid = Grid(sett: s);
@@ -175,7 +175,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (grid.at(index).isBomb) {
       // tempExplode(index);
-      gameOver();
+      var timePeriod = Duration(milliseconds: 10);
+      Timer timer = Timer.periodic(timePeriod, (Timer timer) {
+        if (grid.explode(index)) {
+          setState(() {});
+        } else {
+          timer.cancel();
+          gameOver();
+        }
+      });
+      // gameOver();
     } else if (grid.clicked + grid.bombs == grid.fields) {
       gameWon();
     }
@@ -187,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
       success = grid.flag(index);
     });
     if (!success) return;
-    
+
     HapticFeedback.selectionClick();
   }
 
