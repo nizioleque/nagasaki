@@ -3,33 +3,30 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'classes.dart';
+import 'grid.dart';
 
 // grid widget class
 class GameArea extends StatelessWidget {
   const GameArea({
     Key? key,
-    required this.columns,
-    required this.rows,
     required this.grid,
     required this.onChanged,
   }) : super(key: key);
 
-  final int columns;
-  final int rows;
-  final List<FieldData> grid;
+  final Grid grid;
   final ValueChanged<FieldChangeData> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return GridView.count(
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: columns,
+      crossAxisCount: grid.columns,
       padding: const EdgeInsets.all(0),
       childAspectRatio: 1,
       children: List.generate(
-        rows * columns,
+        grid.fields,
         (index) => Field(
-          data: grid[index],
+          data: grid.atIndex(index),
           handleTap: () {
             debugPrint('[GameArea] detected tap');
             onChanged(FieldChangeData(index, PressType.tap));

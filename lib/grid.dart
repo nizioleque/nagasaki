@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:nagasaki/classes.dart';
 import 'classes.dart';
 import 'iterators.dart';
@@ -7,8 +8,8 @@ import 'iterators.dart';
 class Grid {
   late List<FieldData> grid;
   late GameSettings _sett;
-  bool locked = false;
 
+  bool _locked = false;
   int _clickedFields = 0;
   int _flaggedFields = 0;
   int _totalFields = 0;
@@ -27,6 +28,8 @@ class Grid {
   int get flagged => _flaggedFields;
   int get flagsLeft => bombs - flagged;
   int get clicked => _clickedFields;
+  bool get locked => _locked;
+  GameSettings get settings => _sett;
 
   int ijToIndex(int i, int j) => i * _sett.columns + j;
   FieldPosition indexToij(int index) =>
@@ -36,12 +39,18 @@ class Grid {
     return grid[index];
   }
 
+  FieldData at(index) => atIndex(index);
+
   FieldData atij(int i, int j) {
     return grid[i * _sett.columns + j];
   }
 
   FieldData atPos(FieldPosition pos) {
     return grid[pos.i * _sett.columns + pos.j];
+  }
+
+  void lock() {
+    _locked = true;
   }
 
   void flag(int index) {
@@ -86,7 +95,7 @@ class Grid {
   }
 
   int _countBombsAround(int index) {
-    // set bombsAround for every bomb
+    // count bombs around a bomb
     var counter = 0;
     for (FieldData f in FieldsAround(grid: this, index: index)) {
       if (f.isBomb) counter++;
@@ -118,6 +127,7 @@ class Grid {
       atIndex(i).isBomb = true;
     }
 
+    // set bomb counts
     for (int i = 0; i < grid.length; i++) {
       atIndex(i).bombsAround = _countBombsAround(i);
     }
