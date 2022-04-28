@@ -167,9 +167,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void handleFieldTap(int index) {
+    bool success = true;
     setState(() {
-      grid.tap(index);
+      success = grid.tap(index);
     });
+    if (!success) return;
 
     if (grid.at(index).isBomb) {
       // tempExplode(index);
@@ -180,9 +182,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void handleFieldLongPress(int index) {
+    bool success = true;
     setState(() {
-      grid.flag(index);
+      success = grid.flag(index);
     });
+    if (!success) return;
+    
     HapticFeedback.selectionClick();
   }
 

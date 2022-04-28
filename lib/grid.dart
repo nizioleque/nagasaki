@@ -52,18 +52,18 @@ class Grid {
     _locked = true;
   }
 
-  void flag(int index) {
+  bool flag(int index) {
     var el = atIndex(index);
 
     // cant put flag when game over
-    if (locked) return;
+    if (locked) return false;
 
     // cant put flag when clicked
-    if (el.isClicked) return;
+    if (el.isClicked) return false;
 
     if (!el.isFlagged) {
       // reached maximum of flags
-      if (flagged == bombs) return;
+      if (flagged == bombs) return false;
 
       // flag
       el.isFlagged = true;
@@ -73,16 +73,18 @@ class Grid {
       el.isFlagged = false;
       _flaggedFields--;
     }
+
+    return true;
   }
 
-  void tap(int index) {
+  bool tap(int index) {
     // cannot tap when game is over
-    if (locked) return;
+    if (locked) return false;
 
     var el = atIndex(index);
 
     // cannot tap if field is flagged
-    if (el.isFlagged) return;
+    if (el.isFlagged) return false;
 
     // first click
     if (_clickedFields == 0) generateBombs(index);
@@ -91,6 +93,7 @@ class Grid {
     if (!el.isClicked) makeFieldVisible(index);
 
     // game end checks --> main.dart
+    return true;
   }
 
   int _countBombsAround(int index) {
