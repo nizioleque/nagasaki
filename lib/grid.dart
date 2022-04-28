@@ -1,224 +1,144 @@
-import 'dart:collection';
+import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:nagasaki/classes.dart';
 import 'classes.dart';
+import 'iterators.dart';
 
 class Grid {
   late List<FieldData> grid;
-  late GameSettings sett;
+  late GameSettings _sett;
   bool locked = false;
 
-  int clickedFields = 0;
-  int deletedFields = 0;
-  int flaggedFields = 0;
-  int bombsLeft = 0;
+  int _clickedFields = 0;
+  int _flaggedFields = 0;
+  int _totalFields = 0;
 
   // constructor
-  Grid({required this.sett}) {
-    grid = List.generate(sett.rows * sett.columns, (i) => FieldData());
+  Grid({required sett}) {
+    _sett = sett;
+    _totalFields = _sett.rows * _sett.columns;
+    grid = List.generate(_totalFields, (i) => FieldData());
   }
+
+  int get columns => _sett.columns;
+  int get rows => _sett.rows;
+  int get fields => _totalFields;
+  int get bombs => _sett.bombs;
+  int get flagged => _flaggedFields;
+  int get flagsLeft => bombs - flagged;
+  int get clicked => _clickedFields;
+
+  int ijToIndex(int i, int j) => i * _sett.columns + j;
+  FieldPosition indexToij(int index) =>
+      FieldPosition(index ~/ columns, index % columns);
 
   FieldData atIndex(int index) {
     return grid[index];
   }
 
   FieldData atij(int i, int j) {
-    return grid[i * sett.columns + j];
+    return grid[i * _sett.columns + j];
   }
 
   FieldData atPos(FieldPosition pos) {
-    return grid[pos.i * sett.columns + pos.j];
+    return grid[pos.i * _sett.columns + pos.j];
   }
 
-  int get columns => sett.columns;
-  int get rows => sett.rows;
-}
+  void flag(int index) {
+    var el = atIndex(index);
 
-class FieldsAroundIterator extends Iterator<FieldData> {
-  late Grid grid;
-  late FieldPosition pos;
-  late int endi;
-  late int endj;
-  int returned = -1;
-  // late FieldData _current;
+    // cant put flag when game over
+    if (locked) return;
 
-  FieldsAroundIterator({required this.grid, required index}) {
-    pos = FieldPosition(index, grid.columns);
-    endi = grid.rows - 1;
-    endj = grid.columns - 1;
-    // _current = g.atIndex(index);
-  }
+    // cant put flag when clicked
+    if (el.isClicked) return;
 
-  @override
-  FieldData get current {
-    switch (returned) {
-      case 0:
-        return grid.atij(pos.i - 1, pos.j);
-      case 1:
-        return grid.atij(pos.i - 1, pos.j + 1);
-      case 2:
-        return grid.atij(pos.i, pos.j + 1);
-      case 3:
-        return grid.atij(pos.i + 1, pos.j + 1);
-      case 4:
-        return grid.atij(pos.i + 1, pos.j);
-      case 5:
-        return grid.atij(pos.i + 1, pos.j - 1);
-      case 6:
-        return grid.atij(pos.i, pos.j - 1);
-      case 7:
-        return grid.atij(pos.i - 1, pos.j - 1);
-      default:
-        return grid.atPos(pos);
+    if (!el.isFlagged) {
+      // reached maximum of flags
+      if (flagged == bombs) return;
+
+      // flag
+      el.isFlagged = true;
+      _flaggedFields++;
+    } else {
+      // remove flag
+      el.isFlagged = false;
+      _flaggedFields--;
     }
   }
 
-  @override
-  bool moveNext() {
-    returned++;
+  void tap(int index) {
+    // cannot tap when game is over
+    if (locked) return;
 
-    switch (returned) {
-      case 0:
-        if (pos.i == 0) {
-          return moveNext();
-        }
-        break;
-      case 1:
-        if (pos.i == 0 || pos.j == endj) return moveNext();
-        break;
-      case 2:
-        if (pos.j == endj) return moveNext();
-        break;
-      case 3:
-        if (pos.i == endi || pos.j == endj) return moveNext();
-        break;
-      case 4:
-        if (pos.i == endi) return moveNext();
-        break;
-      case 5:
-        if (pos.i == endi || pos.j == 0) return moveNext();
-        break;
-      case 6:
-        if (pos.j == 0) return moveNext();
-        break;
-      case 7:
-        if (pos.i == 0 || pos.j == 0) return moveNext();
-        break;
-      default:
-        return false;
+    var el = atIndex(index);
+
+    // cannot tap if field is flagged
+    if (el.isFlagged) return;
+
+    // first click
+    if (_clickedFields == 0) generateBombs(index);
+
+    // make visible
+    if (!el.isClicked) makeFieldVisible(index);
+
+    // game end checks --> main.dart
+  }
+
+  int _countBombsAround(int index) {
+    // set bombsAround for every bomb
+    var counter = 0;
+    for (FieldData f in FieldsAround(grid: this, index: index)) {
+      if (f.isBomb) counter++;
+    }
+    return counter;
+  }
+
+  void generateBombs(int tapIndex) {
+    // select random coordinates and add bombs
+    var rng = Random();
+    var bombs = <int>{};
+    var tapPos = indexToij(tapIndex);
+
+    while (bombs.length != _sett.bombs) {
+      int randomNumber = rng.nextInt(_sett.columns * _sett.rows);
+      var randomPos = indexToij(randomNumber);
+
+      // check if i, j != first clicked field
+      // to avoid generating a bomb under the user's finger
+      if (!(randomPos.i >= tapPos.i - 1 &&
+          randomPos.i <= tapPos.i + 1 &&
+          randomPos.j >= tapPos.j - 1 &&
+          randomPos.j <= tapPos.j + 1)) {
+        bombs.add(randomNumber);
+      }
     }
 
-    return true;
-  }
-}
+    for (int i in bombs) {
+      atIndex(i).isBomb = true;
+    }
 
-class FieldsAround extends IterableBase<FieldData> {
-  late Grid grid;
-  late int index;
-
-  FieldsAround({required this.grid, required this.index});
-
-  @override
-  Iterator<FieldData> get iterator => FieldsAroundIterator(
-        grid: grid,
-        index: index,
-      );
-}
-
-/*
-class FieldsAroundIteratorTEST extends Iterator<FieldPosition> {
-  late Grid grid;
-  late FieldPosition pos;
-  late int endi;
-  late int endj;
-  int returned = -1;
-  // late FieldData _current;
-
-  FieldsAroundIteratorTEST({required this.grid, required index}) {
-    pos = FieldPosition.fromIndex(index, grid.columns);
-    endi = grid.rows - 1;
-    endj = grid.columns - 1;
-
-    debugPrint("CONSTR ITERATOR ${pos.i} ${pos.j} $endi $endj");
-    // _current = g.atIndex(index);
-  }
-
-  @override
-  FieldPosition get current {
-    debugPrint("CURRENT $returned");
-
-    switch (returned) {
-      case 0:
-        return FieldPosition(pos.i - 1, pos.j);
-      case 1:
-        return FieldPosition(pos.i - 1, pos.j + 1);
-      case 2:
-        return FieldPosition(pos.i, pos.j + 1);
-      case 3:
-        return FieldPosition(pos.i + 1, pos.j + 1);
-      case 4:
-        return FieldPosition(pos.i + 1, pos.j);
-      case 5:
-        return FieldPosition(pos.i + 1, pos.j - 1);
-      case 6:
-        return FieldPosition(pos.i, pos.j - 1);
-      case 7:
-        return FieldPosition(pos.i - 1, pos.j - 1);
-      default:
-        return pos;
+    for (int i = 0; i < grid.length; i++) {
+      atIndex(i).bombsAround = _countBombsAround(i);
     }
   }
 
-  @override
-  bool moveNext() {
-    debugPrint("MOVE NEXT $returned");
-    returned++;
+  void makeFieldVisible(int index) {
+    // make the field visible
+    var field = atIndex(index);
 
-    switch (returned) {
-      case 0:
-        if (pos.i == 0) return moveNext();
-        break;
-      case 1:
-        if (pos.i == 0 || pos.j == endj) return moveNext();
-        break;
-      case 2:
-        if (pos.j == endj) return moveNext();
-        break;
-      case 3:
-        if (pos.i == endi || pos.j == endj) return moveNext();
-        break;
-      case 4:
-        if (pos.i == endi) return moveNext();
-        break;
-      case 5:
-        if (pos.i == endi || pos.j == 0) return moveNext();
-        break;
-      case 6:
-        if (pos.j == 0) return moveNext();
-        break;
-      case 7:
-        if (pos.i == 0 || pos.j == 0) return moveNext();
-        break;
-      default:
-        return false;
+    if (field.isFlagged) return;
+
+    field.isClicked = true;
+    _clickedFields++;
+
+    if (field.isBomb) return;
+
+    // make fields around visible
+    if (field.bombsAround == 0) {
+      for (int f in FieldsAroundPosition(grid: this, index: index)) {
+        if (!atIndex(f).isClicked) makeFieldVisible(f);
+      }
     }
-
-    debugPrint("END MOVE NEXT");
-    return true;
   }
 }
-
-class FieldsAroundTEST extends IterableBase<FieldPosition> {
-  late Grid grid;
-  late int index;
-
-  FieldsAroundTEST({required this.grid, required this.index});
-
-  @override
-  Iterator<FieldPosition> get iterator => FieldsAroundIteratorTEST(
-        grid: grid,
-        index: index,
-      );
-}
-*/

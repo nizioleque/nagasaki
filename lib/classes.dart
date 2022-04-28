@@ -62,10 +62,4 @@ class FieldPosition {
 
   @override
   int get hashCode => hashValues(i, j);
-
-  // @override
-  // String toString() {
-  //   // TODO: implement toString
-  //   return "$i, $j";
-  // }
 }
