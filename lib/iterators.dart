@@ -5,18 +5,9 @@ import 'grid.dart';
 
 class FieldsAroundIterator extends Iterator<FieldData> {
   late Grid grid;
-  // late FieldPosition pos;
-  // late int endi;
-  // late int endj;
-  // int returned = -1;
-
   late FieldsAroundPositionIterator iter;
 
   FieldsAroundIterator({required this.grid, required index}) {
-    // pos = FieldPosition(index, grid.columns);
-    // endi = grid.rows - 1;
-    // endj = grid.columns - 1;
-
     iter = FieldsAroundPositionIterator(grid: grid, index: index);
   }
 
