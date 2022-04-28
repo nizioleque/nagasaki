@@ -39,6 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late List<List<FieldData>> grid;
   late int bombsLeft;
   late int clickedFields;
+  late int deletedFields;
   late int time;
   late int flaggedFields;
   Timer? timer;
@@ -171,6 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
     blockGrid = false;
     time = 0;
     clickedFields = 0;
+    deletedFields = 0;
     flaggedFields = 0;
     resetTimer();
   }
@@ -189,7 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (!(i >= iTap! - 1 &&
           i <= iTap + 1 &&
           j >= jTap! - 1 &&
-          jTap <= jTap + 1)) {
+          j <= jTap + 1)) {
         bombs.add(BombPosistion(i, j));
       }
     }
@@ -243,15 +245,6 @@ class _MyHomePageState extends State<MyHomePage> {
     if (blockGrid) return;
     // cant click if flagged
     if (grid[i][j].isFlagged) return;
-
-    BombPosistion a = BombPosistion(1, 1);
-    BombPosistion b = BombPosistion(1, 1);
-
-    if (a == b) {
-      debugPrint("są równe");
-    } else {
-      debugPrint("nie są równe");
-    }
 
     // first click - generate bombs
     if (clickedFields == 0) {
@@ -522,27 +515,32 @@ class _MyHomePageState extends State<MyHomePage> {
     aboutToDelete = aboutToDelete.toList();
     aboutToDelete.add(BombPosistion(i, j));
     Timer timer = Timer.periodic(oneSec, (Timer timer) {
-      if (clickedFields == sett.rows * sett.columns) {
+      if (deletedFields == sett.rows * sett.columns) {
         setState(() {
           timer.cancel();
           gameOver();
         });
       } else {
+        debugPrint("$deletedFields deleted fields");
         List<BombPosistion> temp = List<BombPosistion>.empty();
         temp = temp.toList();
         aboutToDelete.forEach((element) {
           if (element.x - 1 >= 0 && !grid[element.x - 1][element.y].isDeleted) {
+            grid[element.x - 1][element.y].isDeleted = true;
             temp.add(BombPosistion(element.x - 1, element.y));
           }
           if (element.x + 1 < sett.rows &&
               !grid[element.x + 1][element.y].isDeleted) {
+            grid[element.x + 1][element.y].isDeleted = true;
             temp.add(BombPosistion(element.x + 1, element.y));
           }
           if (element.y - 1 >= 0 && !grid[element.x][element.y - 1].isDeleted) {
+            grid[element.x][element.y - 1].isDeleted = true;
             temp.add(BombPosistion(element.x, element.y - 1));
           }
           if (element.y + 1 < sett.columns &&
               !grid[element.x][element.y + 1].isDeleted) {
+            grid[element.x][element.y + 1].isDeleted = true;
             temp.add(BombPosistion(element.x, element.y + 1));
           }
         });
@@ -550,6 +548,7 @@ class _MyHomePageState extends State<MyHomePage> {
           aboutToDelete.forEach((element) {
             grid[element.x][element.y].isClicked = true;
             grid[element.x][element.y].isDeleted = true;
+            deletedFields++;
           });
         });
         aboutToDelete = temp;
