@@ -71,7 +71,27 @@ class _FieldState extends State<Field> {
   Widget build(BuildContext context) {
     var color = widget.data.isClicked
         ? (widget.data.isBomb ? Colors.red : Colors.grey)
-        : (widget.data.isFlagged ? Colors.green : Colors.grey);
+        // : (widget.data.state == FieldState.flagged
+        //     ? Colors.green
+        //     : Colors.grey);
+        : (widget.data.state == FieldState.flagged
+            ? Colors.green
+            : (widget.data.state == FieldState.sus
+                ? Colors.yellow
+                : Colors.grey));
+
+    switch (widget.data.state) {
+      case FieldState.none:
+        Colors.grey;
+        break;
+      case FieldState.flagged:
+        Colors.green;
+        break;
+      case FieldState.sus:
+        Colors.yellow;
+        break;
+      default:
+    }
     // var color = widget.data.isBomb ? Colors.red : Colors.grey;
 
     return GestureDetector(
@@ -114,8 +134,12 @@ class _FieldState extends State<Field> {
                   ),
                 if (widget.data.isBomb && widget.data.isClicked)
                   const FieldImage(imgPath: 'assets/images/bomb.png'),
-                if (widget.data.isFlagged)
-                  const FieldImage(imgPath: 'assets/images/flag.png')
+                if (widget.data.state == FieldState.flagged &&
+                    !widget.data.isClicked)
+                  const FieldImage(imgPath: 'assets/images/flag.png'),
+                if (widget.data.state == FieldState.sus &&
+                    !widget.data.isClicked)
+                  const FieldImage(imgPath: 'assets/images/mark.png')
               ],
             ),
           )),

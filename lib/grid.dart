@@ -65,17 +65,19 @@ class Grid {
     // cant put flag when clicked
     if (el.isClicked) return false;
 
-    if (!el.isFlagged) {
+    if (el.state == FieldState.none) {
       // reached maximum of flags
       if (flagged == bombs) return false;
 
       // flag
-      el.isFlagged = true;
+      el.state = FieldState.flagged;
       _flaggedFields++;
-    } else {
+    } else if (el.state == FieldState.flagged) {
       // remove flag
-      el.isFlagged = false;
+      el.state = FieldState.sus;
       _flaggedFields--;
+    } else if (el.state == FieldState.sus) {
+      el.state = FieldState.none;
     }
 
     return true;
@@ -88,7 +90,7 @@ class Grid {
     var el = at(index);
 
     // cannot tap if field is flagged
-    if (el.isFlagged) return false;
+    if (el.state == FieldState.flagged) return false;
 
     // make visible
     if (!el.isClicked) makeFieldVisible(index);
@@ -140,7 +142,7 @@ class Grid {
     // make the field visible
     var field = at(index);
 
-    if (field.isFlagged) return;
+    if (field.state == FieldState.flagged) return;
 
     field.isClicked = true;
     _clickedFields++;

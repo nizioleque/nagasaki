@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class FieldData {
   bool isBomb;
   bool isClicked;
-  bool isFlagged;
+  FieldState state;
   bool isDeleted;
   int bombsAround;
 
   FieldData({
     this.isBomb = false,
     this.isClicked = false,
-    this.isFlagged = false,
+    this.state = FieldState.none,
     this.isDeleted = false,
     this.bombsAround = 0,
   });
@@ -29,6 +29,12 @@ class FieldChangeData {
 enum PressType {
   tap,
   longPress,
+}
+
+enum FieldState {
+  none,
+  flagged,
+  sus,
 }
 
 // setting values
