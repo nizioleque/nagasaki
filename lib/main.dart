@@ -175,15 +175,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (grid.at(index).isBomb) {
       // tempExplode(index);
-      var timePeriod = Duration(milliseconds: 50);
-      Timer timer = Timer.periodic(timePeriod, (Timer timer) {
-        if (grid.explode(index)) {
-          setState(() {});
-        } else {
-          timer.cancel();
-          gameOver();
-        }
-      });
+      Timer.periodic(
+        const Duration(milliseconds: 50),
+        (Timer timer) {
+          if (grid.explode(index)) {
+            // setState(() {});
+          } else {
+            timer.cancel();
+            gameOver();
+          }
+        },
+      );
       // gameOver();
     } else if (grid.clicked + grid.bombs == grid.fields) {
       gameWon();

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -17,7 +16,6 @@ class Grid {
   int _totalFields = 0;
   bool _explosionBeggined = false;
   int _explosionRadius = 0;
-  late Timer _timer;
   late List<FieldPosition> _aboutToDelete;
 
   // constructor
@@ -170,7 +168,7 @@ class Grid {
       _aboutToDelete = _aboutToDelete.toList();
       _aboutToDelete.add(FieldPosition(i, j));
       _explosionBeggined = true;
-      _grid[ijToIndex(i, j)].isDeleted = true;
+      atij(i, j).isDeleted = true;
       _deletedFields++;
     }
     if (deleted == rows * columns) {
@@ -180,51 +178,30 @@ class Grid {
       List<FieldPosition> temp = List<FieldPosition>.empty();
       temp = temp.toList();
       for (int index = 0; index < _grid.length; index++) {
-        // DIAMOND PATTERN (change for to foreach on  _aboutToExplode)
-        // if (element.i - 1 >= 0 &&
-        //     !_grid[ijToIndex(element.i - 1, element.j)].isDeleted) {
-        //   _grid[ijToIndex(element.i - 1, element.j)].isDeleted = true;
-        //   temp.add(FieldPosition(element.i - 1, element.j));
-        // }
-        // if (element.i + 1 < rows &&
-        //     !_grid[ijToIndex(element.i + 1, element.j)].isDeleted) {
-        //   _grid[ijToIndex(element.i + 1, element.j)].isDeleted = true;
-        //   temp.add(FieldPosition(element.i + 1, element.j));
-        // }
-        // if (element.j - 1 >= 0 &&
-        //     !_grid[ijToIndex(element.i, element.j - 1)].isDeleted) {
-        //   _grid[ijToIndex(element.i, element.j - 1)].isDeleted = true;
-        //   temp.add(FieldPosition(element.i, element.j - 1));
-        // }
-        // if (element.j + 1 < columns &&
-        //     !_grid[ijToIndex(element.i, element.j + 1)].isDeleted) {
-        //   _grid[ijToIndex(element.i, element.j + 1)].isDeleted = true;
-        //   temp.add(FieldPosition(element.i, element.j + 1));
-        // }
 
         // CIRCLE PATTERN
         var curPos = indexToij(index);
         var curi = curPos.i;
         var curj = curPos.j;
-        if (!_grid[ijToIndex(curi, curj)].isDeleted &&
-            getDistance(i, j, curi, curj) <= _explosionRadius * 1.0 &&
+        if (!atij(curi, curj).isDeleted &&
+            _getDistance(i, j, curi, curj) <= _explosionRadius * 1.0 &&
             !(i == curi && j == curj)) {
-          _grid[ijToIndex(curi, curj)].isDeleted = true;
+          atij(curi, curj).isDeleted = true;
           temp.add(FieldPosition(curi, curj));
         }
       }
       _aboutToDelete = temp;
       _explosionRadius++;
-      _aboutToDelete.forEach((element) {
-        _grid[ijToIndex(element.i, element.j)].isClicked = true;
-        _grid[ijToIndex(element.i, element.j)].isDeleted = true;
+      for (var element in _aboutToDelete) {
+        atij(element.i, element.j).isClicked = true;
+        atij(element.i, element.j).isDeleted = true;
         _deletedFields++;
-      });
+      }
     }
     return true;
   }
 
-  double getDistance(int x1, int y1, int x2, int y2) {
+  double _getDistance(int x1, int y1, int x2, int y2) {
     return sqrt((x1 - x2) * (x1 - x2) * 1.0 + (y1 - y2) * (y1 - y2) * 1.0);
   }
 }
