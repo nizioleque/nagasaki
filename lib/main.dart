@@ -140,12 +140,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<GameSettings> loadData() async {
     // obtain shared preferences
-    debugPrint('loadData');
-    SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
 
     // set value
-
     GameSettings settings = GameSettings(
       rows: prefs.getInt('rows') ?? 10,
       columns: prefs.getInt('columns') ?? 10,
@@ -153,16 +150,17 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
     return settings;
-    // setState(() {
-    //   prepareGame(settings);
-    //   dataLoaded = true;
-    // });
+  }
+
+  void saveData(GameSettings s) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('rows', s.rows);
+    prefs.setInt('columns', s.columns);
+    prefs.setInt('bombs', s.bombs);
   }
 
   void prepareGame([GameSettings? s]) async {
     s ??= await loadData();
-
-    debugPrint('loadEDData');
 
     setState(() {
       grid = Grid(sett: s);
@@ -248,19 +246,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void resetGame() {
+    // don't react to clicks before user data is loaded
     if (!dataLoaded) return;
+
     setState(() {
       prepareGame(grid.settings);
     });
   }
 
   void tapSettings() async {
+    // don't react to clicks before user data is loaded
     if (!dataLoaded) return;
+
+    // show settings
     List result = await openSettings(grid, context);
+
     if (result[0] == true) {
+      // apply new settings
       setState(() {
         prepareGame(result[1]);
       });
+
+      // save user preferences
+      saveData(result[1]);
     }
   }
 
