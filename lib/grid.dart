@@ -14,7 +14,7 @@ class Grid {
   int _flaggedFields = 0;
   int _deletedFields = 0;
   int _totalFields = 0;
-  bool _explosionBeggined = false;
+  bool _explosionStarted = false;
   int _explosionRadius = 0;
   late List<FieldPosition> _aboutToDelete;
 
@@ -163,11 +163,10 @@ class Grid {
     var i = pos.i;
     var j = pos.j;
 
-    if (!_explosionBeggined) {
-      _aboutToDelete = List<FieldPosition>.empty();
-      _aboutToDelete = _aboutToDelete.toList();
+    if (!_explosionStarted) {
+      _aboutToDelete = [];
       _aboutToDelete.add(FieldPosition(i, j));
-      _explosionBeggined = true;
+      _explosionStarted = true;
       atij(i, j).isDeleted = true;
       _deletedFields++;
     }
@@ -175,10 +174,9 @@ class Grid {
       return false;
     } else {
       debugPrint("$deleted deleted fields");
-      List<FieldPosition> temp = List<FieldPosition>.empty();
-      temp = temp.toList();
-      for (int index = 0; index < _grid.length; index++) {
+      List<FieldPosition> temp = [];
 
+      for (int index = 0; index < _grid.length; index++) {
         // CIRCLE PATTERN
         var curPos = indexToij(index);
         var curi = curPos.i;

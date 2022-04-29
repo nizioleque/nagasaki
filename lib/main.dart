@@ -179,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
         const Duration(milliseconds: 50),
         (Timer timer) {
           if (grid.explode(index)) {
-            // setState(() {});
+            setState(() {});
           } else {
             timer.cancel();
             gameOver();
