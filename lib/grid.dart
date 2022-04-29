@@ -90,9 +90,6 @@ class Grid {
     // cannot tap if field is flagged
     if (el.isFlagged) return false;
 
-    // first click
-    if (_clickedFields == 0) generateBombs(index);
-
     // make visible
     if (!el.isClicked) makeFieldVisible(index);
 

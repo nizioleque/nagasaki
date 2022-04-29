@@ -167,6 +167,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void handleFieldTap(int index) {
+    if (grid.clicked == 0) firstTap(index);
+
     bool success = true;
     setState(() {
       success = grid.tap(index);
