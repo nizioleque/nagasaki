@@ -175,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (grid.at(index).isBomb) {
       // tempExplode(index);
-      var timePeriod = Duration(milliseconds: 10);
+      var timePeriod = Duration(milliseconds: 50);
       Timer timer = Timer.periodic(timePeriod, (Timer timer) {
         if (grid.explode(index)) {
           setState(() {});

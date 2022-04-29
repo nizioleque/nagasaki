@@ -16,6 +16,7 @@ class Grid {
   int _deletedFields = 0;
   int _totalFields = 0;
   bool _explosionBeggined = false;
+  int _explosionRadius = 0;
   late Timer _timer;
   late List<FieldPosition> _aboutToDelete;
 
@@ -44,7 +45,6 @@ class Grid {
   FieldData at(int index) {
     return _grid[index];
   }
-
 
   FieldData atij(int i, int j) {
     return _grid[i * _sett.columns + j];
@@ -161,15 +161,17 @@ class Grid {
   }
 
   bool explode(int index) {
-    if (!_explosionBeggined) {
-      var pos = indexToij(index);
-      var i = pos.i;
-      var j = pos.j;
+    var pos = indexToij(index);
+    var i = pos.i;
+    var j = pos.j;
 
+    if (!_explosionBeggined) {
       _aboutToDelete = List<FieldPosition>.empty();
       _aboutToDelete = _aboutToDelete.toList();
       _aboutToDelete.add(FieldPosition(i, j));
       _explosionBeggined = true;
+      _grid[ijToIndex(i, j)].isDeleted = true;
+      _deletedFields++;
     }
     if (deleted == rows * columns) {
       return false;
@@ -177,35 +179,52 @@ class Grid {
       debugPrint("$deleted deleted fields");
       List<FieldPosition> temp = List<FieldPosition>.empty();
       temp = temp.toList();
-      _aboutToDelete.forEach((element) {
-        if (element.i - 1 >= 0 &&
-            !_grid[ijToIndex(element.i - 1, element.j)].isDeleted) {
-          _grid[ijToIndex(element.i - 1, element.j)].isDeleted = true;
-          temp.add(FieldPosition(element.i - 1, element.j));
+      for (int index = 0; index < _grid.length; index++) {
+        // DIAMOND PATTERN (change for to foreach on  _aboutToExplode)
+        // if (element.i - 1 >= 0 &&
+        //     !_grid[ijToIndex(element.i - 1, element.j)].isDeleted) {
+        //   _grid[ijToIndex(element.i - 1, element.j)].isDeleted = true;
+        //   temp.add(FieldPosition(element.i - 1, element.j));
+        // }
+        // if (element.i + 1 < rows &&
+        //     !_grid[ijToIndex(element.i + 1, element.j)].isDeleted) {
+        //   _grid[ijToIndex(element.i + 1, element.j)].isDeleted = true;
+        //   temp.add(FieldPosition(element.i + 1, element.j));
+        // }
+        // if (element.j - 1 >= 0 &&
+        //     !_grid[ijToIndex(element.i, element.j - 1)].isDeleted) {
+        //   _grid[ijToIndex(element.i, element.j - 1)].isDeleted = true;
+        //   temp.add(FieldPosition(element.i, element.j - 1));
+        // }
+        // if (element.j + 1 < columns &&
+        //     !_grid[ijToIndex(element.i, element.j + 1)].isDeleted) {
+        //   _grid[ijToIndex(element.i, element.j + 1)].isDeleted = true;
+        //   temp.add(FieldPosition(element.i, element.j + 1));
+        // }
+
+        // CIRCLE PATTERN
+        var curPos = indexToij(index);
+        var curi = curPos.i;
+        var curj = curPos.j;
+        if (!_grid[ijToIndex(curi, curj)].isDeleted &&
+            getDistance(i, j, curi, curj) <= _explosionRadius * 1.0 &&
+            !(i == curi && j == curj)) {
+          _grid[ijToIndex(curi, curj)].isDeleted = true;
+          temp.add(FieldPosition(curi, curj));
         }
-        if (element.i + 1 < rows &&
-            !_grid[ijToIndex(element.i + 1, element.j)].isDeleted) {
-          _grid[ijToIndex(element.i + 1, element.j)].isDeleted = true;
-          temp.add(FieldPosition(element.i + 1, element.j));
-        }
-        if (element.j - 1 >= 0 &&
-            !_grid[ijToIndex(element.i, element.j - 1)].isDeleted) {
-          _grid[ijToIndex(element.i, element.j - 1)].isDeleted = true;
-          temp.add(FieldPosition(element.i, element.j - 1));
-        }
-        if (element.j + 1 < columns &&
-            !_grid[ijToIndex(element.i, element.j + 1)].isDeleted) {
-          _grid[ijToIndex(element.i, element.j + 1)].isDeleted = true;
-          temp.add(FieldPosition(element.i, element.j + 1));
-        }
-      });
+      }
+      _aboutToDelete = temp;
+      _explosionRadius++;
       _aboutToDelete.forEach((element) {
         _grid[ijToIndex(element.i, element.j)].isClicked = true;
         _grid[ijToIndex(element.i, element.j)].isDeleted = true;
         _deletedFields++;
       });
-      _aboutToDelete = temp;
     }
     return true;
+  }
+
+  double getDistance(int x1, int y1, int x2, int y2) {
+    return sqrt((x1 - x2) * (x1 - x2) * 1.0 + (y1 - y2) * (y1 - y2) * 1.0);
   }
 }
