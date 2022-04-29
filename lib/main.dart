@@ -40,9 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-
-    grid = Grid(sett: GameSettings(bombs: 0, columns: 1, rows: 1));
-    time = -1;
     prepareGame();
   }
 
@@ -69,14 +66,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: dataLoaded ? resetGame : null,
+                      onPressed: resetGame,
                       child: const Text("Reset"),
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          grid.flagsLeft.toString(),
+                          dataLoaded ? grid.flagsLeft.toString() : "",
                           style: const TextStyle(
                             fontSize: 50,
                           ),
@@ -88,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          time.toString(),
+                          dataLoaded ? time.toString() : "0",
                           style: const TextStyle(
                             fontSize: 50,
                           ),
@@ -97,16 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: dataLoaded
-                          ? () async {
-                              List result = await openSettings(grid, context);
-                              if (result[0] == true) {
-                                setState(() {
-                                  prepareGame(result[1]);
-                                });
-                              }
-                            }
-                          : null,
+                      onPressed: tapSettings,
                       child: const Text("Settings"),
                     )
                   ],
@@ -118,25 +106,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Center(
-                      child: AspectRatio(
-                        aspectRatio: grid.columns / grid.rows,
-                        child: GameArea(
-                          grid: grid,
-                          onChanged: (FieldChangeData data) {
-                            debugPrint(
-                                '[HomePage] onChanged, index: ${data.index}, type: ${data.pressType}');
-                            switch (data.pressType) {
-                              case PressType.tap:
-                                handleFieldTap(data.index);
-                                break;
-                              case PressType.longPress:
-                                handleFieldLongPress(data.index);
-                                break;
-                              default:
-                            }
-                          },
-                        ),
-                      ),
+                      child: dataLoaded
+                          ? AspectRatio(
+                              aspectRatio: grid.columns / grid.rows,
+                              child: GameArea(
+                                grid: grid,
+                                onChanged: (FieldChangeData data) {
+                                  debugPrint(
+                                      '[HomePage] onChanged, index: ${data.index}, type: ${data.pressType}');
+                                  switch (data.pressType) {
+                                    case PressType.tap:
+                                      handleFieldTap(data.index);
+                                      break;
+                                    case PressType.longPress:
+                                      handleFieldLongPress(data.index);
+                                      break;
+                                    default:
+                                  }
+                                },
+                              ),
+                            )
+                          : null,
                     ),
                   ),
                 ),
@@ -170,15 +160,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void prepareGame([GameSettings? s]) async {
-    s = await loadData();
+    s ??= await loadData();
 
     debugPrint('loadEDData');
-
-    // s ??= GameSettings(
-    //   columns: 20,
-    //   rows: 30,
-    //   bombs: 500,
-    // );
 
     setState(() {
       grid = Grid(sett: s);
@@ -264,9 +248,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void resetGame() {
+    if (!dataLoaded) return;
     setState(() {
-      prepareGame();
+      prepareGame(grid.settings);
     });
+  }
+
+  void tapSettings() async {
+    if (!dataLoaded) return;
+    List result = await openSettings(grid, context);
+    if (result[0] == true) {
+      setState(() {
+        prepareGame(result[1]);
+      });
+    }
   }
 
   void resetTimer() {
