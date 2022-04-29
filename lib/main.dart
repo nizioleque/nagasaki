@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nagasaki/settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets.dart';
 import 'classes.dart';
 import 'grid.dart';
@@ -34,12 +35,14 @@ class _MyHomePageState extends State<MyHomePage> {
   late int time;
   Timer? timer;
 
+  bool dataLoaded = false;
+
   @override
   void initState() {
     super.initState();
 
-    // TODO: load user settings from storage??
-
+    grid = Grid(sett: GameSettings(bombs: 0, columns: 1, rows: 1));
+    time = -1;
     prepareGame();
   }
 
@@ -66,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: resetGame,
+                      onPressed: dataLoaded ? resetGame : null,
                       child: const Text("Reset"),
                     ),
                     Column(
@@ -94,14 +97,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: () async {
-                        List result = await openSettings(grid, context);
-                        if (result[0] == true) {
-                          setState(() {
-                            prepareGame(result[1]);
-                          });
-                        }
-                      },
+                      onPressed: dataLoaded
+                          ? () async {
+                              List result = await openSettings(grid, context);
+                              if (result[0] == true) {
+                                setState(() {
+                                  prepareGame(result[1]);
+                                });
+                              }
+                            }
+                          : null,
                       child: const Text("Settings"),
                     )
                   ],
@@ -143,16 +148,42 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void prepareGame([GameSettings? s]) {
-// TODO: save user settings
+  Future<GameSettings> loadData() async {
+    // obtain shared preferences
+    debugPrint('loadData');
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
 
-    s ??= GameSettings(
-      columns: 20,
-      rows: 30,
-      bombs: 500,
+    // set value
+
+    GameSettings settings = GameSettings(
+      rows: prefs.getInt('rows') ?? 4,
+      columns: prefs.getInt('columns') ?? 4,
+      bombs: prefs.getInt('bombs') ?? 4,
     );
 
-    grid = Grid(sett: s);
+    return settings;
+    // setState(() {
+    //   prepareGame(settings);
+    //   dataLoaded = true;
+    // });
+  }
+
+  void prepareGame([GameSettings? s]) async {
+    s = await loadData();
+
+    debugPrint('loadEDData');
+
+    // s ??= GameSettings(
+    //   columns: 20,
+    //   rows: 30,
+    //   bombs: 500,
+    // );
+
+    setState(() {
+      grid = Grid(sett: s);
+      dataLoaded = true;
+    });
 
     time = 0;
     resetTimer();
