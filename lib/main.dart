@@ -159,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
     GameSettings settings = GameSettings(
       rows: prefs.getInt('rows') ?? 10,
       columns: prefs.getInt('columns') ?? 10,
-      bombs: prefs.getInt('bombs') ?? 20,
+      bombs: prefs.getInt('bombs') ?? 10,
     );
 
     return settings;
