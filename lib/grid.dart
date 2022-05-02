@@ -12,7 +12,7 @@ part 'grid.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Grid {
   late List<FieldData> grid;
-  late GameSettings sett;
+  GameSettings sett = GameSettings();
 
   bool locked = false;
   int clickedFields = 0;
