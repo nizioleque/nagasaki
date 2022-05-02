@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'classes.g.dart';
+
+@JsonSerializable()
 class FieldData {
   bool isBomb;
   bool isClicked;
@@ -14,6 +18,10 @@ class FieldData {
     this.isDeleted = false,
     this.bombsAround = 0,
   });
+
+  factory FieldData.fromJson(Map<String, dynamic> json) =>
+      _$FieldDataFromJson(json);
+  Map<String, dynamic> toJson() => _$FieldDataToJson(this);
 }
 
 class FieldChangeData {
@@ -38,6 +46,7 @@ enum FieldState {
 }
 
 // setting values
+@JsonSerializable()
 class GameSettings {
   int columns;
   int rows;
@@ -48,6 +57,10 @@ class GameSettings {
     this.rows = 10,
     this.bombs = 10,
   });
+
+  factory GameSettings.fromJson(Map<String, dynamic> json) =>
+      _$GameSettingsFromJson(json);
+  Map<String, dynamic> toJson() => _$GameSettingsToJson(this);
 }
 
 class FieldPosition {

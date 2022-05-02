@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -96,7 +97,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     ElevatedButton(
                       onPressed: tapSettings,
                       child: const Text("Settings"),
-                    )
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        loadState();
+                        debugPrint("run loadstate");
+                      },
+                      child: const Text("loadState"),
+                    ),
                   ],
                 ),
               ),
@@ -152,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return settings;
   }
 
-  void saveData(GameSettings s) async {
+  void saveSettings(GameSettings s) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('rows', s.rows);
     prefs.setInt('columns', s.columns);
@@ -163,12 +171,37 @@ class _MyHomePageState extends State<MyHomePage> {
     s ??= await loadData();
 
     setState(() {
-      grid = Grid(sett: s);
+      grid = Grid(sett: s!);
       dataLoaded = true;
     });
 
     time = 0;
     resetTimer();
+  }
+
+  void saveState(Grid g) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      String encoded = jsonEncode(g);
+      prefs.setString('state', encoded);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<Grid> loadState() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    var stateStr = prefs.getString('state') ?? '';
+    var stateJson = jsonDecode(stateStr);
+
+    try {
+      return Grid.fromJson(stateJson);
+    } catch (e) {
+      debugPrint(e.toString());
+      return Grid(sett: GameSettings());
+    }
   }
 
   void firstTap(int index) {
@@ -249,6 +282,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // don't react to clicks before user data is loaded
     if (!dataLoaded) return;
 
+    // TODO: debug
+    saveState(grid);
+
     setState(() {
       prepareGame(grid.settings);
     });
@@ -268,7 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
 
       // save user preferences
-      saveData(result[1]);
+      saveSettings(result[1]);
     }
   }
 

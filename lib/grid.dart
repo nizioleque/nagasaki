@@ -2,58 +2,65 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:nagasaki/classes.dart';
+import 'package:json_annotation/json_annotation.dart';
+
 import 'classes.dart';
 import 'iterators.dart';
 
-class Grid {
-  late List<FieldData> _grid;
-  late GameSettings _sett;
+part 'grid.g.dart';
 
-  bool _locked = false;
-  int _clickedFields = 0;
-  int _flaggedFields = 0;
-  int _deletedFields = 0;
-  int _totalFields = 0;
-  bool _explosionStarted = false;
-  int _explosionRadius = 0;
-  late List<FieldPosition> _aboutToDelete;
+@JsonSerializable(explicitToJson: true)
+class Grid {
+  late List<FieldData> grid;
+  late GameSettings sett;
+
+  bool locked = false;
+  int clickedFields = 0;
+  int flaggedFields = 0;
+  int deletedFields = 0;
+  int totalFields = 0;
+  bool explosionStarted = false;
+  int explosionRadius = 0;
+  late List _aboutToDelete;
 
   // constructor
-  Grid({required sett}) {
-    _sett = sett;
-    _totalFields = _sett.rows * _sett.columns;
-    _grid = List.generate(_totalFields, (i) => FieldData());
+  Grid({required GameSettings sett}) {
+    sett = sett;
+    totalFields = sett.rows * sett.columns;
+    grid = List.generate(totalFields, (i) => FieldData());
   }
 
-  int get columns => _sett.columns;
-  int get rows => _sett.rows;
-  int get fields => _totalFields;
-  int get bombs => _sett.bombs;
-  int get flagged => _flaggedFields;
-  int get flagsLeft => bombs - flagged;
-  int get clicked => _clickedFields;
-  int get deleted => _deletedFields;
-  bool get locked => _locked;
-  GameSettings get settings => _sett;
+  factory Grid.fromJson(Map<String, dynamic> json) => _$GridFromJson(json);
+  Map<String, dynamic> toJson() => _$GridToJson(this);
 
-  int ijToIndex(int i, int j) => i * _sett.columns + j;
+  int get columns => sett.columns;
+  int get rows => sett.rows;
+  int get fields => totalFields;
+  int get bombs => sett.bombs;
+  int get flagged => flaggedFields;
+  int get flagsLeft => bombs - flagged;
+  int get clicked => clickedFields;
+  int get deleted => deletedFields;
+  GameSettings get settings => sett;
+
+  int ijToIndex(int i, int j) => i * sett.columns + j;
   FieldPosition indexToij(int index) =>
       FieldPosition(index ~/ columns, index % columns);
 
   FieldData at(int index) {
-    return _grid[index];
+    return grid[index];
   }
 
   FieldData atij(int i, int j) {
-    return _grid[i * _sett.columns + j];
+    return grid[i * sett.columns + j];
   }
 
   FieldData atPos(FieldPosition pos) {
-    return _grid[pos.i * _sett.columns + pos.j];
+    return grid[pos.i * sett.columns + pos.j];
   }
 
   void lock() {
-    _locked = true;
+    locked = true;
   }
 
   bool flag(int index) {
@@ -71,11 +78,11 @@ class Grid {
 
       // flag
       el.state = FieldState.flagged;
-      _flaggedFields++;
+      flaggedFields++;
     } else if (el.state == FieldState.flagged) {
       // remove flag
       el.state = FieldState.sus;
-      _flaggedFields--;
+      flaggedFields--;
     } else if (el.state == FieldState.sus) {
       el.state = FieldState.none;
     }
@@ -114,8 +121,8 @@ class Grid {
     var bombs = <int>{};
     var tapPos = indexToij(tapIndex);
 
-    while (bombs.length != _sett.bombs) {
-      int randomNumber = rng.nextInt(_sett.columns * _sett.rows);
+    while (bombs.length != sett.bombs) {
+      int randomNumber = rng.nextInt(sett.columns * sett.rows);
       var randomPos = indexToij(randomNumber);
 
       // check if i, j != first clicked field
@@ -133,7 +140,7 @@ class Grid {
     }
 
     // set bomb counts
-    for (int i = 0; i < _grid.length; i++) {
+    for (int i = 0; i < grid.length; i++) {
       at(i).bombsAround = _countBombsAround(i);
     }
   }
@@ -145,7 +152,7 @@ class Grid {
     if (field.state == FieldState.flagged) return;
 
     field.isClicked = true;
-    _clickedFields++;
+    clickedFields++;
 
     if (field.isBomb) return;
 
@@ -162,12 +169,12 @@ class Grid {
     var i = pos.i;
     var j = pos.j;
 
-    if (!_explosionStarted) {
+    if (!explosionStarted) {
       _aboutToDelete = [];
       _aboutToDelete.add(FieldPosition(i, j));
-      _explosionStarted = true;
+      explosionStarted = true;
       atij(i, j).isDeleted = true;
-      _deletedFields++;
+      deletedFields++;
     }
     if (deleted == rows * columns) {
       return false;
@@ -175,24 +182,24 @@ class Grid {
       debugPrint("$deleted deleted fields");
       List<FieldPosition> temp = [];
 
-      for (int index = 0; index < _grid.length; index++) {
+      for (int index = 0; index < grid.length; index++) {
         // CIRCLE PATTERN
         var curPos = indexToij(index);
         var curi = curPos.i;
         var curj = curPos.j;
         if (!atij(curi, curj).isDeleted &&
-            _getDistance(i, j, curi, curj) <= _explosionRadius * 1.0 &&
+            _getDistance(i, j, curi, curj) <= explosionRadius * 1.0 &&
             !(i == curi && j == curj)) {
           atij(curi, curj).isDeleted = true;
           temp.add(FieldPosition(curi, curj));
         }
       }
       _aboutToDelete = temp;
-      _explosionRadius++;
+      explosionRadius++;
       for (var element in _aboutToDelete) {
         atij(element.i, element.j).isClicked = true;
         atij(element.i, element.j).isDeleted = true;
-        _deletedFields++;
+        deletedFields++;
       }
     }
     return true;
