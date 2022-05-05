@@ -39,8 +39,8 @@ Future<List> openSettings(Grid grid, BuildContext context) async {
   await showDialog(
     context: context,
     builder: (BuildContext context) => AlertDialog(
-      title: const Text("SETTINGS"),
-      contentPadding: const EdgeInsets.all(20.0),
+      title: const Text("Settings"),
+      contentPadding: const EdgeInsets.all(24.0),
       scrollable: true,
       content: Form(
         key: _formKey,
