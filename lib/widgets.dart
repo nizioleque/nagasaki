@@ -58,7 +58,9 @@ class Field extends StatefulWidget {
   static const longPressDuration = 200;
 
   // bomb/flag img scale
-  static const imgSizeFactor = 0.7;
+  static const imgSizeFactorHidden = 0.6;
+  static const imgSizeFactorClicked = 0.7;
+  static const clickedOffset = 0.4;
 
   @override
   State<Field> createState() => _FieldState();
@@ -69,30 +71,14 @@ class _FieldState extends State<Field> {
 
   @override
   Widget build(BuildContext context) {
-    var color = widget.data.isClicked
-        ? (widget.data.isBomb ? Colors.red : Colors.grey)
-        // : (widget.data.state == FieldState.flagged
-        //     ? Colors.green
-        //     : Colors.grey);
-        : (widget.data.state == FieldState.flagged
-            ? Colors.green
-            : (widget.data.state == FieldState.sus
-                ? Colors.yellow
-                : Colors.grey));
+    String backgroundImage = 'assets/images/field-hidden.png';
 
-    switch (widget.data.state) {
-      case FieldState.none:
-        Colors.grey;
-        break;
-      case FieldState.flagged:
-        Colors.green;
-        break;
-      case FieldState.sus:
-        Colors.yellow;
-        break;
-      default:
+    if (widget.data.isClicked) {
+      backgroundImage = 'assets/images/field-0.png';
+      if (!widget.data.isBomb && widget.data.bombsAround > 0) {
+        backgroundImage = 'assets/images/field-${widget.data.bombsAround}.png';
+      }
     }
-    // var color = widget.data.isBomb ? Colors.red : Colors.grey;
 
     return GestureDetector(
       onTapDown: (_) {
@@ -116,33 +102,35 @@ class _FieldState extends State<Field> {
           widget.handleTap();
         }
       },
-      child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: color,
-              border: widget.data.isClicked ? null : Border.all(width: 4.0),
-            ),
-            child: Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                if (widget.data.bombsAround > 0 &&
-                    widget.data.isClicked &&
-                    !widget.data.isBomb)
-                  Text(
-                    widget.data.bombsAround.toString(),
-                  ),
-                if (widget.data.isBomb && widget.data.isClicked)
-                  const FieldImage(imgPath: 'assets/images/bomb.png'),
-                if (widget.data.state == FieldState.flagged &&
-                    !widget.data.isClicked)
-                  const FieldImage(imgPath: 'assets/images/flag.png'),
-                if (widget.data.state == FieldState.sus &&
-                    !widget.data.isClicked)
-                  const FieldImage(imgPath: 'assets/images/mark.png')
-              ],
-            ),
-          )),
+      child: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage(backgroundImage),
+          fit: BoxFit.cover,
+        )),
+        child: Stack(
+          alignment: AlignmentDirectional.center,
+          fit: StackFit.expand,
+          children: [
+            if (widget.data.isBomb && widget.data.isClicked)
+              const FieldImage(
+                imgPath: 'assets/images/bomb.png',
+                clicked: true,
+              ),
+            if (widget.data.state == FieldState.flagged &&
+                !widget.data.isClicked)
+              const FieldImage(
+                imgPath: 'assets/images/flag.png',
+                clicked: false,
+              ),
+            if (widget.data.state == FieldState.sus && !widget.data.isClicked)
+              const FieldImage(
+                imgPath: 'assets/images/mark.png',
+                clicked: false,
+              )
+          ],
+        ),
+      ),
     );
   }
 }
@@ -151,15 +139,25 @@ class FieldImage extends StatelessWidget {
   const FieldImage({
     Key? key,
     required this.imgPath,
+    required this.clicked,
   }) : super(key: key);
 
   final String imgPath;
+  final bool clicked;
 
   @override
   Widget build(BuildContext context) {
+    final imgSizeFactor =
+        clicked ? Field.imgSizeFactorClicked : Field.imgSizeFactorHidden;
+
+    final alignment = clicked
+        ? const Alignment(Field.clickedOffset, Field.clickedOffset)
+        : Alignment.center;
+
     return FractionallySizedBox(
-      heightFactor: Field.imgSizeFactor,
-      widthFactor: Field.imgSizeFactor,
+      heightFactor: imgSizeFactor,
+      widthFactor: imgSizeFactor,
+      alignment: alignment,
       child: Image(
         image: AssetImage(imgPath),
         fit: BoxFit.contain,

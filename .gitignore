@@ -44,3 +44,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Custom
+# Powerpoint temporary files
+assets_projects/~$icons.pptx
+# Exported icons
+assets_projects/export

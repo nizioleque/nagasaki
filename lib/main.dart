@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
-        color: Colors.grey,
+        color: const Color(0xffD4D4D4),
         child: SafeArea(
           child: Column(
             children: [
@@ -127,9 +127,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               ),
               Expanded(
                 child: Container(
-                  color: Colors.white,
+                  color: const Color(0xffD4D4D4),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(0),
                     child: Center(
                       child: dataLoaded
                           ? AspectRatio(
