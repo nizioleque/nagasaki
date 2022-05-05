@@ -14,18 +14,21 @@ class Grid {
   late List<FieldData> grid;
   GameSettings sett = GameSettings();
 
+  int time = 0;
+
   bool locked = false;
+
   int clickedFields = 0;
   int flaggedFields = 0;
   int deletedFields = 0;
   int totalFields = 0;
+
   bool explosionStarted = false;
   int explosionRadius = 0;
   late List _aboutToDelete;
 
   // constructor
-  Grid({required GameSettings sett}) {
-    sett = sett;
+  Grid({required this.sett}) {
     totalFields = sett.rows * sett.columns;
     grid = List.generate(totalFields, (i) => FieldData());
   }

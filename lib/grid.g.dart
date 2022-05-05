@@ -12,6 +12,7 @@ Grid _$GridFromJson(Map<String, dynamic> json) => Grid(
       ..grid = (json['grid'] as List<dynamic>)
           .map((e) => FieldData.fromJson(e as Map<String, dynamic>))
           .toList()
+      ..time = json['time'] as int
       ..locked = json['locked'] as bool
       ..clickedFields = json['clickedFields'] as int
       ..flaggedFields = json['flaggedFields'] as int
@@ -23,6 +24,7 @@ Grid _$GridFromJson(Map<String, dynamic> json) => Grid(
 Map<String, dynamic> _$GridToJson(Grid instance) => <String, dynamic>{
       'grid': instance.grid.map((e) => e.toJson()).toList(),
       'sett': instance.sett.toJson(),
+      'time': instance.time,
       'locked': instance.locked,
       'clickedFields': instance.clickedFields,
       'flaggedFields': instance.flaggedFields,

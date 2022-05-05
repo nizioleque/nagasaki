@@ -31,23 +31,44 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   late Grid grid;
-  late int time;
   Timer? timer;
-
+  bool active = true;
   bool dataLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    prepareGame();
+    WidgetsBinding.instance?.addObserver(this);
+    loadState();
   }
 
   @override
   void dispose() {
     super.dispose();
+    WidgetsBinding.instance?.removeObserver(this);
     timer?.cancel();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    debugPrint("didChangeAPpLifecycleState, state: $state");
+
+    if (active && state != AppLifecycleState.resumed) {
+      debugPrint('app paused');
+
+      saveState();
+      active = false;
+
+      // pause timer
+    }
+
+    if (!active && state == AppLifecycleState.resumed) {
+      debugPrint('app resumed');
+      // restart timer
+      active = true;
+    }
   }
 
   @override
@@ -67,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: resetGame,
+                      onPressed: prepareGame,
                       child: const Text("Reset"),
                     ),
                     Column(
@@ -86,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          dataLoaded ? time.toString() : "0",
+                          dataLoaded ? grid.time.toString() : "0",
                           style: const TextStyle(
                             fontSize: 50,
                           ),
@@ -101,7 +122,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ElevatedButton(
                       onPressed: () {
                         loadState();
-                        debugPrint("run loadstate");
                       },
                       child: const Text("loadState"),
                     ),
@@ -146,61 +166,65 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<GameSettings> loadData() async {
-    // obtain shared preferences
-    final prefs = await SharedPreferences.getInstance();
-
-    // set value
-    GameSettings settings = GameSettings(
-      rows: prefs.getInt('rows') ?? 10,
-      columns: prefs.getInt('columns') ?? 10,
-      bombs: prefs.getInt('bombs') ?? 10,
-    );
-
-    return settings;
-  }
-
-  void saveSettings(GameSettings s) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setInt('rows', s.rows);
-    prefs.setInt('columns', s.columns);
-    prefs.setInt('bombs', s.bombs);
-  }
-
   void prepareGame([GameSettings? s]) async {
-    s ??= await loadData();
+    // get current settings if not supplied
+    s ??= grid.settings;
 
+    // set new grid
     setState(() {
       grid = Grid(sett: s!);
       dataLoaded = true;
     });
 
-    time = 0;
     resetTimer();
   }
 
-  void saveState(Grid g) async {
+  void saveState() async {
+    debugPrint('saveState!!!');
+
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      String encoded = jsonEncode(g);
-      prefs.setString('state', encoded);
+      String gridEncoded = jsonEncode(grid);
+      prefs.setString('state', gridEncoded);
     } catch (e) {
       debugPrint(e.toString());
     }
   }
 
-  Future<Grid> loadState() async {
+  void loadState() async {
+    debugPrint('loadState!!!');
+
     final prefs = await SharedPreferences.getInstance();
 
     var stateStr = prefs.getString('state') ?? '';
+
+    if (stateStr == '') {
+      debugPrint('EMPTY STATESTR');
+
+      // new game
+      setState(() {
+        grid = Grid(sett: GameSettings());
+        dataLoaded = true;
+      });
+      return;
+    }
+
+    // loading existing game
     var stateJson = jsonDecode(stateStr);
 
     try {
-      return Grid.fromJson(stateJson);
+      setState(() {
+        grid = Grid.fromJson(stateJson);
+        dataLoaded = true;
+      });
     } catch (e) {
       debugPrint(e.toString());
-      return Grid(sett: GameSettings());
+
+      setState(() {
+        grid = Grid(sett: GameSettings());
+        dataLoaded = true;
+      });
     }
   }
 
@@ -278,18 +302,6 @@ class _MyHomePageState extends State<MyHomePage> {
     grid.lock();
   }
 
-  void resetGame() {
-    // don't react to clicks before user data is loaded
-    if (!dataLoaded) return;
-
-    // TODO: debug
-    saveState(grid);
-
-    setState(() {
-      prepareGame(grid.settings);
-    });
-  }
-
   void tapSettings() async {
     // don't react to clicks before user data is loaded
     if (!dataLoaded) return;
@@ -302,9 +314,6 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         prepareGame(result[1]);
       });
-
-      // save user preferences
-      saveSettings(result[1]);
     }
   }
 
@@ -322,7 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
           if (grid.locked) {
             timer.cancel();
           } else {
-            time++;
+            grid.time++;
           }
         });
       },
