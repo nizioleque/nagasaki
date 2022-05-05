@@ -62,11 +62,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       active = false;
 
       // pause timer
+      resetTimer();
     }
 
     if (!active && state == AppLifecycleState.resumed) {
       debugPrint('app resumed');
       // restart timer
+      startTimer();
+
       active = true;
     }
   }
@@ -118,12 +121,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     ElevatedButton(
                       onPressed: tapSettings,
                       child: const Text("Settings"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        loadState();
-                      },
-                      child: const Text("loadState"),
                     ),
                   ],
                 ),
