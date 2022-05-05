@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nagasaki/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets.dart';
@@ -18,8 +19,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyHomePage(),
+    return MaterialApp(
+      home: const MyHomePage(),
+      theme: ThemeData(
+          textTheme: GoogleFonts.oxaniumTextTheme(
+        Theme.of(context).textTheme,
+      )),
     );
   }
 }
@@ -85,14 +90,19 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           child: Column(
             children: [
               Container(
-                height: 150,
+                height: 130,
                 color: Colors.grey,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
                       onPressed: prepareGame,
-                      child: const Text("Reset"),
+                      child: const Icon(Icons.refresh),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(0, 0),
+                        padding: const EdgeInsets.all(8.0),
+                        shape: const CircleBorder(),
+                      ),
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -120,7 +130,12 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     ),
                     ElevatedButton(
                       onPressed: tapSettings,
-                      child: const Text("Settings"),
+                      child: const Icon(Icons.settings),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(0, 0),
+                        padding: const EdgeInsets.all(8.0),
+                        shape: const CircleBorder(),
+                      ),
                     ),
                   ],
                 ),
