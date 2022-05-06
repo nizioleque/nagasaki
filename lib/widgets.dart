@@ -260,7 +260,7 @@ class HeaderCounter extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          width: 95.0 * h,
+          // width: 105.0 * h,
           decoration: BoxDecoration(
             border: outsetBorder(
               4.0,
@@ -269,15 +269,13 @@ class HeaderCounter extends StatelessWidget {
             ),
             color: const Color(0xff440000),
           ),
-          child: Text(
-            dataText,
-            textAlign: TextAlign.end,
-            style: const TextStyle(
-              fontSize: 50,
-              color: Color(0xffff0000),
-              fontWeight: FontWeight.w700,
-              height: 0.9,
-            ),
+          child: Stack(
+            alignment: Alignment.centerRight,
+            fit: StackFit.loose,
+            children: [
+              CounterText(dataText: dataText, visible: true),
+              const CounterText(dataText: "888", visible: false),
+            ],
           ),
         ),
         Padding(
@@ -291,6 +289,32 @@ class HeaderCounter extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class CounterText extends StatelessWidget {
+  const CounterText({
+    Key? key,
+    required this.dataText,
+    required this.visible,
+  }) : super(key: key);
+
+  final String dataText;
+  final bool visible;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      dataText,
+      textAlign: TextAlign.end,
+      style: TextStyle(
+        fontSize: 50,
+        color: visible ? const Color(0xffff0000) : Colors.transparent,
+        fontWeight: FontWeight.w700,
+        height: 0.9,
+        letterSpacing: 1.2,
+      ),
     );
   }
 }
