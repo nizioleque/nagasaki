@@ -250,7 +250,7 @@ class HeaderCounter extends StatelessWidget {
     required this.labelText,
   }) : super(key: key);
 
-  final String dataText;
+  final int dataText;
   final String labelText;
 
   @override
@@ -259,20 +259,13 @@ class HeaderCounter extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          decoration: BoxDecoration(
-            border: outsetBorder(
-              5.0,
-              const Color.fromARGB(255, 63, 46, 46),
-              const Color.fromARGB(255, 24, 5, 5),
-            ),
-            color: const Color.fromARGB(255, 44, 12, 12),
-          ),
-          child: Stack(
-            alignment: Alignment.centerRight,
-            fit: StackFit.loose,
+          height: 50,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              CounterText(dataText: dataText, visible: true),
-              const CounterText(dataText: "888", visible: false),
+              Image.asset('assets/images/timer_null.png'),
+              Image.asset('assets/images/timer_null.png'),
+              Image.asset('assets/images/timer_null.png'),
             ],
           ),
         ),

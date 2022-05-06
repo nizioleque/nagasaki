@@ -105,11 +105,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                       child: const Icon(Icons.refresh),
                     ),
                     HeaderCounter(
-                      dataText: dataLoaded ? grid.flagsLeft.toString() : "",
+                      dataText: dataLoaded ? grid.flagsLeft : 0,
                       labelText: "bombs",
                     ),
                     HeaderCounter(
-                      dataText: dataLoaded ? grid.time.toString() : "",
+                      dataText: dataLoaded ? grid.time : 0,
                       labelText: "timer",
                     ),
                     HeaderButton(
