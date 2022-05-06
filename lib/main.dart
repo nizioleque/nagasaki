@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:nagasaki/helpers.dart';
 import 'package:nagasaki/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'end_dialog.dart';
 import 'widgets.dart';
 import 'classes.dart';
 import 'grid.dart';
@@ -60,7 +61,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-
     if (active && state != AppLifecycleState.resumed) {
       saveState();
       active = false;
@@ -259,29 +259,31 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void gameOver() {
-    showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => const AlertDialog(
-        title: Text('GAME OVER'),
-        content: Text("You've hit a bomb!"),
-        backgroundColor: Colors.red,
-      ),
-    );
-
     grid.lock();
+    showEndGameDialog(context, grid, false);
+
+    // showDialog<String>(
+    //   context: context,
+    //   builder: (BuildContext context) => const AlertDialog(
+    //     title: Text('GAME OVER'),
+    //     content: Text("You've hit a bomb!"),
+    //     backgroundColor: Colors.red,
+    //   ),
+    // );
   }
 
   void gameWon() {
-    showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => const AlertDialog(
-        title: Text("YOU WON"),
-        content: Text("You've found all bombs!"),
-        backgroundColor: Colors.lightGreen,
-      ),
-    );
+    // showDialog<String>(
+    //   context: context,
+    //   builder: (BuildContext context) => const AlertDialog(
+    //     title: Text("YOU WON"),
+    //     content: Text("You've found all bombs!"),
+    //     backgroundColor: Colors.lightGreen,
+    //   ),
+    // );
 
     grid.lock();
+    showEndGameDialog(context, grid, true);
   }
 
   void tapSettings() async {
