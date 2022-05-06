@@ -91,51 +91,25 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             children: [
               Container(
                 height: 130,
-                color: Colors.grey,
+                color: const Color(0xffD4D4D4),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                      onPressed: prepareGame,
+                    HeaderButton(
+                      onTap: prepareGame,
                       child: const Icon(Icons.refresh),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(0, 0),
-                        padding: const EdgeInsets.all(8.0),
-                        shape: const CircleBorder(),
-                      ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          dataLoaded ? grid.flagsLeft.toString() : "",
-                          style: const TextStyle(
-                            fontSize: 50,
-                          ),
-                        ),
-                        const Text("bombs"),
-                      ],
+                    HeaderCounter(
+                      dataText: dataLoaded ? grid.flagsLeft.toString() : "",
+                      labelText: "bombs",
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          dataLoaded ? grid.time.toString() : "0",
-                          style: const TextStyle(
-                            fontSize: 50,
-                          ),
-                        ),
-                        const Text("time"),
-                      ],
+                    HeaderCounter(
+                      dataText: dataLoaded ? grid.time.toString() : "",
+                      labelText: "timer",
                     ),
-                    ElevatedButton(
-                      onPressed: tapSettings,
+                    HeaderButton(
+                      onTap: tapSettings,
                       child: const Icon(Icons.settings),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(0, 0),
-                        padding: const EdgeInsets.all(8.0),
-                        shape: const CircleBorder(),
-                      ),
                     ),
                   ],
                 ),

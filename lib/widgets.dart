@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -190,6 +191,101 @@ class SettingsNumberField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: text,
       ),
+    );
+  }
+}
+
+class HeaderButton extends StatefulWidget {
+  const HeaderButton({
+    Key? key,
+    required this.onTap,
+    required this.child,
+  }) : super(key: key);
+
+  final void Function() onTap;
+  final Widget child;
+
+  @override
+  State<HeaderButton> createState() => _HeaderButtonState();
+}
+
+class _HeaderButtonState extends State<HeaderButton> {
+  bool pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      onTapDown: (_) {
+        setState(() {
+          pressed = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          pressed = false;
+        });
+      },
+      child: Container(
+        child: widget.child,
+        height: 40,
+        width: 40,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: pressed
+                ? const AssetImage('assets/images/button-pressed.png')
+                : const AssetImage('assets/images/button.png'),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HeaderCounter extends StatelessWidget {
+  const HeaderCounter({
+    Key? key,
+    required this.dataText,
+    required this.labelText,
+  }) : super(key: key);
+
+  final String dataText;
+  final String labelText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+              width: 2.0,
+            ),
+            color: const Color(0xff440000),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 0.0),
+            child: Text(
+              dataText,
+              style: const TextStyle(
+                fontSize: 50,
+                color: Color(0xffff0000),
+                fontWeight: FontWeight.w700,
+                height: 0.9,
+              ),
+            ),
+          ),
+        ),
+        Text(
+          labelText.toUpperCase(),
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+        ),
+      ],
     );
   }
 }
