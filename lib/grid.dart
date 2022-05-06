@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:nagasaki/classes.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import 'classes.dart';
 import 'iterators.dart';
@@ -15,6 +16,8 @@ class Grid {
   GameSettings sett = GameSettings();
 
   int time = 0;
+
+  static AudioCache player = AudioCache();
 
   bool locked = false;
 
@@ -157,7 +160,10 @@ class Grid {
     field.isClicked = true;
     clickedFields++;
 
-    if (field.isBomb) return;
+    if (field.isBomb) {
+      player.play('sounds/explosion.mp3');
+      return;
+    }
 
     // make fields around visible
     if (field.bombsAround == 0) {
@@ -201,6 +207,9 @@ class Grid {
       for (var element in _aboutToDelete) {
         atij(element.i, element.j).isClicked = true;
         atij(element.i, element.j).isDeleted = true;
+        if (atij(element.i, element.j).isBomb) {
+          player.play('sounds/explosion.mp3');
+        }
         deletedFields++;
       }
     }
