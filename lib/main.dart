@@ -124,21 +124,30 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   color: MyHomePage.bgColor,
                   child: Center(
                     child: dataLoaded
-                        ? AspectRatio(
-                            aspectRatio: grid.columns / grid.rows,
-                            child: GameArea(
-                              grid: grid,
-                              onChanged: (FieldChangeData data) {
-                                switch (data.pressType) {
-                                  case PressType.tap:
-                                    handleFieldTap(data.index);
-                                    break;
-                                  case PressType.longPress:
-                                    handleFieldLongPress(data.index);
-                                    break;
-                                  default:
-                                }
-                              },
+                        ? Container(
+                            decoration: BoxDecoration(
+                              border: outsetBorder(
+                                8.0,
+                                const Color(0xff7F7F7F),
+                                const Color(0xffF2F2F2),
+                              ),
+                            ),
+                            child: AspectRatio(
+                              aspectRatio: grid.columns / grid.rows,
+                              child: GameArea(
+                                grid: grid,
+                                onChanged: (FieldChangeData data) {
+                                  switch (data.pressType) {
+                                    case PressType.tap:
+                                      handleFieldTap(data.index);
+                                      break;
+                                    case PressType.longPress:
+                                      handleFieldLongPress(data.index);
+                                      break;
+                                    default:
+                                  }
+                                },
+                              ),
                             ),
                           )
                         : null,
