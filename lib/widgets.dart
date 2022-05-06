@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'classes.dart';
 import 'grid.dart';
+import 'helpers.dart';
 
 // grid widget class
 class GameArea extends StatelessWidget {
@@ -254,35 +254,40 @@ class HeaderCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double h = MediaQuery.of(context).textScaleFactor;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
+          width: 95.0 * h,
           decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.black,
-              width: 2.0,
+            border: outsetBorder(
+              4.0,
+              const Color.fromARGB(255, 102, 56, 56),
+              const Color.fromARGB(255, 20, 20, 20),
             ),
             color: const Color(0xff440000),
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 0.0),
-            child: Text(
-              dataText,
-              style: const TextStyle(
-                fontSize: 50,
-                color: Color(0xffff0000),
-                fontWeight: FontWeight.w700,
-                height: 0.9,
-              ),
+          child: Text(
+            dataText,
+            textAlign: TextAlign.end,
+            style: const TextStyle(
+              fontSize: 50,
+              color: Color(0xffff0000),
+              fontWeight: FontWeight.w700,
+              height: 0.9,
             ),
           ),
         ),
-        Text(
-          labelText.toUpperCase(),
-          style: const TextStyle(
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
+        Padding(
+          padding: const EdgeInsets.only(top: 4.0),
+          child: Text(
+            labelText.toUpperCase(),
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
+            ),
           ),
         ),
       ],

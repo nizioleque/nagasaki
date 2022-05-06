@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nagasaki/helpers.dart';
 import 'package:nagasaki/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets.dart';
@@ -91,7 +92,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             children: [
               Container(
                 height: 130,
-                color: const Color(0xffD4D4D4),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 206, 206, 206),
+                  border: outsetBorder(
+                    8.0,
+                    const Color(0xff7F7F7F),
+                    const Color(0xffF2F2F2),
+                  ),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -117,31 +125,28 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               Expanded(
                 child: Container(
                   color: const Color(0xffD4D4D4),
-                  child: Padding(
-                    padding: const EdgeInsets.all(0),
-                    child: Center(
-                      child: dataLoaded
-                          ? AspectRatio(
-                              aspectRatio: grid.columns / grid.rows,
-                              child: GameArea(
-                                grid: grid,
-                                onChanged: (FieldChangeData data) {
-                                  debugPrint(
-                                      '[HomePage] onChanged, index: ${data.index}, type: ${data.pressType}');
-                                  switch (data.pressType) {
-                                    case PressType.tap:
-                                      handleFieldTap(data.index);
-                                      break;
-                                    case PressType.longPress:
-                                      handleFieldLongPress(data.index);
-                                      break;
-                                    default:
-                                  }
-                                },
-                              ),
-                            )
-                          : null,
-                    ),
+                  child: Center(
+                    child: dataLoaded
+                        ? AspectRatio(
+                            aspectRatio: grid.columns / grid.rows,
+                            child: GameArea(
+                              grid: grid,
+                              onChanged: (FieldChangeData data) {
+                                debugPrint(
+                                    '[HomePage] onChanged, index: ${data.index}, type: ${data.pressType}');
+                                switch (data.pressType) {
+                                  case PressType.tap:
+                                    handleFieldTap(data.index);
+                                    break;
+                                  case PressType.longPress:
+                                    handleFieldLongPress(data.index);
+                                    break;
+                                  default:
+                                }
+                              },
+                            ),
+                          )
+                        : null,
                   ),
                 ),
               ),
