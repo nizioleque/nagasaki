@@ -258,17 +258,7 @@ class HeaderCounter extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          height: 50,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Image.asset('assets/images/timer_null.png'),
-              Image.asset('assets/images/timer_null.png'),
-              Image.asset('assets/images/timer_null.png'),
-            ],
-          ),
-        ),
+        getDigital(dataText),
         Padding(
           padding: const EdgeInsets.only(top: 5.0),
           child: Text(
@@ -282,6 +272,59 @@ class HeaderCounter extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget getDigital(int data) {
+    if (data >= 1000) {
+      return SizedBox(
+        height: 65,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Image.asset('assets/images/digital_9.png'),
+            Image.asset('assets/images/digital_9.png'),
+            Image.asset('assets/images/digital_9.png'),
+          ],
+        ),
+      );
+    }
+    if (data >= 100) {
+      return SizedBox(
+        height: 65,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Image.asset('assets/images/digital_${dataText ~/ 100}.png'),
+            Image.asset('assets/images/digital_${(dataText % 100) ~/ 10}.png'),
+            Image.asset('assets/images/digital_${dataText % 10}.png'),
+          ],
+        ),
+      );
+    } else if (data >= 10) {
+      return SizedBox(
+        height: 65,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Image.asset('assets/images/digital_null.png'),
+            Image.asset('assets/images/digital_${(dataText % 100) ~/ 10}.png'),
+            Image.asset('assets/images/digital_${dataText % 10}.png'),
+          ],
+        ),
+      );
+    } else {
+      return SizedBox(
+        height: 65,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Image.asset('assets/images/digital_null.png'),
+            Image.asset('assets/images/digital_null.png'),
+            Image.asset('assets/images/digital_$dataText.png'),
+          ],
+        ),
+      );
+    }
   }
 }
 
