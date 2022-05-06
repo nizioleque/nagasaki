@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
+  static const bgColor = Color(0xFFD4D4D4);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -74,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (!active && state == AppLifecycleState.resumed) {
       debugPrint('app resumed');
       // restart timer
-      startTimer();
+      if (!grid.locked && grid.clicked > 0) startTimer();
 
       active = true;
     }
@@ -86,18 +87,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
-        color: const Color(0xffD4D4D4),
+        color: const Color(0xffD9D9D9),
         child: SafeArea(
           child: Column(
             children: [
               Container(
                 height: 130,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 206, 206, 206),
+                  color: MyHomePage.bgColor,
                   border: outsetBorder(
                     8.0,
-                    const Color(0xff7F7F7F),
                     const Color(0xffF2F2F2),
+                    const Color(0xff7F7F7F),
                   ),
                 ),
                 child: Row(
@@ -124,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               ),
               Expanded(
                 child: Container(
-                  color: const Color(0xffD4D4D4),
+                  color: MyHomePage.bgColor,
                   child: Center(
                     child: dataLoaded
                         ? AspectRatio(
@@ -203,11 +204,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
     // loading existing game
     var stateJson = jsonDecode(stateStr);
+    var stateGrid = Grid.fromJson(stateJson);
 
     try {
       setState(() {
-        grid = Grid.fromJson(stateJson);
+        grid = stateGrid;
         dataLoaded = true;
+
+        if (!grid.locked && grid.clicked > 0) startTimer();
       });
     } catch (e) {
       debugPrint(e.toString());
@@ -237,7 +241,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (!success) return;
 
     if (grid.at(index).isBomb) {
-      // tempExplode(index);
+      grid.lock();
+
       Timer.periodic(
         const Duration(milliseconds: 50),
         (Timer timer) {

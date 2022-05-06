@@ -226,6 +226,11 @@ class _HeaderButtonState extends State<HeaderButton> {
           pressed = false;
         });
       },
+      onTapCancel: () {
+        setState(() {
+          pressed = false;
+        });
+      },
       child: Container(
         child: widget.child,
         height: 40,
@@ -254,20 +259,17 @@ class HeaderCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double h = MediaQuery.of(context).textScaleFactor;
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          // width: 105.0 * h,
           decoration: BoxDecoration(
             border: outsetBorder(
-              4.0,
-              const Color.fromARGB(255, 102, 56, 56),
-              const Color.fromARGB(255, 20, 20, 20),
+              5.0,
+              const Color.fromARGB(255, 63, 46, 46),
+              const Color.fromARGB(255, 24, 5, 5),
             ),
-            color: const Color(0xff440000),
+            color: const Color.fromARGB(255, 44, 12, 12),
           ),
           child: Stack(
             alignment: Alignment.centerRight,
@@ -279,12 +281,13 @@ class HeaderCounter extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 4.0),
+          padding: const EdgeInsets.only(top: 5.0),
           child: Text(
             labelText.toUpperCase(),
             style: const TextStyle(
               fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
+              letterSpacing: 1.5,
+              fontSize: 15,
             ),
           ),
         ),
@@ -305,15 +308,19 @@ class CounterText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      dataText,
-      textAlign: TextAlign.end,
-      style: TextStyle(
-        fontSize: 50,
-        color: visible ? const Color(0xffff0000) : Colors.transparent,
-        fontWeight: FontWeight.w700,
-        height: 0.9,
-        letterSpacing: 1.2,
+    double h = MediaQuery.of(context).textScaleFactor;
+
+    return SizedBox(
+      height: 40 * h,
+      child: Text(
+        dataText,
+        style: TextStyle(
+          fontSize: 45,
+          color: visible ? const Color(0xffFB0007) : Colors.transparent,
+          fontWeight: FontWeight.w700,
+          height: 1,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
