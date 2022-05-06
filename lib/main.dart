@@ -60,11 +60,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    debugPrint("didChangeAPpLifecycleState, state: $state");
 
     if (active && state != AppLifecycleState.resumed) {
-      debugPrint('app paused');
-
       saveState();
       active = false;
 
@@ -73,7 +70,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
 
     if (!active && state == AppLifecycleState.resumed) {
-      debugPrint('app resumed');
       // restart timer
       if (!grid.locked && grid.clicked > 0) startTimer();
 
@@ -133,8 +129,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                             child: GameArea(
                               grid: grid,
                               onChanged: (FieldChangeData data) {
-                                debugPrint(
-                                    '[HomePage] onChanged, index: ${data.index}, type: ${data.pressType}');
                                 switch (data.pressType) {
                                   case PressType.tap:
                                     handleFieldTap(data.index);
@@ -172,8 +166,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void saveState() async {
-    debugPrint('saveState!!!');
-
     final prefs = await SharedPreferences.getInstance();
 
     try {
@@ -185,15 +177,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void loadState() async {
-    debugPrint('loadState!!!');
-
     final prefs = await SharedPreferences.getInstance();
 
     var stateStr = prefs.getString('state') ?? '';
 
     if (stateStr == '') {
-      debugPrint('EMPTY STATESTR');
-
       // new game
       setState(() {
         grid = Grid(sett: GameSettings());
@@ -271,7 +259,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void gameOver() {
-    debugPrint('Game Over!');
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => const AlertDialog(
@@ -285,7 +272,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void gameWon() {
-    debugPrint('You Won!');
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => const AlertDialog(

@@ -29,11 +29,9 @@ class GameArea extends StatelessWidget {
         (index) => Field(
           data: grid.at(index),
           handleTap: () {
-            debugPrint('[GameArea] detected tap');
             onChanged(FieldChangeData(index, PressType.tap));
           },
           handleLongPress: () {
-            debugPrint('[GameArea] detected long press');
             onChanged(FieldChangeData(index, PressType.longPress));
           },
         ),
@@ -88,7 +86,6 @@ class _FieldState extends State<Field> {
           const Duration(milliseconds: Field.longPressDuration),
           () {
             // trigger long press
-            debugPrint('[Field] detected long press');
             widget.handleLongPress();
           },
         );
@@ -99,7 +96,6 @@ class _FieldState extends State<Field> {
           longPressTimer?.cancel();
 
           // trigger tap
-          debugPrint('[Field] detected tap');
           widget.handleTap();
         }
       },

@@ -182,7 +182,6 @@ class Grid {
     if (deleted == rows * columns) {
       return false;
     } else {
-      debugPrint("$deleted deleted fields");
       List<FieldPosition> temp = [];
 
       for (int index = 0; index < grid.length; index++) {
