@@ -265,7 +265,7 @@ class HeaderCounter extends StatelessWidget {
               const Color.fromARGB(255, 63, 46, 46),
               const Color.fromARGB(255, 24, 5, 5),
             ),
-            color: const Color.fromARGB(255, 44, 12, 12),
+            color: Color(0xFF2C0C0C),
           ),
           child: Stack(
             alignment: Alignment.centerRight,
