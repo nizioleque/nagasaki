@@ -161,7 +161,7 @@ class Grid {
     clickedFields++;
 
     if (field.isBomb) {
-      player.play('sounds/explosion.mp3');
+      playExplosion();
       return;
     }
 
@@ -208,7 +208,7 @@ class Grid {
         atij(element.i, element.j).isClicked = true;
         atij(element.i, element.j).isDeleted = true;
         if (atij(element.i, element.j).isBomb) {
-          player.play('sounds/explosion.mp3');
+          playExplosion();
         }
         deletedFields++;
       }
@@ -218,5 +218,9 @@ class Grid {
 
   double _getDistance(int x1, int y1, int x2, int y2) {
     return sqrt((x1 - x2) * (x1 - x2) * 1.0 + (y1 - y2) * (y1 - y2) * 1.0);
+  }
+
+  Future<AudioPlayer> playExplosion() async {
+    return await player.play('sounds/explosion.mp3');
   }
 }
