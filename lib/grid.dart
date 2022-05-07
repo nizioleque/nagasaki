@@ -25,6 +25,7 @@ class Grid {
   int flaggedFields = 0;
   int deletedFields = 0;
   int totalFields = 0;
+  int disarmedBombs = 0;
 
   bool explosionStarted = false;
   int explosionRadius = 0;
@@ -85,10 +86,12 @@ class Grid {
       // flag
       el.state = FieldState.flagged;
       flaggedFields++;
+      if (el.isBomb) disarmedBombs++;
     } else if (el.state == FieldState.flagged) {
       // remove flag
       el.state = FieldState.sus;
       flaggedFields--;
+      if (el.isBomb) disarmedBombs--;
     } else if (el.state == FieldState.sus) {
       el.state = FieldState.none;
     }

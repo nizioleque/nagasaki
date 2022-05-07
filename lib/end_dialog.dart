@@ -1,45 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:nagasaki/constants.dart';
 
 import 'grid.dart';
 import 'widgets/dialog.dart';
 
-showEndGameDialog(BuildContext context, Grid grid, bool success) async {
-  // showDialog<String>(
-  //   context: context,
-  //   builder: (BuildContext context) => AlertDialog(
-  //     title: success ? const Text("YOU WON") : const Text("You lost"),
-  //     content: success
-  //         ? const Text("You've found all bombs!")
-  //         : const Text("You've hit a bomb!"),
-  //     backgroundColor: success ? Colors.lightGreen : Colors.red,
-  //   ),
-  // );
+Future<bool> showEndGameDialog(
+    BuildContext context, Grid grid, bool success) async {
+  bool newGame = false;
 
   await showDialog(
     context: context,
     builder: (BuildContext context) => CustomDialog(
-      backgroundColor: Constants.backgroundColor,
-      borderTopColor: Constants.borderTopColor,
-      borderBottomColor: Constants.borderBottomColor,
-      title: "You lost",
+      // backgroundColor: Color(0xffff9999),
+      // borderTopColor: Color(0xffff8080),
+      // borderBottomColor: Color(0xffff6666),
+      title: success ? "You won!" : "You lost!",
       content: Column(
         children: [
           CustomDialogRow(
             label: "Time",
-            value: 100.toString(),
+            value: grid.time.toString(),
           ),
-          const CustomDialogRow(
+          CustomDialogRow(
             label: "Bombs disarmed",
-            value: "69",
+            value: grid.disarmedBombs.toString(),
           ),
-          const CustomDialogRow(
+          CustomDialogRow(
             label: "False positives",
-            value: "20",
+            value: (grid.flagged - grid.disarmedBombs).toString(),
           ),
-          const CustomDialogRow(
+          CustomDialogRow(
             label: "Bombs exploded",
-            value: "5",
+            value: success ? '0' : (grid.bombs - grid.disarmedBombs).toString(),
           ),
         ],
       ),
@@ -53,6 +44,7 @@ showEndGameDialog(BuildContext context, Grid grid, bool success) async {
         TextButton(
           onPressed: () {
             // new game
+            newGame = true;
             Navigator.of(context).pop();
           },
           child: const Text("New Game"),
@@ -60,4 +52,6 @@ showEndGameDialog(BuildContext context, Grid grid, bool success) async {
       ],
     ),
   );
+
+  return newGame;
 }

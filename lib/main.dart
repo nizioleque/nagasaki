@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     HeaderButton(
-                      onTap: prepareGame,
+                      onTap: resetGame,
                       child: const Icon(Icons.refresh),
                     ),
                     HeaderCounter(
@@ -162,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     );
   }
 
-  void prepareGame([GameSettings? s]) async {
+  void resetGame([GameSettings? s]) async {
     // get current settings if not supplied
     s ??= grid.settings;
 
@@ -248,13 +248,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             setState(() {});
           } else {
             timer.cancel();
-            gameOver();
+            gameEnd(false);
           }
         },
       );
       // gameOver();
     } else if (grid.clicked + grid.bombs == grid.fields) {
-      gameWon();
+      gameEnd(true);
     }
   }
 
@@ -268,32 +268,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     HapticFeedback.selectionClick();
   }
 
-  void gameOver() {
+  Future<void> gameEnd(bool success) async {
     grid.lock();
-    showEndGameDialog(context, grid, false);
-
-    // showDialog<String>(
-    //   context: context,
-    //   builder: (BuildContext context) => const AlertDialog(
-    //     title: Text('GAME OVER'),
-    //     content: Text("You've hit a bomb!"),
-    //     backgroundColor: Colors.red,
-    //   ),
-    // );
-  }
-
-  void gameWon() {
-    // showDialog<String>(
-    //   context: context,
-    //   builder: (BuildContext context) => const AlertDialog(
-    //     title: Text("YOU WON"),
-    //     content: Text("You've found all bombs!"),
-    //     backgroundColor: Colors.lightGreen,
-    //   ),
-    // );
-
-    grid.lock();
-    showEndGameDialog(context, grid, true);
+    var newGame = await showEndGameDialog(context, grid, success);
+    if (newGame) resetGame();
   }
 
   void tapSettings() async {
@@ -306,7 +284,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (result[0] == true) {
       // apply new settings
       setState(() {
-        prepareGame(result[1]);
+        resetGame(result[1]);
       });
     }
   }
