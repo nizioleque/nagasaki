@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nagasaki/classes.dart';
-import 'package:nagasaki/widgets.dart';
+import 'package:nagasaki/widgets/game_area.dart';
 
 import 'grid.dart';
 import 'helpers.dart';

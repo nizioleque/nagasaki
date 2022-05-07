@@ -6,9 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nagasaki/helpers.dart';
 import 'package:nagasaki/settings.dart';
+import 'package:nagasaki/widgets/main_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'end_dialog.dart';
-import 'widgets.dart';
+import 'widgets/game_area.dart';
 import 'classes.dart';
 import 'grid.dart';
 
