@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nagasaki/main.dart';
 
 import 'grid.dart';
+import 'helpers.dart';
 
 showEndGameDialog(BuildContext context, Grid grid, bool success) async {
   // showDialog<String>(
@@ -16,16 +18,29 @@ showEndGameDialog(BuildContext context, Grid grid, bool success) async {
 
   await showDialog(
     context: context,
-    builder: (BuildContext context) => AlertDialog(
-      title: const Text("You Lost"),
-      contentPadding: const EdgeInsets.all(24.0),
-      scrollable: true,
+    builder: (BuildContext context) => CustomDialog(
+      backgroundColor: MyHomePage.bgColor,
+      borderTopColor: const Color(0xffF2F2F2),
+      borderBottomColor: const Color(0xff7F7F7F),
+      title: "You lost",
       content: Column(
         children: [
-          Row(children: const [Text("Time"), Text("100")]),
-          Row(children: const [Text("Bombs disarmed"), Text("69")]),
-          Row(children: const [Text("False positives"), Text("20")]),
-          Row(children: const [Text("Bombs exploded"), Text("5")]),
+          CustomDialogRow(
+            label: "Time",
+            value: 100.toString(),
+          ),
+          const CustomDialogRow(
+            label: "Bombs disarmed",
+            value: "69",
+          ),
+          const CustomDialogRow(
+            label: "False positives",
+            value: "20",
+          ),
+          const CustomDialogRow(
+            label: "Bombs exploded",
+            value: "5",
+          ),
         ],
       ),
       actions: [
@@ -45,4 +60,113 @@ showEndGameDialog(BuildContext context, Grid grid, bool success) async {
       ],
     ),
   );
+}
+
+class CustomDialogRow extends StatelessWidget {
+  const CustomDialogRow({
+    Key? key,
+    required this.label,
+    required this.value,
+  }) : super(key: key);
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 30,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CustomDialog extends StatelessWidget {
+  const CustomDialog({
+    Key? key,
+    required this.title,
+    required this.content,
+    required this.actions,
+    this.backgroundColor,
+    this.borderTopColor,
+    this.borderBottomColor,
+  }) : super(key: key);
+
+  final String title;
+  final Widget content;
+  final List<Widget> actions;
+
+  final Color? backgroundColor;
+  final Color? borderTopColor;
+  final Color? borderBottomColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: backgroundColor ?? Colors.blue[100],
+      shape: outsetBorder(
+        10.0,
+        borderTopColor ?? Colors.red,
+        borderBottomColor ?? Colors.yellow,
+        // borderRadius: BorderRadius.circular(20.0),
+      ), //this right here
+      child: SizedBox(
+        width: 260,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 18.0,
+            horizontal: 32.0,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.5,
+                    fontSize: 32,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: content,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: actions,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    return AlertDialog(
+      title: const Text("You Lost"),
+      contentPadding: const EdgeInsets.all(24.0),
+      scrollable: true,
+      content: content,
+      actions: actions,
+    );
+  }
 }
