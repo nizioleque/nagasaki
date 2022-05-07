@@ -220,7 +220,11 @@ class Grid {
     return sqrt((x1 - x2) * (x1 - x2) * 1.0 + (y1 - y2) * (y1 - y2) * 1.0);
   }
 
-  Future<AudioPlayer> playExplosion() async {
-    return await player.play('sounds/explosion.mp3');
+  Future<void> playExplosion() async {
+    try {
+      await player.play('sounds/explosion.mp3');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }
