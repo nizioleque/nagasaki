@@ -93,8 +93,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   color: MyHomePage.bgColor,
                   border: outsetBorder(
                     8.0,
-                    const Color(0xffF2F2F2),
                     const Color(0xff7F7F7F),
+                    const Color(0xffF2F2F2),
                   ),
                 ),
                 child: Row(
