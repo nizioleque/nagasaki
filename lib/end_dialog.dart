@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nagasaki/main.dart';
+import 'package:nagasaki/constants.dart';
 
 import 'grid.dart';
 import 'widgets/dialog.dart';
@@ -19,9 +19,9 @@ showEndGameDialog(BuildContext context, Grid grid, bool success) async {
   await showDialog(
     context: context,
     builder: (BuildContext context) => CustomDialog(
-      backgroundColor: MyHomePage.bgColor,
-      borderTopColor: const Color(0xffF2F2F2),
-      borderBottomColor: const Color(0xff7F7F7F),
+      backgroundColor: Constants.backgroundColor,
+      borderTopColor: Constants.borderTopColor,
+      borderBottomColor: Constants.borderBottomColor,
       title: "You lost",
       content: Column(
         children: [
@@ -61,4 +61,3 @@ showEndGameDialog(BuildContext context, Grid grid, bool success) async {
     ),
   );
 }
-

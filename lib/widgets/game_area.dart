@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../classes.dart';
 import '../grid.dart';
-import '../helpers.dart';
 
 // grid widget class
 class GameArea extends StatelessWidget {

@@ -8,6 +8,7 @@ import 'package:nagasaki/helpers.dart';
 import 'package:nagasaki/settings.dart';
 import 'package:nagasaki/widgets/main_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'constants.dart';
 import 'end_dialog.dart';
 import 'widgets/game_area.dart';
 import 'classes.dart';
@@ -34,7 +35,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
-  static const bgColor = Color(0xFFD4D4D4);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -91,11 +91,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               Container(
                 height: 130,
                 decoration: BoxDecoration(
-                  color: MyHomePage.bgColor,
+                  color: Constants.backgroundColor,
                   border: outsetBorder(
                     8.0,
-                    const Color(0xff7F7F7F),
-                    const Color(0xffF2F2F2),
+                    Constants.borderBottomColor,
+                    Constants.borderTopColor,
                   ),
                 ),
                 child: Row(
@@ -122,15 +122,15 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               ),
               Expanded(
                 child: Container(
-                  color: MyHomePage.bgColor,
+                  color: Constants.backgroundColor,
                   child: Center(
                     child: dataLoaded
                         ? Container(
                             decoration: BoxDecoration(
                               border: outsetBorder(
                                 8.0,
-                                const Color(0xff7F7F7F),
-                                const Color(0xffF2F2F2),
+                                Constants.borderBottomColor,
+                                Constants.borderTopColor,
                               ),
                             ),
                             child: AspectRatio(
