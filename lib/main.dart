@@ -4,11 +4,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nagasaki/helpers.dart';
 import 'package:nagasaki/settings.dart';
+import 'helpers.dart';
+import 'widgets/main_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'constants.dart';
 import 'end_dialog.dart';
-import 'widgets.dart';
+import 'widgets/game_area.dart';
 import 'classes.dart';
 import 'grid.dart';
 
@@ -33,7 +35,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
-  static const bgColor = Color(0xFFD4D4D4);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -50,6 +51,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
     loadState();
+    Settings.loadPreferences();
+    // .then((value) => enableSound = value.soundOn);
   }
 
   @override
@@ -90,18 +93,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               Container(
                 height: 130,
                 decoration: BoxDecoration(
-                  color: MyHomePage.bgColor,
+                  color: Constants.backgroundColor,
                   border: outsetBorder(
                     8.0,
-                    const Color(0xffF2F2F2),
-                    const Color(0xff7F7F7F),
+                    Constants.borderBottomColor,
+                    Constants.borderTopColor,
                   ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     HeaderButton(
-                      onTap: prepareGame,
+                      onTap: resetGame,
                       child: const Icon(Icons.refresh),
                     ),
                     HeaderCounter(
@@ -121,15 +124,15 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               ),
               Expanded(
                 child: Container(
-                  color: MyHomePage.bgColor,
+                  color: Constants.backgroundColor,
                   child: Center(
                     child: dataLoaded
                         ? Container(
                             decoration: BoxDecoration(
                               border: outsetBorder(
                                 8.0,
-                                const Color(0xff7F7F7F),
-                                const Color(0xffF2F2F2),
+                                Constants.borderBottomColor,
+                                Constants.borderTopColor,
                               ),
                             ),
                             child: AspectRatio(
@@ -161,13 +164,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     );
   }
 
-  void prepareGame([GameSettings? s]) async {
+  void resetGame({
+    GameSettings? settings,
+    bool? playSound,
+  }) async {
     // get current settings if not supplied
-    s ??= grid.settings;
+    settings ??= grid.settings;
+
+    playSound ??= grid.playSound;
 
     // set new grid
     setState(() {
-      grid = Grid(sett: s!);
+      grid = Grid(sett: settings!, playSound: playSound!);
       dataLoaded = true;
     });
 
@@ -193,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (stateStr == '') {
       // new game
       setState(() {
-        grid = Grid(sett: GameSettings());
+        grid = Grid(sett: const GameSettings(), playSound: true);
         dataLoaded = true;
       });
       return;
@@ -201,9 +209,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
     // loading existing game
     var stateJson = jsonDecode(stateStr);
-    var stateGrid = Grid.fromJson(stateJson);
 
     try {
+      var stateGrid = Grid.fromJson(stateJson);
       setState(() {
         grid = stateGrid;
         dataLoaded = true;
@@ -214,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       debugPrint(e.toString());
 
       setState(() {
-        grid = Grid(sett: GameSettings());
+        grid = Grid(sett: const GameSettings(), playSound: true);
         dataLoaded = true;
       });
     }
@@ -247,13 +255,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             setState(() {});
           } else {
             timer.cancel();
-            gameOver();
+            gameEnd(false);
           }
         },
       );
       // gameOver();
     } else if (grid.clicked + grid.bombs == grid.fields) {
-      gameWon();
+      gameEnd(true);
     }
   }
 
@@ -267,32 +275,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     HapticFeedback.selectionClick();
   }
 
-  void gameOver() {
+  Future<void> gameEnd(bool success) async {
     grid.lock();
-    showEndGameDialog(context, grid, false);
-
-    // showDialog<String>(
-    //   context: context,
-    //   builder: (BuildContext context) => const AlertDialog(
-    //     title: Text('GAME OVER'),
-    //     content: Text("You've hit a bomb!"),
-    //     backgroundColor: Colors.red,
-    //   ),
-    // );
-  }
-
-  void gameWon() {
-    // showDialog<String>(
-    //   context: context,
-    //   builder: (BuildContext context) => const AlertDialog(
-    //     title: Text("YOU WON"),
-    //     content: Text("You've found all bombs!"),
-    //     backgroundColor: Colors.lightGreen,
-    //   ),
-    // );
-
-    grid.lock();
-    showEndGameDialog(context, grid, true);
+    var newGame = await showEndGameDialog(context, grid, success);
+    if (newGame) resetGame();
   }
 
   void tapSettings() async {
@@ -300,12 +286,20 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (!dataLoaded) return;
 
     // show settings
-    List result = await openSettings(grid, context);
+    SettingsChange result = await Settings.openSettings(context);
 
-    if (result[0] == true) {
+    if (result.soundChanged) {
+      grid.playSound = result.newSound!;
+      debugPrint('grid.playSound = ${grid.playSound}');
+    }
+
+    if (result.difficultyChanged) {
       // apply new settings
       setState(() {
-        prepareGame(result[1]);
+        resetGame(
+          settings: result.newSettings,
+          playSound: grid.playSound,
+        );
       });
     }
   }

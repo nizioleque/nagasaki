@@ -8,6 +8,7 @@ part of 'grid.dart';
 
 Grid _$GridFromJson(Map<String, dynamic> json) => Grid(
       sett: GameSettings.fromJson(json['sett'] as Map<String, dynamic>),
+      playSound: json['playSound'] as bool,
     )
       ..grid = (json['grid'] as List<dynamic>)
           .map((e) => FieldData.fromJson(e as Map<String, dynamic>))
@@ -18,6 +19,7 @@ Grid _$GridFromJson(Map<String, dynamic> json) => Grid(
       ..flaggedFields = json['flaggedFields'] as int
       ..deletedFields = json['deletedFields'] as int
       ..totalFields = json['totalFields'] as int
+      ..disarmedBombs = json['disarmedBombs'] as int
       ..explosionStarted = json['explosionStarted'] as bool
       ..explosionRadius = json['explosionRadius'] as int;
 
@@ -25,11 +27,13 @@ Map<String, dynamic> _$GridToJson(Grid instance) => <String, dynamic>{
       'grid': instance.grid.map((e) => e.toJson()).toList(),
       'sett': instance.sett.toJson(),
       'time': instance.time,
+      'playSound': instance.playSound,
       'locked': instance.locked,
       'clickedFields': instance.clickedFields,
       'flaggedFields': instance.flaggedFields,
       'deletedFields': instance.deletedFields,
       'totalFields': instance.totalFields,
+      'disarmedBombs': instance.disarmedBombs,
       'explosionStarted': instance.explosionStarted,
       'explosionRadius': instance.explosionRadius,
     };

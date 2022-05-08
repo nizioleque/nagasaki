@@ -13,11 +13,12 @@ part 'grid.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Grid {
   late List<FieldData> grid;
-  GameSettings sett = GameSettings();
+  GameSettings sett = const GameSettings();
 
   int time = 0;
 
   static AudioCache player = AudioCache();
+  bool playSound = true;
 
   bool locked = false;
 
@@ -25,13 +26,17 @@ class Grid {
   int flaggedFields = 0;
   int deletedFields = 0;
   int totalFields = 0;
+  int disarmedBombs = 0;
 
   bool explosionStarted = false;
   int explosionRadius = 0;
   late List _aboutToDelete;
 
   // constructor
-  Grid({required this.sett}) {
+  Grid({
+    required this.sett,
+    required this.playSound,
+  }) {
     totalFields = sett.rows * sett.columns;
     grid = List.generate(totalFields, (i) => FieldData());
   }
@@ -85,10 +90,12 @@ class Grid {
       // flag
       el.state = FieldState.flagged;
       flaggedFields++;
+      if (el.isBomb) disarmedBombs++;
     } else if (el.state == FieldState.flagged) {
       // remove flag
       el.state = FieldState.sus;
       flaggedFields--;
+      if (el.isBomb) disarmedBombs--;
     } else if (el.state == FieldState.sus) {
       el.state = FieldState.none;
     }
@@ -220,7 +227,13 @@ class Grid {
     return sqrt((x1 - x2) * (x1 - x2) * 1.0 + (y1 - y2) * (y1 - y2) * 1.0);
   }
 
-  Future<AudioPlayer> playExplosion() async {
-    return await player.play('sounds/explosion.mp3');
+  Future<void> playExplosion() async {
+    if (!playSound) return;
+
+    try {
+      await player.play('sounds/explosion.mp3');
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }

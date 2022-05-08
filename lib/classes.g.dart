@@ -41,3 +41,29 @@ Map<String, dynamic> _$GameSettingsToJson(GameSettings instance) =>
       'rows': instance.rows,
       'bombs': instance.bombs,
     };
+
+UserPreferences _$UserPreferencesFromJson(Map<String, dynamic> json) =>
+    UserPreferences(
+      soundOn: json['soundOn'] as bool? ?? true,
+      radioOption:
+          $enumDecodeNullable(_$DifficultyEnumMap, json['radioOption']) ??
+              Difficulty.beginner,
+      customSettings: json['customSettings'] == null
+          ? const GameSettings()
+          : GameSettings.fromJson(
+              json['customSettings'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$UserPreferencesToJson(UserPreferences instance) =>
+    <String, dynamic>{
+      'soundOn': instance.soundOn,
+      'radioOption': _$DifficultyEnumMap[instance.radioOption],
+      'customSettings': instance.customSettings,
+    };
+
+const _$DifficultyEnumMap = {
+  Difficulty.beginner: 'beginner',
+  Difficulty.intermediate: 'intermediate',
+  Difficulty.expert: 'expert',
+  Difficulty.custom: 'custom',
+};
