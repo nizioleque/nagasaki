@@ -18,6 +18,7 @@ class Grid {
   int time = 0;
 
   static AudioCache player = AudioCache();
+  bool playSound = true;
 
   bool locked = false;
 
@@ -32,7 +33,10 @@ class Grid {
   late List _aboutToDelete;
 
   // constructor
-  Grid({required this.sett}) {
+  Grid({
+    required this.sett,
+    required this.playSound,
+  }) {
     totalFields = sett.rows * sett.columns;
     grid = List.generate(totalFields, (i) => FieldData());
   }
@@ -224,6 +228,8 @@ class Grid {
   }
 
   Future<void> playExplosion() async {
+    if (!playSound) return;
+
     try {
       await player.play('sounds/explosion.mp3');
     } catch (e) {

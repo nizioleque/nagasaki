@@ -52,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance?.addObserver(this);
     loadState();
     Settings.loadPreferences();
+    // .then((value) => enableSound = value.soundOn);
   }
 
   @override
@@ -163,13 +164,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     );
   }
 
-  void resetGame([GameSettings? s]) async {
+  void resetGame({
+    GameSettings? settings,
+    bool? playSound,
+  }) async {
     // get current settings if not supplied
-    s ??= grid.settings;
+    settings ??= grid.settings;
+
+    playSound ??= grid.playSound;
 
     // set new grid
     setState(() {
-      grid = Grid(sett: s!);
+      grid = Grid(sett: settings!, playSound: playSound!);
       dataLoaded = true;
     });
 
@@ -195,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (stateStr == '') {
       // new game
       setState(() {
-        grid = Grid(sett: const GameSettings());
+        grid = Grid(sett: const GameSettings(), playSound: true);
         dataLoaded = true;
       });
       return;
@@ -216,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       debugPrint(e.toString());
 
       setState(() {
-        grid = Grid(sett: const GameSettings());
+        grid = Grid(sett: const GameSettings(), playSound: true);
         dataLoaded = true;
       });
     }
@@ -280,12 +286,20 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (!dataLoaded) return;
 
     // show settings
-    List result = await Settings.openSettings(context);
+    SettingsChange result = await Settings.openSettings(context);
 
-    if (result[0] == true) {
+    if (result.soundChanged) {
+      grid.playSound = result.newSound!;
+      debugPrint('grid.playSound = ${grid.playSound}');
+    }
+
+    if (result.difficultyChanged) {
       // apply new settings
       setState(() {
-        resetGame(result[1]);
+        resetGame(
+          settings: result.newSettings,
+          playSound: grid.playSound,
+        );
       });
     }
   }

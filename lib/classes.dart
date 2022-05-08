@@ -100,3 +100,20 @@ class UserPreferences {
       _$UserPreferencesFromJson(json);
   Map<String, dynamic> toJson() => _$UserPreferencesToJson(this);
 }
+
+class SettingsChange {
+  bool difficultyChanged;
+  GameSettings? newSettings;
+
+  bool soundChanged;
+  bool? newSound;
+
+  SettingsChange({
+    this.difficultyChanged = false,
+    this.newSettings,
+    this.soundChanged = false,
+    this.newSound,
+  });
+
+  bool get anyChange => difficultyChanged || soundChanged;
+}

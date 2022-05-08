@@ -11,14 +11,14 @@ import 'widgets/settings.dart';
 class Settings {
   static UserPreferences? currentPreferences;
 
-  static Future<void> loadPreferences() async {
+  static Future<UserPreferences> loadPreferences() async {
     final prefs = await SharedPreferences.getInstance();
 
     var prefStr = prefs.getString('userPreferences') ?? '';
 
     if (prefStr == '') {
       currentPreferences = UserPreferences();
-      return;
+      return currentPreferences!;
     }
 
     // loading existing game
@@ -30,6 +30,8 @@ class Settings {
     } catch (e) {
       debugPrint(e.toString());
     }
+
+    return currentPreferences!;
   }
 
   static Future<void> savePreferences() async {
@@ -43,11 +45,11 @@ class Settings {
     }
   }
 
-  static Future<List> openSettings(BuildContext context) async {
+  static Future<SettingsChange> openSettings(BuildContext context) async {
     final _controllers = [for (var i = 0; i < 3; i++) TextEditingController()];
     final _formKey = GlobalKey<FormState>();
-    GameSettings? newSett;
-    var settingsChanged = false;
+
+    var settingsChange = SettingsChange();
 
     if (currentPreferences == null) await loadPreferences();
 
@@ -77,13 +79,16 @@ class Settings {
     }
 
     Difficulty radioValue = currentPreferences!.radioOption;
-    bool soundOn = true;
+    bool soundOn = currentPreferences!.soundOn;
 
     var dialogContent = SettingsDialogContent(
       controllers: _controllers,
       initialPrefs: currentPreferences!,
-      onRadioTap: (Difficulty newDifficulty) {
-        radioValue = newDifficulty;
+      onRadioTap: (Difficulty newValue) {
+        radioValue = newValue;
+      },
+      onSoundTap: (bool newValue) {
+        soundOn = newValue;
       },
     );
 
@@ -107,12 +112,20 @@ class Settings {
               debugPrint(
                   'radioValue: $radioValue, currPref: ${currentPreferences!.radioOption}');
               // settings changed if different radio button clicked
-              settingsChanged = radioValue != currentPreferences!.radioOption;
+              settingsChange.difficultyChanged =
+                  radioValue != currentPreferences!.radioOption;
+              settingsChange.soundChanged =
+                  soundOn != currentPreferences!.soundOn;
+
               bool canHide = true;
+
+              if (settingsChange.soundChanged) {
+                settingsChange.newSound = soundOn;
+              }
 
               switch (radioValue) {
                 case Difficulty.beginner:
-                  newSett = const GameSettings(
+                  settingsChange.newSettings = const GameSettings(
                     rows: 10,
                     columns: 10,
                     bombs: 10,
@@ -120,7 +133,7 @@ class Settings {
                   break;
 
                 case Difficulty.intermediate:
-                  newSett = const GameSettings(
+                  settingsChange.newSettings = const GameSettings(
                     rows: 15,
                     columns: 10,
                     bombs: 20,
@@ -128,7 +141,7 @@ class Settings {
                   break;
 
                 case Difficulty.expert:
-                  newSett = const GameSettings(
+                  settingsChange.newSettings = const GameSettings(
                     rows: 20,
                     columns: 15,
                     bombs: 30,
@@ -137,14 +150,15 @@ class Settings {
 
                 case Difficulty.custom:
                   if (_formKey.currentState!.validate()) {
-                    newSett = GameSettings(
+                    settingsChange.newSettings = GameSettings(
                       columns: int.parse(_controllers[0].text),
                       rows: int.parse(_controllers[1].text),
                       bombs: int.parse(_controllers[2].text),
                     );
                     // settings changed if custom value changed
-                    settingsChanged = true;
-                    currentPreferences!.customSettings = newSett!;
+                    settingsChange.difficultyChanged = true;
+                    currentPreferences!.customSettings =
+                        settingsChange.newSettings!;
                   } else {
                     // don't let the settings menu close if there are validation errors
                     canHide = false;
@@ -152,9 +166,10 @@ class Settings {
                   break;
               }
 
-              if (settingsChanged) {
+              if (settingsChange.anyChange) {
                 debugPrint('settings changed');
                 currentPreferences!.radioOption = radioValue;
+                currentPreferences!.soundOn = soundOn;
                 savePreferences();
               }
 
@@ -167,7 +182,7 @@ class Settings {
       ),
     );
 
-    return [settingsChanged, newSett];
+    return settingsChange;
   }
 }
 
@@ -176,12 +191,14 @@ class SettingsDialogContent extends StatefulWidget {
     Key? key,
     required List<TextEditingController> controllers,
     required this.onRadioTap,
+    required this.onSoundTap,
     required this.initialPrefs,
   })  : _controllers = controllers,
         super(key: key);
 
   final List<TextEditingController> _controllers;
   final ValueChanged<Difficulty> onRadioTap;
+  final ValueChanged<bool> onSoundTap;
   final UserPreferences initialPrefs;
 
   @override
@@ -192,9 +209,11 @@ enum Difficulty { beginner, intermediate, expert, custom }
 
 class _SettingsDialogContentState extends State<SettingsDialogContent> {
   Difficulty? _difficulty;
+  bool? _soundOn;
   @override
   Widget build(BuildContext context) {
     _difficulty ??= widget.initialPrefs.radioOption;
+    _soundOn ??= widget.initialPrefs.soundOn;
     debugPrint('build, diff: $_difficulty');
 
     return Column(
@@ -202,7 +221,16 @@ class _SettingsDialogContentState extends State<SettingsDialogContent> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SettingsDialogSectionHeader(text: "Sound"),
-        const Text("disable sound..."),
+        SettingsToggle(
+          label: "Sound effects",
+          value: _soundOn!,
+          onChanged: (bool newValue) {
+            widget.onSoundTap(newValue);
+            setState(() {
+              _soundOn = newValue;
+            });
+          },
+        ),
         const SettingsDialogSectionHeader(text: "Difficulty"),
         DifficultyRadio(
           label: 'Beginner',

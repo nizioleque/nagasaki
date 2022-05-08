@@ -34,7 +34,6 @@ class SettingsNumberField extends StatelessWidget {
   }
 }
 
-
 class SettingsDialogSectionHeader extends StatelessWidget {
   const SettingsDialogSectionHeader({
     Key? key,
@@ -90,6 +89,49 @@ class DifficultyRadio extends StatelessWidget {
               onChanged(newValue!);
             },
           ),
+          Text(label),
+        ],
+      ),
+    );
+  }
+}
+
+class SettingsToggle extends StatelessWidget {
+  const SettingsToggle({
+    Key? key,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  }) : super(key: key);
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        onChanged(!value);
+      },
+      child: Row(
+        children: <Widget>[
+          // Radio<Difficulty>(
+          //   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          //   groupValue: groupValue,
+          //   value: value,
+          //   onChanged: (Difficulty? newValue) {
+          //     onChanged(newValue!);
+          //   },
+          // ),
+          Switch(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            value: value,
+            onChanged: (bool newValue) {
+              onChanged(newValue);
+            },
+          ),
+
           Text(label),
         ],
       ),
