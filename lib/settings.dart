@@ -4,6 +4,7 @@ import 'package:nagasaki/widgets/game_area.dart';
 
 import 'grid.dart';
 import 'helpers.dart';
+import 'widgets/dialog.dart';
 
 Future<List> openSettings(Grid grid, BuildContext context) async {
   final _controllers = [for (var i = 0; i < 3; i++) TextEditingController()];
@@ -38,15 +39,12 @@ Future<List> openSettings(Grid grid, BuildContext context) async {
 
   await showDialog(
     context: context,
-    builder: (BuildContext context) => AlertDialog(
-      title: const Text("Settings"),
-      contentPadding: const EdgeInsets.all(24.0),
-      scrollable: true,
+    builder: (BuildContext context) => CustomDialog(
+      title: "Settings",
       content: Form(
         key: _formKey,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisSize: MainAxisSize.min,
           children: [
             SettingsNumberField(
               controller: _controllers[0],
