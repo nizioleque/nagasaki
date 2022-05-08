@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:nagasaki/settings.dart';
 
 part 'classes.g.dart';
 
@@ -48,11 +49,11 @@ enum FieldState {
 // setting values
 @JsonSerializable()
 class GameSettings {
-  int columns;
-  int rows;
-  int bombs;
+  final int columns;
+  final int rows;
+  final int bombs;
 
-  GameSettings({
+  const GameSettings({
     this.columns = 10,
     this.rows = 10,
     this.bombs = 10,
@@ -81,4 +82,21 @@ class FieldPosition {
 
   @override
   int get hashCode => hashValues(i, j);
+}
+
+@JsonSerializable()
+class UserPreferences {
+  bool soundOn;
+  Difficulty radioOption;
+  GameSettings customSettings;
+
+  UserPreferences({
+    this.soundOn = true,
+    this.radioOption = Difficulty.beginner,
+    this.customSettings = const GameSettings(),
+  });
+
+  factory UserPreferences.fromJson(Map<String, dynamic> json) =>
+      _$UserPreferencesFromJson(json);
+  Map<String, dynamic> toJson() => _$UserPreferencesToJson(this);
 }

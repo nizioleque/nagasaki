@@ -18,6 +18,7 @@ Grid _$GridFromJson(Map<String, dynamic> json) => Grid(
       ..flaggedFields = json['flaggedFields'] as int
       ..deletedFields = json['deletedFields'] as int
       ..totalFields = json['totalFields'] as int
+      ..disarmedBombs = json['disarmedBombs'] as int
       ..explosionStarted = json['explosionStarted'] as bool
       ..explosionRadius = json['explosionRadius'] as int;
 
@@ -30,6 +31,7 @@ Map<String, dynamic> _$GridToJson(Grid instance) => <String, dynamic>{
       'flaggedFields': instance.flaggedFields,
       'deletedFields': instance.deletedFields,
       'totalFields': instance.totalFields,
+      'disarmedBombs': instance.disarmedBombs,
       'explosionStarted': instance.explosionStarted,
       'explosionRadius': instance.explosionRadius,
     };

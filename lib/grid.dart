@@ -13,7 +13,7 @@ part 'grid.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Grid {
   late List<FieldData> grid;
-  GameSettings sett = GameSettings();
+  GameSettings sett = const GameSettings();
 
   int time = 0;
 

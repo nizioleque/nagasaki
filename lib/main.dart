@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nagasaki/helpers.dart';
 import 'package:nagasaki/settings.dart';
-import 'package:nagasaki/widgets/main_page.dart';
+import 'helpers.dart';
+import 'widgets/main_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
 import 'end_dialog.dart';
@@ -51,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance?.addObserver(this);
     loadState();
+    Settings.loadPreferences();
   }
 
   @override
@@ -194,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (stateStr == '') {
       // new game
       setState(() {
-        grid = Grid(sett: GameSettings());
+        grid = Grid(sett: const GameSettings());
         dataLoaded = true;
       });
       return;
@@ -215,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       debugPrint(e.toString());
 
       setState(() {
-        grid = Grid(sett: GameSettings());
+        grid = Grid(sett: const GameSettings());
         dataLoaded = true;
       });
     }
@@ -279,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (!dataLoaded) return;
 
     // show settings
-    List result = await openSettings(grid, context);
+    List result = await Settings.openSettings(context);
 
     if (result[0] == true) {
       // apply new settings
