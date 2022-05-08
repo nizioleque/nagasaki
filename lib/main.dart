@@ -203,9 +203,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
     // loading existing game
     var stateJson = jsonDecode(stateStr);
-    var stateGrid = Grid.fromJson(stateJson);
 
     try {
+      var stateGrid = Grid.fromJson(stateJson);
       setState(() {
         grid = stateGrid;
         dataLoaded = true;
