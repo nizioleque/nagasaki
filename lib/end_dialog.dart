@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'constants.dart';
 import 'grid.dart';
 import 'widgets/dialog.dart';
 
@@ -14,6 +15,7 @@ Future<bool> showEndGameDialog(
       // borderTopColor: Color(0xffff8080),
       // borderBottomColor: Color(0xffff6666),
       title: success ? "You won!" : "You lost!",
+      titleColor: success ? Constants.gameWinColor : Constants.gameLoseColor,
       content: Column(
         children: [
           CustomDialogRow(
@@ -35,19 +37,20 @@ Future<bool> showEndGameDialog(
         ],
       ),
       actions: [
-        TextButton(
+        CustomDialogTextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text("Close"),
+          text: "Close",
         ),
-        TextButton(
+        CustomDialogTextButton(
           onPressed: () {
             // new game
             newGame = true;
             Navigator.of(context).pop();
           },
-          child: const Text("New Game"),
+          text: "New Game",
+          accented: true,
         ),
       ],
     ),

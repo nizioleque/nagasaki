@@ -101,13 +101,14 @@ class Settings {
           child: dialogContent,
         ),
         actions: [
-          TextButton(
+          CustomDialogTextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text("Cancel"),
+            text: "Cancel",
           ),
-          TextButton(
+          CustomDialogTextButton(
+            text: "Apply",
             onPressed: () {
               debugPrint(
                   'radioValue: $radioValue, currPref: ${currentPreferences!.radioOption}');
@@ -176,7 +177,6 @@ class Settings {
               // hide dialog
               if (canHide) Navigator.of(context).pop();
             },
-            child: const Text("Apply"),
           ),
         ],
       ),
@@ -221,27 +221,33 @@ class _SettingsDialogContentState extends State<SettingsDialogContent> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SettingsDialogSectionHeader(text: "Sound"),
-        SettingsToggle(
-          label: "Sound effects",
-          value: _soundOn!,
-          onChanged: (bool newValue) {
-            widget.onSoundTap(newValue);
-            setState(() {
-              _soundOn = newValue;
-            });
-          },
+        Padding(
+          padding: const EdgeInsets.only(top: 2.0, bottom: 12.0),
+          child: SettingsToggle(
+            label: "Sound effects",
+            value: _soundOn!,
+            onChanged: (bool newValue) {
+              widget.onSoundTap(newValue);
+              setState(() {
+                _soundOn = newValue;
+              });
+            },
+          ),
         ),
         const SettingsDialogSectionHeader(text: "Difficulty"),
-        DifficultyRadio(
-          label: 'Beginner',
-          value: Difficulty.beginner,
-          groupValue: _difficulty!,
-          onChanged: (Difficulty newValue) {
-            widget.onRadioTap(newValue);
-            setState(() {
-              _difficulty = newValue;
-            });
-          },
+        Padding(
+          padding: const EdgeInsets.only(top: 2.0),
+          child: DifficultyRadio(
+            label: 'Beginner',
+            value: Difficulty.beginner,
+            groupValue: _difficulty!,
+            onChanged: (Difficulty newValue) {
+              widget.onRadioTap(newValue);
+              setState(() {
+                _difficulty = newValue;
+              });
+            },
+          ),
         ),
         DifficultyRadio(
           label: 'Intermediate',
