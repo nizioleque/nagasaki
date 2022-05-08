@@ -76,7 +76,7 @@ class Settings {
           );
     }
 
-    Difficulty radioValue = Difficulty.beginner;
+    Difficulty radioValue = currentPreferences!.radioOption;
     bool soundOn = true;
 
     var dialogContent = SettingsDialogContent(
@@ -104,6 +104,8 @@ class Settings {
           ),
           TextButton(
             onPressed: () {
+              debugPrint(
+                  'radioValue: $radioValue, currPref: ${currentPreferences!.radioOption}');
               // settings changed if different radio button clicked
               settingsChanged = radioValue != currentPreferences!.radioOption;
               bool canHide = true;
@@ -151,6 +153,7 @@ class Settings {
               }
 
               if (settingsChanged) {
+                debugPrint('settings changed');
                 currentPreferences!.radioOption = radioValue;
                 savePreferences();
               }
@@ -192,6 +195,7 @@ class _SettingsDialogContentState extends State<SettingsDialogContent> {
   @override
   Widget build(BuildContext context) {
     _difficulty ??= widget.initialPrefs.radioOption;
+    debugPrint('build, diff: $_difficulty');
 
     return Column(
       // mainAxisSize: MainAxisSize.min,
