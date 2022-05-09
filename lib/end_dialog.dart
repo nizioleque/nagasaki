@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'grid.dart';
 import 'widgets/dialog.dart';
+import 'widgets/settings.dart';
 
 Future<bool> showEndGameDialog(
     BuildContext context, Grid grid, bool success) async {
