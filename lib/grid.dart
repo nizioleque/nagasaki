@@ -185,6 +185,8 @@ class Grid {
     var i = pos.i;
     var j = pos.j;
 
+    bool didExplode = false;
+
     if (!explosionStarted) {
       _aboutToDelete = [];
       _aboutToDelete.add(FieldPosition(i, j));
@@ -215,11 +217,12 @@ class Grid {
         atij(element.i, element.j).isClicked = true;
         atij(element.i, element.j).isDeleted = true;
         if (atij(element.i, element.j).isBomb) {
-          playExplosion();
+          didExplode = true;
         }
         deletedFields++;
       }
     }
+    if (didExplode) playExplosion();
     return true;
   }
 
