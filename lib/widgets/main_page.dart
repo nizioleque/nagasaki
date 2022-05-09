@@ -62,6 +62,8 @@ class HeaderCounter extends StatelessWidget {
   final int dataText;
   final String labelText;
 
+  static const height = 55.0;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -86,7 +88,7 @@ class HeaderCounter extends StatelessWidget {
   Widget getDigital(int data) {
     if (data >= 1000) {
       return SizedBox(
-        height: 65,
+        height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -99,7 +101,7 @@ class HeaderCounter extends StatelessWidget {
     }
     if (data >= 100) {
       return SizedBox(
-        height: 65,
+        height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -111,7 +113,7 @@ class HeaderCounter extends StatelessWidget {
       );
     } else if (data >= 10) {
       return SizedBox(
-        height: 65,
+        height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -123,7 +125,7 @@ class HeaderCounter extends StatelessWidget {
       );
     } else {
       return SizedBox(
-        height: 65,
+        height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

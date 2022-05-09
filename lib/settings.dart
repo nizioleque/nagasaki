@@ -137,7 +137,7 @@ class Settings {
                   settingsChange.newSettings = const GameSettings(
                     rows: 15,
                     columns: 10,
-                    bombs: 20,
+                    bombs: 30,
                   );
                   break;
 
