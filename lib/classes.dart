@@ -54,6 +54,7 @@ class GameSettings {
   final int bombs;
 
   const GameSettings({
+    // settings for Beginner mode
     this.columns = 9,
     this.rows = 9,
     this.bombs = 10,

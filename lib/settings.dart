@@ -126,11 +126,8 @@ class Settings {
 
               switch (radioValue) {
                 case Difficulty.beginner:
-                  settingsChange.newSettings = const GameSettings(
-                    rows: 9,
-                    columns: 9,
-                    bombs: 10,
-                  );
+                  settingsChange.newSettings = const GameSettings();
+                  // settings for beginner mode defined in GameSettings constructor
                   break;
 
                 case Difficulty.intermediate:
