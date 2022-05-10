@@ -54,8 +54,8 @@ class GameSettings {
   final int bombs;
 
   const GameSettings({
-    this.columns = 10,
-    this.rows = 10,
+    this.columns = 9,
+    this.rows = 9,
     this.bombs = 10,
   });
 
