@@ -27,6 +27,7 @@ class Grid {
   int deletedFields = 0;
   int totalFields = 0;
   int disarmedBombs = 0;
+  bool firstAction = true;
 
   bool explosionStarted = false;
   int explosionRadius = 0;

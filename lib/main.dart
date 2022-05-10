@@ -228,7 +228,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
-  void firstTap(int index) {
+  void firstTap(int index, Grid grid) {
+    grid.firstAction = false;
     // generate bombs
     grid.generateBombs(index);
 
@@ -237,7 +238,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void handleFieldTap(int index) {
-    if (grid.clicked == 0) firstTap(index);
+    if (grid.firstAction) firstTap(index, grid);
 
     bool success = true;
     setState(() {
@@ -266,6 +267,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void handleFieldLongPress(int index) {
+    if (grid.firstAction) return;
+
     bool success = true;
     setState(() {
       success = grid.flag(index);
