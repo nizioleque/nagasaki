@@ -1,6 +1,8 @@
 # Nagasaki Minesweeper
 
-Modern interpretation of the classic Minesweeper game.
+Mobile game made in Flutter. 
+
+Modern interpretation of the classic Minesweeper with many features, including saving game state (with serialization), custom stateful and stateless widgets, custom dialog, animations and more.
 
 [**Click here to play now!**](https://spicy-nachos.github.io/nagasaki/)
 
