@@ -8,7 +8,7 @@ Modern interpretation of the classic Minesweeper with many features, including s
 
 ## About
 
-Created by two great minds.
+Created as an opportunity to learn Flutter by two CS students from Warsaw, Poland.
 
 ## Features
 
