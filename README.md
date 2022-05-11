@@ -10,7 +10,7 @@ Modern interpretation of the classic Minesweeper with many features, including s
 
 Created as an opportunity to learn Flutter by two CS students from Warsaw, Poland.
 
-## Features
+### Features
 
 - Modern high-resolution graphics inspired by the Windows Minesweeper
 - Animations
@@ -18,7 +18,7 @@ Created as an opportunity to learn Flutter by two CS students from Warsaw, Polan
 - Automatically saving and restoring the game
 - Sound effects & haptic feedback
 
-## Implementation overview
+### Implementation overview
 
 - Saving game state – serialization with json_serializable package and detecting app closing with didChangeAppLifecycleState
 - Sounds – audioplayers package
