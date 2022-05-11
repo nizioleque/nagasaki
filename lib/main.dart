@@ -180,6 +180,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     });
 
     resetTimer();
+    saveState();
   }
 
   void saveState() async {
@@ -244,7 +245,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     setState(() {
       success = grid.tap(index);
     });
+
     if (!success) return;
+    saveState();
 
     if (grid.at(index).isBomb) {
       grid.lock();
@@ -257,12 +260,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           } else {
             timer.cancel();
             gameEnd(false);
+            saveState();
           }
         },
       );
       // gameOver();
     } else if (grid.clicked + grid.bombs == grid.fields) {
       gameEnd(true);
+      saveState();
     }
   }
 
@@ -273,7 +278,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     setState(() {
       success = grid.flag(index);
     });
+
     if (!success) return;
+    saveState();
 
     HapticFeedback.selectionClick();
   }
