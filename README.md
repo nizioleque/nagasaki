@@ -12,13 +12,18 @@ Created by two great minds.
 
 ## Features
 
-- saving game state (serialization w/ package,  didChangeAppLifecycleState / RestorationMixin)
-- vibration & sounds (package)
-- custom stateful and stateless widgets and classes
-- iterator
-- custom dialog
-- settings panel & saving user preferences
-- beautiful graphics, animations
-- adapting to screen size (soon...)
-- text field validation
-- asynchronous functions
+- Modern high-resolution graphics inspired by the Windows Minesweeper
+- Animations
+- Three difficulty levels & custom settings
+- Automatically saving and restoring the game
+- Sound effects & haptic feedback
+
+## Implementation overview
+
+- Saving game state – serialization with json_serializable package and detecting app closing with didChangeAppLifecycleState
+- Sounds – audioplayers package
+- Custom stateful and stateless widgets for various elements of the UI
+- Iterator for analyzing the surrounding of a field
+- Custom dialog for the settings panel & game end
+- Text field validation
+- Asynchronous functions for loading/saving settings and (de)serialization
