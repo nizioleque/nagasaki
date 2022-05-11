@@ -192,6 +192,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     } catch (e) {
       debugPrint(e.toString());
     }
+
+    debugPrint('saved state');
   }
 
   void loadState() async {
