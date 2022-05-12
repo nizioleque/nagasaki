@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                       child: Container(
                         // color: Colors.red,
                         child: AspectRatio(
-                          aspectRatio: 4,
+                          aspectRatio: 3.7,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
