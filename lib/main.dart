@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                 child: FractionallySizedBox(
                                   heightFactor: 0.7,
                                   child: HeaderCounter(
-                                    dataText: dataLoaded ? grid.flagsLeft : 0,
+                                    value: dataLoaded ? grid.flagsLeft : 0,
                                     labelText: "bombs",
                                   ),
                                 ),
@@ -141,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                 child: FractionallySizedBox(
                                   heightFactor: 0.7,
                                   child: HeaderCounter(
-                                    dataText: dataLoaded ? grid.time : 0,
+                                    value: dataLoaded ? grid.time : 0,
                                     labelText: "timer",
                                   ),
                                 ),

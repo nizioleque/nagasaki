@@ -55,11 +55,11 @@ class _HeaderButtonState extends State<HeaderButton> {
 class HeaderCounter extends StatelessWidget {
   const HeaderCounter({
     Key? key,
-    required this.dataText,
+    required this.value,
     required this.labelText,
   }) : super(key: key);
 
-  final int dataText;
+  final int value;
   final String labelText;
 
   // static const height = 55.0;
@@ -71,7 +71,10 @@ class HeaderCounter extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Expanded(
-          child: getDigital(dataText),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _getChildren(value),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 5.0),
@@ -88,57 +91,33 @@ class HeaderCounter extends StatelessWidget {
     );
   }
 
-  Widget getDigital(int data) {
-    if (data >= 1000) {
-      return SizedBox(
-        // height: height,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Image.asset('assets/images/digital_9.png'),
-            Image.asset('assets/images/digital_9.png'),
-            Image.asset('assets/images/digital_9.png'),
-          ],
-        ),
-      );
+  List<Widget> _getChildren(int value) {
+    if (value >= 1000) {
+      return [
+        Image.asset('assets/images/digital_9.png'),
+        Image.asset('assets/images/digital_9.png'),
+        Image.asset('assets/images/digital_9.png'),
+      ];
     }
-    if (data >= 100) {
-      return SizedBox(
-        // height: height,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Image.asset('assets/images/digital_${dataText ~/ 100}.png'),
-            Image.asset('assets/images/digital_${(dataText % 100) ~/ 10}.png'),
-            Image.asset('assets/images/digital_${dataText % 10}.png'),
-          ],
-        ),
-      );
-    } else if (data >= 10) {
-      return SizedBox(
-        // height: height,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Image.asset('assets/images/digital_null.png'),
-            Image.asset('assets/images/digital_${(dataText % 100) ~/ 10}.png'),
-            Image.asset('assets/images/digital_${dataText % 10}.png'),
-          ],
-        ),
-      );
-    } else {
-      return SizedBox(
-        // height: height,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Image.asset('assets/images/digital_null.png'),
-            Image.asset('assets/images/digital_null.png'),
-            Image.asset('assets/images/digital_$dataText.png'),
-          ],
-        ),
-      );
+    if (value >= 100) {
+      return [
+        Image.asset('assets/images/digital_${value ~/ 100}.png'),
+        Image.asset('assets/images/digital_${(value % 100) ~/ 10}.png'),
+        Image.asset('assets/images/digital_${value % 10}.png'),
+      ];
     }
+    if (value >= 10) {
+      return [
+        Image.asset('assets/images/digital_null.png'),
+        Image.asset('assets/images/digital_${(value % 100) ~/ 10}.png'),
+        Image.asset('assets/images/digital_${value % 10}.png'),
+      ];
+    }
+    return [
+      Image.asset('assets/images/digital_null.png'),
+      Image.asset('assets/images/digital_null.png'),
+      Image.asset('assets/images/digital_$value.png'),
+    ];
   }
 }
 
