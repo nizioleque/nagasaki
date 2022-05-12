@@ -168,3 +168,72 @@ class CounterText extends StatelessWidget {
     );
   }
 }
+
+class ConstrainedHeightFlexible extends StatelessWidget {
+  final double minHeight;
+  final double maxHeight;
+  final int flex;
+  final int flexSum;
+  final Widget child;
+  final BoxConstraints outerConstraints;
+  const ConstrainedHeightFlexible(
+      {Key? key,
+      required this.minHeight,
+      required this.maxHeight,
+      required this.flex,
+      required this.flexSum,
+      required this.outerConstraints,
+      required this.child})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: minHeight,
+        maxHeight: maxHeight,
+      ),
+      child: SizedBox(
+        height: _getHeight(outerConstraints.maxHeight),
+        child: child,
+      ),
+    );
+  }
+
+  double _getHeight(double outerContainerHeight) {
+    return outerContainerHeight * flex / flexSum;
+  }
+}
+
+class ConstrainedWidthFlexible extends StatelessWidget {
+  final double minWidth;
+  final double maxWidth;
+  final int flex;
+  final int flexSum;
+  final Widget child;
+  final BoxConstraints outerConstraints;
+  const ConstrainedWidthFlexible(
+      {Key? key, required this.minWidth,
+      required this.maxWidth,
+      required this.flex,
+      required this.flexSum,
+      required this.outerConstraints,
+      required this.child}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: minWidth,
+        maxWidth: maxWidth,
+      ),
+      child: SizedBox(
+        width: _getWidth(outerConstraints.maxWidth),
+        child: child,
+      ),
+    );
+
+  }
+
+  double _getWidth(double outerContainerWidth) {
+    return outerContainerWidth * flex / flexSum;
+  }
+}

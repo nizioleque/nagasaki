@@ -88,76 +88,102 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       body: Container(
         color: const Color(0xffD9D9D9),
         child: SafeArea(
-          child: Column(
-            children: [
-              Container(
-                height: 130,
-                decoration: BoxDecoration(
-                  color: Constants.backgroundColor,
-                  border: outsetBorder(
-                    8.0,
-                    Constants.borderBottomColor,
-                    Constants.borderTopColor,
+          child: LayoutBuilder(
+            builder: (context, constraints) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ConstrainedHeightFlexible(
+                  maxHeight: 1000,
+                  minHeight: 100,
+                  outerConstraints: constraints,
+                  flex: 1,
+                  flexSum: 5,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Constants.backgroundColor,
+                      border: outsetBorder(
+                        8.0,
+                        Constants.borderBottomColor,
+                        Constants.borderTopColor,
+                      ),
+                    ),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) => Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const Spacer(),
+                          ConstrainedWidthFlexible(
+                              minWidth: 300,
+                              maxWidth: 800,
+                              flex: 1,
+                              flexSum: 1,
+                              outerConstraints: constraints,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  HeaderButton(
+                                    onTap: resetGame,
+                                    child: const Icon(Icons.refresh),
+                                  ),
+                                  HeaderCounter(
+                                    dataText: dataLoaded ? grid.flagsLeft : 0,
+                                    labelText: "bombs",
+                                  ),
+                                  HeaderCounter(
+                                    dataText: dataLoaded ? grid.time : 0,
+                                    labelText: "timer",
+                                  ),
+                                  HeaderButton(
+                                    onTap: tapSettings,
+                                    child: const Icon(Icons.settings),
+                                  ),
+                                ],
+                              )),
+                          const Spacer(),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    HeaderButton(
-                      onTap: resetGame,
-                      child: const Icon(Icons.refresh),
-                    ),
-                    HeaderCounter(
-                      dataText: dataLoaded ? grid.flagsLeft : 0,
-                      labelText: "bombs",
-                    ),
-                    HeaderCounter(
-                      dataText: dataLoaded ? grid.time : 0,
-                      labelText: "timer",
-                    ),
-                    HeaderButton(
-                      onTap: tapSettings,
-                      child: const Icon(Icons.settings),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  color: Constants.backgroundColor,
-                  child: Center(
-                    child: dataLoaded
-                        ? Container(
-                            decoration: BoxDecoration(
-                              border: outsetBorder(
-                                8.0,
-                                Constants.borderBottomColor,
-                                Constants.borderTopColor,
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                    color: Constants.backgroundColor,
+                    child: Center(
+                      child: dataLoaded
+                          ? Container(
+                              decoration: BoxDecoration(
+                                border: outsetBorder(
+                                  8.0,
+                                  Constants.borderBottomColor,
+                                  Constants.borderTopColor,
+                                ),
                               ),
-                            ),
-                            child: AspectRatio(
-                              aspectRatio: grid.columns / grid.rows,
-                              child: GameArea(
-                                grid: grid,
-                                onChanged: (FieldChangeData data) {
-                                  switch (data.pressType) {
-                                    case PressType.tap:
-                                      handleFieldTap(data.index);
-                                      break;
-                                    case PressType.longPress:
-                                      handleFieldLongPress(data.index);
-                                      break;
-                                    default:
-                                  }
-                                },
+                              child: AspectRatio(
+                                aspectRatio: grid.columns / grid.rows,
+                                child: GameArea(
+                                  grid: grid,
+                                  onChanged: (FieldChangeData data) {
+                                    switch (data.pressType) {
+                                      case PressType.tap:
+                                        handleFieldTap(data.index);
+                                        break;
+                                      case PressType.longPress:
+                                        handleFieldLongPress(data.index);
+                                        break;
+                                      default:
+                                    }
+                                  },
+                                ),
                               ),
-                            ),
-                          )
-                        : null,
+                            )
+                          : null,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
