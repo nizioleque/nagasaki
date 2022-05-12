@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:nagasaki/helpers.dart';
+
+import '../constants.dart';
 
 class HeaderButton extends StatefulWidget {
   const HeaderButton({
     Key? key,
     required this.onTap,
     required this.child,
+    required this.borderWidth,
   }) : super(key: key);
 
   final void Function() onTap;
   final Widget child;
+  final double borderWidth;
 
   @override
   State<HeaderButton> createState() => _HeaderButtonState();
@@ -19,32 +24,50 @@ class _HeaderButtonState extends State<HeaderButton> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      onTapDown: (_) {
-        setState(() {
-          pressed = true;
-        });
-      },
-      onTapUp: (_) {
-        setState(() {
-          pressed = false;
-        });
-      },
-      onTapCancel: () {
-        setState(() {
-          pressed = false;
-        });
-      },
-      child: Container(
-        child: widget.child,
-        // height: 40,
-        // width: 40,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: pressed
-                ? const AssetImage('assets/images/button-pressed.png')
-                : const AssetImage('assets/images/button.png'),
+    return FractionallySizedBox(
+      heightFactor: 0.4,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        onTapDown: (_) {
+          setState(() {
+            pressed = true;
+          });
+        },
+        onTapUp: (_) {
+          setState(() {
+            pressed = false;
+          });
+        },
+        onTapCancel: () {
+          setState(() {
+            pressed = false;
+          });
+        },
+        child: Center(
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: pressed
+                    ? Constants.headerButtonPressedColor
+                    : Constants.headerButtonColor,
+                border: outsetBorder(
+                  widget.borderWidth,
+                  pressed
+                      ? Constants.headerButtonBorderTopPressedColor
+                      : Constants.headerButtonBorderTopColor,
+                  pressed
+                      ? Constants.headerButtonBorderBottomPressedColor
+                      : Constants.headerButtonBorderBottomColor,
+                ),
+              ),
+              child: FractionallySizedBox(
+                heightFactor: 0.9,
+                child: FittedBox(
+                  child: widget.child,
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -57,37 +80,44 @@ class HeaderCounter extends StatelessWidget {
     Key? key,
     required this.value,
     required this.labelText,
+    required this.textSize,
+    required this.textPadding,
   }) : super(key: key);
 
   final int value;
   final String labelText;
+  final double textSize;
+  final double textPadding;
 
   // static const height = 55.0;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: _getChildren(value),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 5.0),
-          child: Text(
-            labelText.toUpperCase(),
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.5,
-              fontSize: 15,
+    return FractionallySizedBox(
+      heightFactor: 0.8,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: _getChildren(value),
             ),
           ),
-        ),
-      ],
+          Padding(
+            padding: EdgeInsets.only(top: textPadding),
+            child: Text(
+              labelText.toUpperCase(),
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.5,
+                fontSize: textSize,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

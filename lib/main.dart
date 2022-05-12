@@ -85,6 +85,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     var deviceSize = MediaQuery.of(context).size;
     debugPrint(deviceSize.toString());
 
+    double scaledSize(double size) {
+      return deviceSize.shortestSide * size / 500;
+    }
+
     // return widget
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -105,55 +109,40 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     decoration: BoxDecoration(
                       color: Constants.backgroundColor,
                       border: outsetBorder(
-                        8.0,
+                        scaledSize(8.0),
                         Constants.borderBottomColor,
                         Constants.borderTopColor,
                       ),
                     ),
                     child: Center(
                       child: Container(
-                        color: Colors.red,
+                        // color: Colors.red,
                         child: AspectRatio(
-                          aspectRatio: 5,
+                          aspectRatio: 4,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Expanded(
-                                child: FractionallySizedBox(
-                                  heightFactor: 0.8,
-                                  // widthFactor: 0.3,
-                                  child: HeaderButton(
-                                    onTap: resetGame,
-                                    child: const Icon(Icons.refresh),
-                                  ),
-                                ),
+                              HeaderButton(
+                                onTap: resetGame,
+                                child: const Icon(Icons.refresh),
+                                borderWidth: scaledSize(5.0),
                               ),
-                              Expanded(
-                                child: FractionallySizedBox(
-                                  heightFactor: 0.7,
-                                  child: HeaderCounter(
-                                    value: dataLoaded ? grid.flagsLeft : 0,
-                                    labelText: "bombs",
-                                  ),
-                                ),
+                              HeaderCounter(
+                                value: dataLoaded ? grid.flagsLeft : 0,
+                                labelText: "bombs",
+                                textSize: scaledSize(16.0),
+                                textPadding: scaledSize(6.0),
                               ),
-                              Expanded(
-                                child: FractionallySizedBox(
-                                  heightFactor: 0.7,
-                                  child: HeaderCounter(
-                                    value: dataLoaded ? grid.time : 0,
-                                    labelText: "timer",
-                                  ),
-                                ),
+                              HeaderCounter(
+                                value: dataLoaded ? grid.time : 0,
+                                labelText: "timer",
+                                textSize: scaledSize(16.0),
+                                textPadding: scaledSize(6.0),
                               ),
-                              Expanded(
-                                child: FractionallySizedBox(
-                                  heightFactor: 0.8,
-                                  child: HeaderButton(
-                                    onTap: tapSettings,
-                                    child: const Icon(Icons.settings),
-                                  ),
-                                ),
+                              HeaderButton(
+                                onTap: tapSettings,
+                                child: const Icon(Icons.settings),
+                                borderWidth: scaledSize(5.0),
                               ),
                             ],
                           ),
@@ -171,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                           ? Container(
                               decoration: BoxDecoration(
                                 border: outsetBorder(
-                                  deviceSize.shortestSide / 50,
+                                  scaledSize(8.0),
                                   Constants.borderBottomColor,
                                   Constants.borderTopColor,
                                 ),
