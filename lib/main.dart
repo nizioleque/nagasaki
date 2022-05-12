@@ -82,6 +82,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    var deviceSize = MediaQuery.of(context).size;
+    debugPrint(deviceSize.toString());
+
     // return widget
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -107,41 +110,54 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                         Constants.borderTopColor,
                       ),
                     ),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) => Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const Spacer(),
-                          ConstrainedWidthFlexible(
-                              minWidth: 300,
-                              maxWidth: 800,
-                              flex: 1,
-                              flexSum: 1,
-                              outerConstraints: constraints,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  HeaderButton(
+                    child: Center(
+                      child: Container(
+                        color: Colors.red,
+                        child: AspectRatio(
+                          aspectRatio: 5,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                child: FractionallySizedBox(
+                                  heightFactor: 0.8,
+                                  // widthFactor: 0.3,
+                                  child: HeaderButton(
                                     onTap: resetGame,
                                     child: const Icon(Icons.refresh),
                                   ),
-                                  HeaderCounter(
+                                ),
+                              ),
+                              Expanded(
+                                child: FractionallySizedBox(
+                                  heightFactor: 0.7,
+                                  child: HeaderCounter(
                                     dataText: dataLoaded ? grid.flagsLeft : 0,
                                     labelText: "bombs",
                                   ),
-                                  HeaderCounter(
+                                ),
+                              ),
+                              Expanded(
+                                child: FractionallySizedBox(
+                                  heightFactor: 0.7,
+                                  child: HeaderCounter(
                                     dataText: dataLoaded ? grid.time : 0,
                                     labelText: "timer",
                                   ),
-                                  HeaderButton(
+                                ),
+                              ),
+                              Expanded(
+                                child: FractionallySizedBox(
+                                  heightFactor: 0.8,
+                                  child: HeaderButton(
                                     onTap: tapSettings,
                                     child: const Icon(Icons.settings),
                                   ),
-                                ],
-                              )),
-                          const Spacer(),
-                        ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -155,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                           ? Container(
                               decoration: BoxDecoration(
                                 border: outsetBorder(
-                                  8.0,
+                                  deviceSize.shortestSide / 50,
                                   Constants.borderBottomColor,
                                   Constants.borderTopColor,
                                 ),

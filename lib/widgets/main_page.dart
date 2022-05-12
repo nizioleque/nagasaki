@@ -38,8 +38,8 @@ class _HeaderButtonState extends State<HeaderButton> {
       },
       child: Container(
         child: widget.child,
-        height: 40,
-        width: 40,
+        // height: 40,
+        // width: 40,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: pressed
@@ -62,14 +62,17 @@ class HeaderCounter extends StatelessWidget {
   final int dataText;
   final String labelText;
 
-  static const height = 55.0;
+  // static const height = 55.0;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        getDigital(dataText),
+        Expanded(
+          child: getDigital(dataText),
+        ),
         Padding(
           padding: const EdgeInsets.only(top: 5.0),
           child: Text(
@@ -88,7 +91,7 @@ class HeaderCounter extends StatelessWidget {
   Widget getDigital(int data) {
     if (data >= 1000) {
       return SizedBox(
-        height: height,
+        // height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -101,7 +104,7 @@ class HeaderCounter extends StatelessWidget {
     }
     if (data >= 100) {
       return SizedBox(
-        height: height,
+        // height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -113,7 +116,7 @@ class HeaderCounter extends StatelessWidget {
       );
     } else if (data >= 10) {
       return SizedBox(
-        height: height,
+        // height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -125,7 +128,7 @@ class HeaderCounter extends StatelessWidget {
       );
     } else {
       return SizedBox(
-        height: height,
+        // height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -212,12 +215,14 @@ class ConstrainedWidthFlexible extends StatelessWidget {
   final Widget child;
   final BoxConstraints outerConstraints;
   const ConstrainedWidthFlexible(
-      {Key? key, required this.minWidth,
+      {Key? key,
+      required this.minWidth,
       required this.maxWidth,
       required this.flex,
       required this.flexSum,
       required this.outerConstraints,
-      required this.child}) : super(key: key);
+      required this.child})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
@@ -230,7 +235,6 @@ class ConstrainedWidthFlexible extends StatelessWidget {
         child: child,
       ),
     );
-
   }
 
   double _getWidth(double outerContainerWidth) {
