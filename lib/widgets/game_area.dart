@@ -57,7 +57,7 @@ class Field extends StatefulWidget {
   // bomb/flag img scale
   static const imgSizeFactorHidden = 0.6;
   static const imgSizeFactorClicked = 0.7;
-  static const clickedOffset = 0.4;
+  static const clickedOffset = 0.6;
 
   @override
   State<Field> createState() => _FieldState();
