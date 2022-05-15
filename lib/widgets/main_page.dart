@@ -122,29 +122,29 @@ class HeaderCounter extends StatelessWidget {
   List<Widget> _getChildren(int value) {
     if (value >= 1000) {
       return [
-        Image.asset('assets/images/digital_9.png'),
-        Image.asset('assets/images/digital_9.png'),
-        Image.asset('assets/images/digital_9.png'),
+        CachedData.images['digital_9']!,
+        CachedData.images['digital_9']!,
+        CachedData.images['digital_9']!,
       ];
     }
     if (value >= 100) {
       return [
-        Image.asset('assets/images/digital_${value ~/ 100}.png'),
-        Image.asset('assets/images/digital_${(value % 100) ~/ 10}.png'),
-        Image.asset('assets/images/digital_${value % 10}.png'),
+        CachedData.images['digital_${value ~/ 100}']!,
+        CachedData.images['digital_${(value % 100) ~/ 10}']!,
+        CachedData.images['digital_${value % 10}']!,
       ];
     }
     if (value >= 10) {
       return [
-        Image.asset('assets/images/digital_null.png'),
-        Image.asset('assets/images/digital_${(value % 100) ~/ 10}.png'),
-        Image.asset('assets/images/digital_${value % 10}.png'),
+        CachedData.images['digital_null']!,
+        CachedData.images['digital_${(value % 100) ~/ 10}']!,
+        CachedData.images['digital_${value % 10}']!,
       ];
     }
     return [
-      Image.asset('assets/images/digital_null.png'),
-      Image.asset('assets/images/digital_null.png'),
-      Image.asset('assets/images/digital_$value.png'),
+      CachedData.images['digital_null']!,
+      CachedData.images['digital_null']!,
+      CachedData.images['digital_$value']!,
     ];
   }
 }

@@ -30,3 +30,55 @@ class Constants {
   // borders
   static const double mainBorderWidth = 8.0 / 500;
 }
+
+class CachedData {
+  static Map<String, Image> images = {};
+
+  static loadImages() {
+    images = {
+      'digital_null':
+          Image.asset('assets/images/digital_null.png', gaplessPlayback: true),
+      'digital_0':
+          Image.asset('assets/images/digital_0.png', gaplessPlayback: true),
+      'digital_1':
+          Image.asset('assets/images/digital_1.png', gaplessPlayback: true),
+      'digital_2':
+          Image.asset('assets/images/digital_2.png', gaplessPlayback: true),
+      'digital_3':
+          Image.asset('assets/images/digital_3.png', gaplessPlayback: true),
+      'digital_4':
+          Image.asset('assets/images/digital_4.png', gaplessPlayback: true),
+      'digital_5':
+          Image.asset('assets/images/digital_5.png', gaplessPlayback: true),
+      'digital_6':
+          Image.asset('assets/images/digital_6.png', gaplessPlayback: true),
+      'digital_7':
+          Image.asset('assets/images/digital_7.png', gaplessPlayback: true),
+      'digital_8':
+          Image.asset('assets/images/digital_8.png', gaplessPlayback: true),
+      'digital_9':
+          Image.asset('assets/images/digital_9.png', gaplessPlayback: true),
+      'field_null': Image.asset('assets/images/field_null.png'),
+      'field_1': Image.asset('assets/images/field_1.png'),
+      'field_2': Image.asset('assets/images/field_2.png'),
+      'field_3': Image.asset('assets/images/field_3.png'),
+      'field_4': Image.asset('assets/images/field_4.png'),
+      'field_5': Image.asset('assets/images/field_5.png'),
+      'field_6': Image.asset('assets/images/field_6.png'),
+      'field_7': Image.asset('assets/images/field_7.png'),
+      'field_8': Image.asset('assets/images/field_8.png'),
+      'bomb': Image.asset('assets/images/bomb.png'),
+      'flag': Image.asset('assets/images/flag.png'),
+      'mark': Image.asset('assets/images/mark.png'),
+      'field_hidden': Image.asset('assets/images/field_hidden.png'),
+      'field_correct': Image.asset('assets/images/field_correct.png'),
+      'field_wrong': Image.asset('assets/images/field_wrong.png'),
+    };
+  }
+
+  static void precacheImages(BuildContext context) {
+    images.forEach((key, value) {
+      precacheImage(value.image, context);
+    });
+  }
+}

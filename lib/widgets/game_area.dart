@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:nagasaki/constants.dart';
 import '../classes.dart';
 import '../grid.dart';
 
@@ -68,22 +69,24 @@ class _FieldState extends State<Field> {
 
   @override
   Widget build(BuildContext context) {
-    String backgroundImage = 'assets/images/field_hidden.png';
+    String imageName = 'field_hidden';
 
     if (widget.data.isClicked) {
-      backgroundImage = 'assets/images/field_null.png';
+      imageName = 'field_null';
       if (!widget.data.isBomb && widget.data.state == FieldState.flagged) {
-        backgroundImage = 'assets/images/field_wrong.png';
+        imageName = 'field_wrong';
       } else if (!widget.data.isBomb && widget.data.bombsAround > 0) {
-        backgroundImage = 'assets/images/field_${widget.data.bombsAround}.png';
+        imageName = 'field_${widget.data.bombsAround}';
       } else if (widget.data.isBomb) {
         if (widget.data.state == FieldState.flagged) {
-          backgroundImage = 'assets/images/field_correct.png';
+          imageName = 'field_correct';
         } else {
-          backgroundImage = 'assets/images/field_wrong.png';
+          imageName = 'field_wrong';
         }
       }
     }
+
+    Image backgroundImage = CachedData.images[imageName]!;
 
     return GestureDetector(
       onTapDown: (_) {
@@ -108,7 +111,7 @@ class _FieldState extends State<Field> {
       child: Container(
         decoration: BoxDecoration(
             image: DecorationImage(
-          image: AssetImage(backgroundImage),
+          image: backgroundImage.image,
           fit: BoxFit.cover,
         )),
         child: Stack(
@@ -117,18 +120,18 @@ class _FieldState extends State<Field> {
           children: [
             if (widget.data.isBomb && widget.data.isClicked)
               const FieldImage(
-                imgPath: 'assets/images/bomb.png',
+                img: 'bomb',
                 clicked: true,
               ),
             if (widget.data.state == FieldState.flagged &&
                 !widget.data.isClicked)
               const FieldImage(
-                imgPath: 'assets/images/flag.png',
+                img: 'flag',
                 clicked: false,
               ),
             if (widget.data.state == FieldState.sus && !widget.data.isClicked)
               const FieldImage(
-                imgPath: 'assets/images/mark.png',
+                img: 'mark',
                 clicked: false,
               )
           ],
@@ -141,11 +144,11 @@ class _FieldState extends State<Field> {
 class FieldImage extends StatelessWidget {
   const FieldImage({
     Key? key,
-    required this.imgPath,
+    required this.img,
     required this.clicked,
   }) : super(key: key);
 
-  final String imgPath;
+  final String img;
   final bool clicked;
 
   @override
@@ -161,8 +164,8 @@ class FieldImage extends StatelessWidget {
       heightFactor: imgSizeFactor,
       widthFactor: imgSizeFactor,
       alignment: alignment,
-      child: Image(
-        image: AssetImage(imgPath),
+      child: FittedBox(
+        child: CachedData.images[img],
         fit: BoxFit.contain,
       ),
     );
