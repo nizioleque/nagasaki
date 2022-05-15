@@ -17,13 +17,15 @@ Created as an opportunity to learn Flutter by two CS students from Warsaw, Polan
 - Three difficulty levels & custom settings
 - Automatically saving and restoring the game
 - Sound effects & haptic feedback
+- Responsive layout adapting to the window size
 
 ### Implementation overview
 
 - Saving game state – serialization with json_serializable package and detecting app closing with didChangeAppLifecycleState
 - Sounds – audioplayers package
 - Custom stateful and stateless widgets for various elements of the UI
-- Iterator for analyzing the surrounding of a field
+- Iterator for analyzing the surroundings of a field
 - Custom dialog for the settings panel & game end
 - Text field validation
 - Asynchronous functions for loading/saving settings and (de)serialization
+- LayoutBuilder for a responsive header layout
