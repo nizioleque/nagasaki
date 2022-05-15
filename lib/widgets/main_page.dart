@@ -87,6 +87,7 @@ class HeaderCounter extends StatelessWidget {
   final int value;
   final String labelText;
   final double textSize;
+
   final double textPadding;
 
   // static const height = 55.0;
@@ -100,15 +101,21 @@ class HeaderCounter extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _getChildren(value),
+            child: Container(
+              decoration: BoxDecoration(
+                  // border: outsetBorder(4, Colors.red, Colors.orange),
+                  ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: _getChildren(value),
+              ),
             ),
           ),
           Padding(
             padding: EdgeInsets.only(top: textPadding),
             child: Text(
               labelText.toUpperCase(),
+              textScaleFactor: 1.0,
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,

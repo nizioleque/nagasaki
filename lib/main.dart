@@ -82,12 +82,12 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    var deviceSize = MediaQuery.of(context).size;
+    var deviceSize = MediaQuery.of(context).size.shortestSide;
     debugPrint(deviceSize.toString());
 
-    double scaledSize(double size) {
-      return deviceSize.shortestSide * size / 500;
-    }
+    // double scaledSize(double size) {
+    //   return deviceSize.shortestSide * size / 500;
+    // }
 
     // return widget
     return Scaffold(
@@ -109,44 +109,53 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     decoration: BoxDecoration(
                       color: Constants.backgroundColor,
                       border: outsetBorder(
-                        scaledSize(8.0),
+                        deviceSize * 8.0 / 500,
                         Constants.borderBottomColor,
                         Constants.borderTopColor,
                       ),
                     ),
                     child: Center(
-                      child: Container(
-                        // color: Colors.red,
-                        child: AspectRatio(
-                          aspectRatio: 3.7,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              HeaderButton(
-                                onTap: resetGame,
-                                child: const Icon(Icons.refresh),
-                                borderWidth: scaledSize(5.0),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          double scaledSize(double size) {
+                            return constraints.maxHeight * size / 100;
+                          }
+
+                          return Container(
+                            // color: Colors.red,
+                            child: AspectRatio(
+                              aspectRatio: 3.7,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  HeaderButton(
+                                    onTap: resetGame,
+                                    child: const Icon(Icons.refresh),
+                                    borderWidth: scaledSize(5.0),
+                                  ),
+                                  HeaderCounter(
+                                    value: dataLoaded ? grid.flagsLeft : 0,
+                                    labelText: "bombs",
+                                    textSize: scaledSize(16.0),
+                                    textPadding: scaledSize(6.0),
+                                  ),
+                                  HeaderCounter(
+                                    value: dataLoaded ? grid.time : 0,
+                                    labelText: "timer",
+                                    textSize: scaledSize(16.0),
+                                    textPadding: scaledSize(6.0),
+                                  ),
+                                  HeaderButton(
+                                    onTap: tapSettings,
+                                    child: const Icon(Icons.settings),
+                                    borderWidth: scaledSize(5.0),
+                                  ),
+                                ],
                               ),
-                              HeaderCounter(
-                                value: dataLoaded ? grid.flagsLeft : 0,
-                                labelText: "bombs",
-                                textSize: scaledSize(16.0),
-                                textPadding: scaledSize(6.0),
-                              ),
-                              HeaderCounter(
-                                value: dataLoaded ? grid.time : 0,
-                                labelText: "timer",
-                                textSize: scaledSize(16.0),
-                                textPadding: scaledSize(6.0),
-                              ),
-                              HeaderButton(
-                                onTap: tapSettings,
-                                child: const Icon(Icons.settings),
-                                borderWidth: scaledSize(5.0),
-                              ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -160,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                           ? Container(
                               decoration: BoxDecoration(
                                 border: outsetBorder(
-                                  scaledSize(8.0),
+                                  deviceSize * 8.0 / 500,
                                   Constants.borderBottomColor,
                                   Constants.borderTopColor,
                                 ),
