@@ -137,13 +137,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                   HeaderCounter(
                                     value: dataLoaded ? grid.flagsLeft : 0,
                                     labelText: "bombs",
-                                    textSize: scaledSize(16.0),
+                                    textSize: scaledSize(12.0),
                                     textPadding: scaledSize(6.0),
                                   ),
                                   HeaderCounter(
                                     value: dataLoaded ? grid.time : 0,
                                     labelText: "timer",
-                                    textSize: scaledSize(16.0),
+                                    textSize: scaledSize(12.0),
                                     textPadding: scaledSize(6.0),
                                   ),
                                   HeaderButton(
