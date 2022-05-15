@@ -46,13 +46,24 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   bool active = true;
   bool dataLoaded = false;
 
+  late List<Image> toLoad;
+
   @override
   void initState() {
     super.initState();
+    loadImages();
     WidgetsBinding.instance?.addObserver(this);
     loadState();
     Settings.loadPreferences();
     // .then((value) => enableSound = value.soundOn);
+  }
+
+  @override
+  void didChangeDependencies() {
+    for (var element in toLoad) {
+      precacheImage(element.image, context);
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -375,5 +386,25 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         });
       },
     );
+  }
+
+  void loadImages() {
+    toLoad = <Image>[];
+    toLoad.add(Image.asset('assets/images/digital_null.png'));
+    for (int i = 0; i < 10; i++) {
+      toLoad.add(Image.asset('assets/images/digital_$i.png'));
+    }
+    toLoad.add(Image.asset('assets/images/field_null.png'));
+    for (int i = 1; i < 9; i++) {
+      toLoad.add(Image.asset('assets/images/field_$i.png'));
+    }
+    toLoad.add(Image.asset('assets/images/bomb.png'));
+    toLoad.add(Image.asset('assets/images/flag.png'));
+    toLoad.add(Image.asset('assets/images/mark.png'));
+    toLoad.add(Image.asset('assets/images/button.png'));
+    toLoad.add(Image.asset('assets/images/button-pressed.png'));
+    toLoad.add(Image.asset('assets/images/field_hidden.png'));
+    toLoad.add(Image.asset('assets/images/field_correct.png'));
+    toLoad.add(Image.asset('assets/images/field_wrong.png'));
   }
 }
