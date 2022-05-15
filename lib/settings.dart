@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -284,7 +285,7 @@ class _SettingsDialogContentState extends State<SettingsDialogContent> {
             children: [
               SettingsNumberField(
                 controller: widget._controllers[0],
-                validator: (value) => validateRange(value, 3, 30),
+                validator: (value) => validateRange(value, 3, 50),
                 text: "Columns",
               ),
               const Spacer(
@@ -292,7 +293,7 @@ class _SettingsDialogContentState extends State<SettingsDialogContent> {
               ),
               SettingsNumberField(
                 controller: widget._controllers[1],
-                validator: (value) => validateRange(value, 3, 30),
+                validator: (value) => validateRange(value, 3, 50),
                 text: "Rows",
               ),
               const Spacer(
@@ -305,7 +306,7 @@ class _SettingsDialogContentState extends State<SettingsDialogContent> {
                     var fields = int.parse(widget._controllers[0].text) *
                         int.parse(widget._controllers[1].text);
 
-                    return validateRange(value, 2, fields - 9);
+                    return validateRange(value, 2, min(fields - 9, 999));
                   } catch (e) {
                     return null;
                   }
