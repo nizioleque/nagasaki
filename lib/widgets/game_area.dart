@@ -68,12 +68,12 @@ class _FieldState extends State<Field> {
 
   @override
   Widget build(BuildContext context) {
-    String backgroundImage = 'assets/images/field-hidden.png';
+    String backgroundImage = 'assets/images/field_hidden.png';
 
     if (widget.data.isClicked) {
-      backgroundImage = 'assets/images/field-0.png';
+      backgroundImage = 'assets/images/field_null.png';
       if (!widget.data.isBomb && widget.data.bombsAround > 0) {
-        backgroundImage = 'assets/images/field-${widget.data.bombsAround}.png';
+        backgroundImage = 'assets/images/field_${widget.data.bombsAround}.png';
       }
     }
 
@@ -160,6 +160,3 @@ class FieldImage extends StatelessWidget {
     );
   }
 }
-
-
-
