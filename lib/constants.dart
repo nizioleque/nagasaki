@@ -17,4 +17,16 @@ class Constants {
   static const headerButtonBorderTopPressedColor = Color(0xff504E04);
   static const headerButtonBorderBottomPressedColor = Color(0xffA4A11C);
 
+  // counters
+  static const counterBorderTopColor = Color(0xff630000);
+  static const counterBorderBottomColor = Color(0xff150000);
+
+  // header sizing
+  static const double minAspectRatio = 2.95;
+  static const double maxAspectRatio = 4.2;
+  static const double maxHeaderHeight = 180;
+  static const int headerFlex = 5; // header's height is 1/n of the window
+
+  // borders
+  static const double mainBorderWidth = 8.0 / 500;
 }

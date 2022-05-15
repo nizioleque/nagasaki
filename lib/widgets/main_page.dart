@@ -8,12 +8,12 @@ class HeaderButton extends StatefulWidget {
     Key? key,
     required this.onTap,
     required this.child,
-    required this.borderWidth,
+    required this.height,
   }) : super(key: key);
 
   final void Function() onTap;
   final Widget child;
-  final double borderWidth;
+  final double height;
 
   @override
   State<HeaderButton> createState() => _HeaderButtonState();
@@ -24,49 +24,44 @@ class _HeaderButtonState extends State<HeaderButton> {
 
   @override
   Widget build(BuildContext context) {
-    return FractionallySizedBox(
-      heightFactor: 0.4,
-      child: GestureDetector(
-        onTap: widget.onTap,
-        onTapDown: (_) {
-          setState(() {
-            pressed = true;
-          });
-        },
-        onTapUp: (_) {
-          setState(() {
-            pressed = false;
-          });
-        },
-        onTapCancel: () {
-          setState(() {
-            pressed = false;
-          });
-        },
-        child: Center(
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: pressed
-                    ? Constants.headerButtonPressedColor
-                    : Constants.headerButtonColor,
-                border: outsetBorder(
-                  widget.borderWidth,
-                  pressed
-                      ? Constants.headerButtonBorderTopPressedColor
-                      : Constants.headerButtonBorderTopColor,
-                  pressed
-                      ? Constants.headerButtonBorderBottomPressedColor
-                      : Constants.headerButtonBorderBottomColor,
-                ),
-              ),
-              child: FractionallySizedBox(
-                heightFactor: 0.9,
-                child: FittedBox(
-                  child: widget.child,
-                ),
-              ),
+    return GestureDetector(
+      onTap: widget.onTap,
+      onTapDown: (_) {
+        setState(() {
+          pressed = true;
+        });
+      },
+      onTapUp: (_) {
+        setState(() {
+          pressed = false;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          pressed = false;
+        });
+      },
+      child: Center(
+        child: Container(
+          height: widget.height,
+          decoration: BoxDecoration(
+            color: pressed
+                ? Constants.headerButtonPressedColor
+                : Constants.headerButtonColor,
+            border: outsetBorder(
+              widget.height * 0.15,
+              pressed
+                  ? Constants.headerButtonBorderTopPressedColor
+                  : Constants.headerButtonBorderTopColor,
+              pressed
+                  ? Constants.headerButtonBorderBottomPressedColor
+                  : Constants.headerButtonBorderBottomColor,
+            ),
+          ),
+          child: FractionallySizedBox(
+            heightFactor: 0.9,
+            child: FittedBox(
+              child: widget.child,
             ),
           ),
         ),
@@ -80,51 +75,47 @@ class HeaderCounter extends StatelessWidget {
     Key? key,
     required this.value,
     required this.labelText,
-    required this.textSize,
-    required this.textPadding,
+    required this.height,
   }) : super(key: key);
 
   final int value;
   final String labelText;
-  final double textSize;
 
-  final double textPadding;
-
-  // static const height = 55.0;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
-    return FractionallySizedBox(
-      heightFactor: 0.8,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                  // border: outsetBorder(4, Colors.red, Colors.orange),
-                  ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: _getChildren(value),
-              ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          height: height * 0.55,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            border: outsetBorder(
+              height * 0.055,
+              Constants.counterBorderTopColor,
+              Constants.counterBorderBottomColor,
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: textPadding),
-            child: Text(
-              labelText.toUpperCase(),
-              textScaleFactor: 1.0,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.5,
-                fontSize: textSize,
-              ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _getChildren(value),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: height * 0.06),
+          child: Text(
+            labelText.toUpperCase(),
+            textScaleFactor: 1.0,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.5,
+              fontSize: height * 0.14,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -185,75 +176,5 @@ class CounterText extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class ConstrainedHeightFlexible extends StatelessWidget {
-  final double minHeight;
-  final double maxHeight;
-  final int flex;
-  final int flexSum;
-  final Widget child;
-  final BoxConstraints outerConstraints;
-  const ConstrainedHeightFlexible(
-      {Key? key,
-      required this.minHeight,
-      required this.maxHeight,
-      required this.flex,
-      required this.flexSum,
-      required this.outerConstraints,
-      required this.child})
-      : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: minHeight,
-        maxHeight: maxHeight,
-      ),
-      child: SizedBox(
-        height: _getHeight(outerConstraints.maxHeight),
-        child: child,
-      ),
-    );
-  }
-
-  double _getHeight(double outerContainerHeight) {
-    return outerContainerHeight * flex / flexSum;
-  }
-}
-
-class ConstrainedWidthFlexible extends StatelessWidget {
-  final double minWidth;
-  final double maxWidth;
-  final int flex;
-  final int flexSum;
-  final Widget child;
-  final BoxConstraints outerConstraints;
-  const ConstrainedWidthFlexible(
-      {Key? key,
-      required this.minWidth,
-      required this.maxWidth,
-      required this.flex,
-      required this.flexSum,
-      required this.outerConstraints,
-      required this.child})
-      : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        minWidth: minWidth,
-        maxWidth: maxWidth,
-      ),
-      child: SizedBox(
-        width: _getWidth(outerConstraints.maxWidth),
-        child: child,
-      ),
-    );
-  }
-
-  double _getWidth(double outerContainerWidth) {
-    return outerContainerWidth * flex / flexSum;
   }
 }

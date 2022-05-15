@@ -74,7 +74,6 @@ class _FieldState extends State<Field> {
       backgroundImage = 'assets/images/field_null.png';
       if (!widget.data.isBomb && widget.data.state == FieldState.flagged) {
         backgroundImage = 'assets/images/field_wrong.png';
-        // TODO add numbers inside??
       } else if (!widget.data.isBomb && widget.data.bombsAround > 0) {
         backgroundImage = 'assets/images/field_${widget.data.bombsAround}.png';
       } else if (widget.data.isBomb) {

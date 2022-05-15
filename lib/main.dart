@@ -61,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   void didChangeDependencies() {
     for (var element in toLoad) {
+      
       precacheImage(element.image, context);
     }
     super.didChangeDependencies();
@@ -94,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size.shortestSide;
-    debugPrint(deviceSize.toString());
+    // debugPrint(deviceSize.toString());
 
     // double scaledSize(double size) {
     //   return deviceSize.shortestSide * size / 500;
@@ -107,35 +108,43 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         color: const Color(0xffD9D9D9),
         child: SafeArea(
           child: LayoutBuilder(
-            builder: (context, constraints) => Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ConstrainedHeightFlexible(
-                  maxHeight: 1000,
-                  minHeight: 100,
-                  outerConstraints: constraints,
-                  flex: 1,
-                  flexSum: 5,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Constants.backgroundColor,
-                      border: outsetBorder(
-                        deviceSize * 8.0 / 500,
-                        Constants.borderBottomColor,
-                        Constants.borderTopColor,
-                      ),
-                    ),
-                    child: Center(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          double scaledSize(double size) {
-                            return constraints.maxHeight * size / 100;
-                          }
+            builder: (context, constraints) {
+              double height = constraints.maxHeight / Constants.headerFlex;
 
-                          return Container(
-                            // color: Colors.red,
-                            child: AspectRatio(
-                              aspectRatio: 3.7,
+              // make the header shorter if it's too narrow
+              if (constraints.maxWidth / height < Constants.minAspectRatio) {
+                height = constraints.maxWidth / Constants.minAspectRatio;
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxHeight: Constants.maxHeaderHeight,
+                    ),
+                    child: Container(
+                      height: height,
+                      decoration: BoxDecoration(
+                        color: Constants.backgroundColor,
+                        border: outsetBorder(
+                          deviceSize * Constants.mainBorderWidth,
+                          Constants.borderBottomColor,
+                          Constants.borderTopColor,
+                        ),
+                      ),
+                      child: Center(
+                        child: LayoutBuilder(
+                          builder: (context, childConstraints) {
+                            double height = childConstraints.maxHeight;
+                            double width = Constants.maxAspectRatio * height;
+
+                            double scaledSize(double size) {
+                              return height * size / 100;
+                            }
+
+                            return SizedBox(
+                              width: width,
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -143,72 +152,70 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                   HeaderButton(
                                     onTap: resetGame,
                                     child: const Icon(Icons.refresh),
-                                    borderWidth: scaledSize(5.0),
+                                    height: scaledSize(40.0),
                                   ),
                                   HeaderCounter(
                                     value: dataLoaded ? grid.flagsLeft : 0,
                                     labelText: "bombs",
-                                    textSize: scaledSize(12.0),
-                                    textPadding: scaledSize(6.0),
+                                    height: scaledSize(100),
                                   ),
                                   HeaderCounter(
                                     value: dataLoaded ? grid.time : 0,
                                     labelText: "timer",
-                                    textSize: scaledSize(12.0),
-                                    textPadding: scaledSize(6.0),
+                                    height: scaledSize(100),
                                   ),
                                   HeaderButton(
                                     onTap: tapSettings,
                                     child: const Icon(Icons.settings),
-                                    borderWidth: scaledSize(5.0),
+                                    height: scaledSize(40.0),
                                   ),
                                 ],
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 4,
-                  child: Container(
-                    color: Constants.backgroundColor,
-                    child: Center(
-                      child: dataLoaded
-                          ? Container(
-                              decoration: BoxDecoration(
-                                border: outsetBorder(
-                                  deviceSize * 8.0 / 500,
-                                  Constants.borderBottomColor,
-                                  Constants.borderTopColor,
+                  Expanded(
+                    flex: Constants.headerFlex - 1,
+                    child: Container(
+                      color: Constants.backgroundColor,
+                      child: Center(
+                        child: dataLoaded
+                            ? Container(
+                                decoration: BoxDecoration(
+                                  border: outsetBorder(
+                                    deviceSize * Constants.mainBorderWidth,
+                                    Constants.borderBottomColor,
+                                    Constants.borderTopColor,
+                                  ),
                                 ),
-                              ),
-                              child: AspectRatio(
-                                aspectRatio: grid.columns / grid.rows,
-                                child: GameArea(
-                                  grid: grid,
-                                  onChanged: (FieldChangeData data) {
-                                    switch (data.pressType) {
-                                      case PressType.tap:
-                                        handleFieldTap(data.index);
-                                        break;
-                                      case PressType.longPress:
-                                        handleFieldLongPress(data.index);
-                                        break;
-                                      default:
-                                    }
-                                  },
+                                child: AspectRatio(
+                                  aspectRatio: grid.columns / grid.rows,
+                                  child: GameArea(
+                                    grid: grid,
+                                    onChanged: (FieldChangeData data) {
+                                      switch (data.pressType) {
+                                        case PressType.tap:
+                                          handleFieldTap(data.index);
+                                          break;
+                                        case PressType.longPress:
+                                          handleFieldLongPress(data.index);
+                                          break;
+                                        default:
+                                      }
+                                    },
+                                  ),
                                 ),
-                              ),
-                            )
-                          : null,
+                              )
+                            : null,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              );
+            },
           ),
         ),
       ),
