@@ -142,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                 children: [
                                   HeaderButton(
                                     onTap: resetGame,
-                                    child: const Icon(Icons.refresh),
+                                    child: const Icon(Icons.play_arrow),
                                     height: scaledSize(40.0),
                                   ),
                                   HeaderCounter(

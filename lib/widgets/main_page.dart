@@ -45,23 +45,47 @@ class _HeaderButtonState extends State<HeaderButton> {
         child: Container(
           height: widget.height,
           decoration: BoxDecoration(
-            color: pressed
-                ? Constants.headerButtonPressedColor
-                : Constants.headerButtonColor,
+            shape: BoxShape.rectangle,
+            color: Constants.backgroundColor,
             border: outsetBorder(
-              widget.height * 0.15,
-              pressed
-                  ? Constants.headerButtonBorderTopPressedColor
-                  : Constants.headerButtonBorderTopColor,
-              pressed
-                  ? Constants.headerButtonBorderBottomPressedColor
-                  : Constants.headerButtonBorderBottomColor,
+              widget.height * 0.12,
+              Constants.borderTopColor,
+              Constants.borderBottomColor,
             ),
+            // color: pressed
+            //     ? Constants.headerButtonPressedColor
+            //     : Constants.headerButtonColor,
+            // border: outsetBorder(
+            //   widget.height * 0.15,
+            //   pressed
+            //       ? Constants.headerButtonBorderTopPressedColor
+            //       : Constants.headerButtonBorderTopColor,
+            //   pressed
+            //       ? Constants.headerButtonBorderBottomPressedColor
+            //       : Constants.headerButtonBorderBottomColor,
+            // ),
           ),
-          child: FractionallySizedBox(
-            heightFactor: 0.9,
-            child: FittedBox(
-              child: widget.child,
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: FractionallySizedBox(
+              heightFactor: 0.9,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Constants.headerButtonColor,
+                  border: Border.all(
+                    color: Colors.black,
+                    width: widget.height * 0.04,
+                  ),
+                ),
+                child: FractionallySizedBox(
+                  heightFactor: 0.9,
+                  // widthFactor: 0.9,
+                  child: FittedBox(
+                    child: widget.child,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
