@@ -46,11 +46,13 @@ class _HeaderButtonState extends State<HeaderButton> {
           height: widget.height,
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
-            color: Constants.backgroundColor,
+            color: pressed
+                ? Constants.backgroundColorDark
+                : Constants.backgroundColor,
             border: outsetBorder(
               widget.height * 0.12,
-              Constants.borderTopColor,
-              Constants.borderBottomColor,
+              pressed ? Constants.borderBottomColor : Constants.borderTopColor,
+              pressed ? Constants.borderTopColor : Constants.borderBottomColor,
             ),
             // color: pressed
             //     ? Constants.headerButtonPressedColor
@@ -72,7 +74,9 @@ class _HeaderButtonState extends State<HeaderButton> {
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Constants.headerButtonColor,
+                  color: pressed
+                      ? Constants.headerButtonPressedColor
+                      : Constants.headerButtonColor,
                   border: Border.all(
                     color: Colors.black,
                     width: widget.height * 0.04,
